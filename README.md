@@ -1,4 +1,4 @@
-# DroneViet.vn
+# DroneViet.vn.
 
 Website thương hiệu cho bộ giải pháp drone nghiên cứu và giáo dục từ cấp 1 đến đại học của Drone Việt.
 
