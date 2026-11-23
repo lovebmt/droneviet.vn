@@ -20,4 +20,20 @@ describe("CustomerLoginPage sign-in errors", () => {
     expect(document.body.textContent).not.toContain("evil");
     expect(document.body.textContent).not.toContain("Mã lỗi");
   });
+
+  it("shows a clean detail but drops one with markup or excess length", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ google: false, zalo: false }) })));
+
+    const { unmount } = render(
+      await CustomerLoginPage({ searchParams: Promise.resolve({ error: "zalo", reason: "profile", detail: "error -216 - Invalid token" }) }),
+    );
+    expect(await screen.findByText("Chi tiết: error -216 - Invalid token")).toBeInTheDocument();
+    unmount();
+
+    render(
+      await CustomerLoginPage({ searchParams: Promise.resolve({ error: "zalo", reason: "profile", detail: "<img src=x>" }) }),
+    );
+    await screen.findByText("Mã lỗi: profile");
+    expect(document.body.textContent).not.toContain("Chi tiết");
+  });
 });

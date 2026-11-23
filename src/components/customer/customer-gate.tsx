@@ -18,10 +18,12 @@ export function CustomerGate({
   mode,
   oauthError,
   oauthReason,
+  oauthDetail,
 }: {
   mode: "login" | "register";
   oauthError?: OauthProvider;
   oauthReason?: string;
+  oauthDetail?: string;
 }) {
   const [message, setMessage] = useState(
     oauthError ? `Đăng nhập ${providerLabels[oauthError]} không thành công. Vui lòng thử lại.` : "",
@@ -194,6 +196,9 @@ export function CustomerGate({
             {message ? <p className="mt-4 text-sm text-red-700">{message}</p> : null}
             {oauthError && oauthReason ? (
               <p className="mt-1 text-xs text-slate-500">Mã lỗi: {oauthReason}</p>
+            ) : null}
+            {oauthError && oauthReason && oauthDetail ? (
+              <p className="mt-1 break-words text-xs text-slate-500">Chi tiết: {oauthDetail}</p>
             ) : null}
           </form>
 

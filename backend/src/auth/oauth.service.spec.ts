@@ -291,4 +291,48 @@ describe("OauthService", () => {
       expect(verifier).toMatch(/\d/);
     }
   });
+
+  it("carries a safe summary of Zalo's error on the failure so the login page can show it", async () => {
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access-token" },
+      "https://graph.zalo.me/v2.0/me": { error: -216, message: "Access token is invalid" },
+    });
+
+    const profileFailure = await service.finishZalo("auth-code", state).catch((error: unknown) => error);
+
+    expect(profileFailure).toMatchObject({ reason: "profile" });
+    expect((profileFailure as { detail: string }).detail).toContain("-216");
+    expect((profileFailure as { detail: string }).detail).toContain("Access token is invalid");
+    expect((profileFailure as { detail: string }).detail).not.toContain("z-access-token");
+  });
+
+  it("summarises a profile response that has no id and no error field by listing its keys", async () => {
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access-token" },
+      "https://graph.zalo.me/v2.0/me": { name: "Bình", picture: "x" },
+    });
+
+    const failure = await service.finishZalo("auth-code", state).catch((error: unknown) => error);
+
+    expect(failure).toMatchObject({ reason: "profile" });
+    expect((failure as { detail: string }).detail).toContain("keys: name,picture");
+  });
+
+  it("strips anything unsafe from the detail and caps its length", async () => {
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": { error: -1, error_name: `<script>alert(1)</script>${"x".repeat(200)}` },
+    });
+
+    const failure = await service.finishZalo("auth-code", state).catch((error: unknown) => error);
+
+    const detail = (failure as { detail: string }).detail;
+    expect(detail).not.toMatch(/[<>()]/);
+    expect(detail.length).toBeLessThanOrEqual(80);
+  });
 });

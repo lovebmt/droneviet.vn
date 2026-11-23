@@ -60,4 +60,16 @@ describe("OauthController", () => {
     await expect(controller.start("facebook" as never, res as never)).rejects.toThrow();
     expect(res.redirect).not.toHaveBeenCalled();
   });
+
+  it("adds the provider's error summary to the redirect when the failure has one", async () => {
+    const { controller, res } = setup({
+      finishZalo: vi.fn(async () => {
+        throw new OauthFailure("profile", "Zalo profile is missing an id", "error -216 - Access token is invalid");
+      }),
+    });
+    await controller.callback("zalo", "auth-code", "s", undefined, res as never);
+    expect(res.redirect).toHaveBeenCalledWith(
+      "https://www.droneviet.vn/dang-nhap?error=zalo&reason=profile&detail=error+-216+-+Access+token+is+invalid",
+    );
+  });
 });

@@ -20,6 +20,8 @@ export class OauthFailure extends BadRequestException {
   constructor(
     readonly reason: OauthFailureReason,
     message: string,
+    /** Short, sanitised summary of what the provider answered; safe to show on the login page. */
+    readonly detail?: string,
   ) {
     super({ message, reason });
   }
@@ -115,7 +117,7 @@ export class OauthService {
       redirect_uri: this.callbackUrl("google"),
     });
     if (!token.access_token) {
-      throw new OauthFailure("token_exchange", "Google token exchange failed");
+      throw new OauthFailure("token_exchange", "Google token exchange failed", summariseProviderBody(token));
     }
 
     const profile = await this.getJson<{ id?: string; email?: string; name?: string }>(
@@ -124,7 +126,7 @@ export class OauthService {
       { Authorization: `Bearer ${token.access_token}` },
     );
     if (!profile.id || !profile.email) {
-      throw new OauthFailure("profile", "Google profile is missing an id or email");
+      throw new OauthFailure("profile", "Google profile is missing an id or email", summariseProviderBody(profile));
     }
 
     const user = await this.upsertUser("googleId", {
@@ -169,7 +171,7 @@ export class OauthService {
       { secret_key: this.env("ZALO_APP_SECRET") },
     );
     if (!token.access_token) {
-      throw new OauthFailure("token_exchange", "Zalo token exchange failed");
+      throw new OauthFailure("token_exchange", "Zalo token exchange failed", summariseProviderBody(token));
     }
 
     const profile = await this.getJson<{ id?: string | number; name?: string }>(
@@ -178,7 +180,7 @@ export class OauthService {
       { access_token: token.access_token },
     );
     if (!profile.id) {
-      throw new OauthFailure("profile", "Zalo profile is missing an id");
+      throw new OauthFailure("profile", "Zalo profile is missing an id", summariseProviderBody(profile));
     }
 
     const zaloId = String(profile.id);
@@ -351,4 +353,30 @@ function describeProviderError(body: unknown): string | null {
     PROVIDER_ERROR_FIELDS.filter((key) => record[key] !== undefined).map((key) => [key, record[key]]),
   );
   return Object.keys(picked).length > 0 ? JSON.stringify(picked) : null;
+}
+
+/**
+ * One short line describing a failed provider answer, e.g. "error -216 - Access token is invalid".
+ * Built only from error fields (or key names), stripped of markup and capped at 80 characters,
+ * so it can be shown on the login page without leaking tokens or allowing injection.
+ */
+function summariseProviderBody(body: unknown): string {
+  if (!body || typeof body !== "object") {
+    return "non-object response";
+  }
+
+  const record = body as Record<string, unknown>;
+  const parts: string[] = [];
+  if (record.error !== undefined) {
+    parts.push(`error ${String(record.error)}`);
+  }
+  const text = record.error_name ?? record.error_description ?? record.message;
+  if (text !== undefined) {
+    parts.push(String(text));
+  }
+  if (parts.length === 0) {
+    parts.push(`no error field, keys: ${Object.keys(record).join(",") || "none"}`);
+  }
+
+  return parts.join(" - ").replace(/[^\w .,:=-]/g, "").slice(0, 80);
 }

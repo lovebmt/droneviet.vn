@@ -62,11 +62,13 @@ export class OauthController {
       return res.redirect(`${web}/dang-nhap/callback?${params}`);
     } catch (failure) {
       const reason = failure instanceof OauthFailure ? failure.reason : "unknown";
+      const detail = failure instanceof OauthFailure ? failure.detail : undefined;
       this.logger.error(
-        `${which} sign-in failed (reason=${reason}): ${failure instanceof Error ? failure.message : String(failure)}`,
+        `${which} sign-in failed (reason=${reason}${detail ? `, detail=${detail}` : ""}): ${failure instanceof Error ? failure.message : String(failure)}`,
         failure instanceof Error && !(failure instanceof OauthFailure) ? failure.stack : undefined,
       );
-      return res.redirect(`${web}/dang-nhap?error=${which}&reason=${reason}`);
+      const query = new URLSearchParams({ error: which, reason, ...(detail ? { detail } : {}) });
+      return res.redirect(`${web}/dang-nhap?${query}`);
     }
   }
 }

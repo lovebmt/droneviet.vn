@@ -50,4 +50,13 @@ describe("CustomerGate social sign-in", () => {
 
     expect(await screen.findByText("Mã lỗi: token_exchange")).toBeInTheDocument();
   });
+
+  it("shows the provider's error summary under the reason code", async () => {
+    mockProviders({ google: true, zalo: true });
+    render(
+      <CustomerGate mode="login" oauthError="zalo" oauthReason="profile" oauthDetail="error -216 - Access token is invalid" />,
+    );
+
+    expect(await screen.findByText("Chi tiết: error -216 - Access token is invalid")).toBeInTheDocument();
+  });
 });
