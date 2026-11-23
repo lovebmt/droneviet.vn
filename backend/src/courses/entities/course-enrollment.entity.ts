@@ -35,6 +35,13 @@ export class CourseEnrollment {
   @Column({ type: "int" })
   quantity!: number;
 
+  /** School or organisation (workshops). */
+  @Column({ type: "varchar", length: 200, nullable: true })
+  organization!: string | null;
+
+  @Column({ type: "text", nullable: true })
+  note!: string | null;
+
   @Column({
     type: "enum",
     enum: ["reserved", "confirmed", "cancelled"],

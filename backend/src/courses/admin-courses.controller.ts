@@ -1,7 +1,7 @@
 import { Body, Controller, Get, NotFoundException, Optional, Param, ParseUUIDPipe, Patch, Post, UseGuards } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { Type } from "class-transformer";
-import { IsDateString, IsEnum, IsIn, IsInt, IsOptional, Max, Min } from "class-validator";
+import { IsDateString, IsEnum, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min, MinLength, ValidateIf } from "class-validator";
 import { DataSource } from "typeorm";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { Roles } from "../auth/roles.decorator";
@@ -20,6 +20,13 @@ class CreateSessionDto {
 class UpdateSessionDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(500) capacity?: number;
   @IsOptional() @IsEnum(CourseSessionStatus) status?: CourseSessionStatus;
+}
+
+class UpdateCourseDto {
+  @IsOptional() @IsString() @MinLength(2) @MaxLength(300) summary?: string;
+  @IsOptional() @IsString() @MaxLength(20000) descriptionMarkdown?: string;
+  /** Only Zalo group links; null removes it. */
+  @IsOptional() @ValidateIf((_, v) => v !== null) @Matches(/^https:\/\/zalo\.me\/[\w\-/]+$/) zaloGroupUrl?: string | null;
 }
 
 class UpdateEnrollmentDto {
@@ -43,6 +50,10 @@ export class AdminCoursesController {
       id: c.id,
       slug: c.slug,
       title: c.title,
+      level: c.level,
+      summary: c.summary,
+      descriptionMarkdown: c.descriptionMarkdown,
+      zaloGroupUrl: c.zaloGroupUrl,
       sessions: (c.sessions ?? [])
         .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
         .map((s) => ({
@@ -54,6 +65,19 @@ export class AdminCoursesController {
           enrollments: (s.enrollments ?? []).filter((e) => e.status !== "cancelled").length,
         })),
     }));
+  }
+
+  @Patch("courses/:slug")
+  async updateCourse(@Param("slug") slug: string, @Body() input: UpdateCourseDto) {
+    const repo = this.dataSource.getRepository(Course);
+    const course = await repo.findOneBy({ slug });
+    if (!course) throw new NotFoundException("Course not found");
+    if (input.summary !== undefined) course.summary = input.summary;
+    if (input.descriptionMarkdown !== undefined) course.descriptionMarkdown = input.descriptionMarkdown;
+    if (input.zaloGroupUrl !== undefined) course.zaloGroupUrl = input.zaloGroupUrl;
+    const saved = await repo.save(course);
+    await this.revalidator?.revalidate(["courses", `course:${slug}`]);
+    return { slug: saved.slug, summary: saved.summary, descriptionMarkdown: saved.descriptionMarkdown, zaloGroupUrl: saved.zaloGroupUrl };
   }
 
   @Post("courses/:slug/sessions")

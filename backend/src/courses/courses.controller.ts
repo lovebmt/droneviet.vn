@@ -1,6 +1,7 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
-import { IsEmail, IsOptional, IsPhoneNumber, IsString, IsUUID, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEmail, IsInt, IsOptional, IsPhoneNumber, IsString, IsUUID, Max, MaxLength, Min, MinLength } from "class-validator";
 import { DataSource } from "typeorm";
 import { OptionalAuthGuard } from "../auth/optional-auth.guard";
 import { CoursesService } from "./courses.service";
@@ -12,6 +13,10 @@ class EnrollDto {
   @IsString() @MinLength(2) name!: string;
   @IsPhoneNumber("VN") phone!: string;
   @IsOptional() @IsEmail() email?: string;
+  /** Workshops: school or organisation, group size and a free note. */
+  @IsOptional() @IsString() @MaxLength(200) organization?: string;
+  @IsOptional() @IsString() @MaxLength(1000) note?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(200) quantity?: number;
 }
 
 /** Courses are reserved, then staff contact the student (no online payment in v2, spec §16 Q5). */
@@ -23,8 +28,8 @@ export class CoursesController {
   ) {}
 
   @Get()
-  async list() {
-    const courses = await this.dataSource.getRepository(Course).find({ relations: { sessions: true }, order: { title: "ASC" } });
+  async list(@Query("level") level?: string) {
+    const courses = await this.dataSource.getRepository(Course).find({ where: level ? { level } : {}, relations: { sessions: true }, order: { title: "ASC" } });
     return courses.map((course) => ({
       ...this.card(course),
       nextSessionAt: this.upcoming(course.sessions)[0]?.startsAt ?? null,
@@ -62,13 +67,15 @@ export class CoursesController {
     const enrollment = await this.courses.reserveEnrollment({
       sessionId: session.id,
       productVariantId: session.course.productVariantId,
-      quantity: 1,
+      quantity: input.quantity ?? 1,
+      organization: input.organization?.trim() || null,
+      note: input.note?.trim() || null,
       contactName: input.name,
       contactPhone: input.phone,
       contactEmail: input.email,
       userId: request.user?.sub ?? null,
     });
-    return { id: enrollment.id, status: enrollment.status };
+    return { id: enrollment.id, status: enrollment.status, zaloGroupUrl: session.course.zaloGroupUrl };
   }
 
   private card(course: Course) {
@@ -81,6 +88,7 @@ export class CoursesController {
       durationHours: course.durationHours,
       tuitionVnd: course.tuitionVnd === null ? null : Number(course.tuitionVnd),
       certificateTrack: course.certificateTrack,
+      zaloGroupUrl: course.zaloGroupUrl,
     };
   }
 

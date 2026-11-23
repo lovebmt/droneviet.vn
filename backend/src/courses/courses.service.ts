@@ -14,6 +14,8 @@ export interface ReserveEnrollmentInput {
   contactName: string;
   contactPhone: string;
   orderId?: string;
+  organization?: string | null;
+  note?: string | null;
   productVariantId: string;
   quantity: number;
   sessionId: string;
@@ -74,6 +76,8 @@ export class CoursesService {
         contactName: input.contactName,
         contactPhone: input.contactPhone,
         orderId: input.orderId ?? null,
+        organization: input.organization ?? null,
+        note: input.note ?? null,
         userId: input.userId ?? null,
         quantity: input.quantity,
         sessionId: session.id,

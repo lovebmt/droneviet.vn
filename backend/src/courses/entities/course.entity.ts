@@ -57,6 +57,10 @@ export class Course {
   @Column({ type: "varchar", nullable: true })
   certificateTrack!: string | null;
 
+  /** Zalo group for this course or workshop, shown on the page and after enrolling. */
+  @Column({ type: "varchar", nullable: true })
+  zaloGroupUrl!: string | null;
+
   @OneToMany(() => CourseSession, (session) => session.course)
   sessions!: CourseSession[];
 

@@ -2,7 +2,8 @@ import "reflect-metadata";
 import { EntityManager } from "typeorm";
 import { ComboItem } from "../catalog/entities/combo-item.entity";
 import { Product, ProductKind, ProductStatus, type ProductLevel } from "../catalog/entities/product.entity";
-import { Course } from "../courses/entities/course.entity";
+import { ProductVariant, PurchaseMode } from "../catalog/entities/product-variant.entity";
+import { Course, CoursePurchaseMode } from "../courses/entities/course.entity";
 import { appDataSource } from "./data-source";
 import { seedCatalogProducts } from "./seed-catalog";
 
@@ -167,6 +168,44 @@ export async function seedV2(manager: EntityManager): Promise<void> {
     }
     if (changed || data.level !== "co-ban") await courses.save(course);
   }
+
+  await seedWorkshop(manager);
+}
+
+const WORKSHOP = {
+  slug: "workshop-trai-nghiem-drone",
+  productSlug: "course-workshop-trai-nghiem-drone",
+  title: "Workshop trải nghiệm drone",
+  summary: "Một buổi bay thử, lắp ráp và lập trình drone cho học sinh, tại trường hoặc tại Drone Việt.",
+};
+
+/** The workshop course (level "workshop"); staff add sessions and the Zalo group in admin. Insert-only. */
+async function seedWorkshop(manager: EntityManager): Promise<void> {
+  const courses = manager.getRepository(Course);
+  if (await courses.findOneBy({ slug: WORKSHOP.slug })) return;
+  const products = manager.getRepository(Product);
+  const product =
+    (await products.findOneBy({ slug: WORKSHOP.productSlug })) ??
+    (await products.save(products.create({ slug: WORKSHOP.productSlug, name: WORKSHOP.title, summary: WORKSHOP.summary, kind: ProductKind.COURSE, status: ProductStatus.PUBLISHED })));
+  const variants = manager.getRepository(ProductVariant);
+  const variant =
+    (await variants.findOneBy({ productId: product.id })) ??
+    (await variants.save(variants.create({ productId: product.id, sku: "DV-WORKSHOP", title: "Đăng ký workshop", priceVnd: 0, purchaseMode: PurchaseMode.QUOTE_ONLY, isActive: true })));
+  await courses.save(
+    courses.create({
+      slug: WORKSHOP.slug,
+      productVariantId: variant.id,
+      locale: "vi",
+      title: WORKSHOP.title,
+      summary: WORKSHOP.summary,
+      purchaseMode: CoursePurchaseMode.QUOTE_ONLY,
+      tuitionVnd: null,
+      level: "workshop",
+      format: "truc-tiep",
+      durationHours: 2,
+      descriptionMarkdown: `Đang cập nhật lịch và nội dung chi tiết của workshop.\n\n${PLACEHOLDER}`,
+    }),
+  );
 }
 
 async function main(): Promise<void> {

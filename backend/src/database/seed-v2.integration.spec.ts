@@ -64,6 +64,14 @@ describe.skipIf(!integrationDatabaseUrl)("seed v2 (placeholder content)", () => 
     expect((await ctx.dataSource.query(`SELECT featured FROM products WHERE slug = 'dv-code-fleet'`))[0].featured).toBe(false);
   });
 
+  it("seeds the workshop course", async () => {
+    const course = await (await fetch(`${ctx.baseUrl}/courses/workshop-trai-nghiem-drone`)).json();
+    expect(course).toMatchObject({ level: "workshop", title: "Workshop trải nghiệm drone" });
+    expect(course.descriptionMarkdown).toContain("Đang cập nhật");
+    await seedV2(ctx.dataSource.manager);
+    expect(await count(`SELECT count(*) AS n FROM courses WHERE slug = 'workshop-trai-nghiem-drone'`)).toBe(1);
+  });
+
   it("courses get placeholder descriptions marked as being updated", async () => {
     const course = await (await fetch(`${ctx.baseUrl}/courses/lap-trinh-drone-cap-2`)).json();
     expect(course.descriptionMarkdown).toContain("Đang cập nhật");
