@@ -162,6 +162,23 @@ export class CatalogService {
     });
   }
 
+  /** Published cards for the given slugs, in the given order; unknown/draft slugs are skipped. */
+  async cardsBySlugs(slugs: string[]): Promise<PublicProductCard[]> {
+    if (slugs.length === 0) {
+      return [];
+    }
+    const products = await this.dataSource.getRepository(Product).find({
+      where: { slug: In(slugs), status: ProductStatus.PUBLISHED },
+      relations: { variants: { inventory: true } },
+    });
+    const tiers = await this.tiersByCombo(products.filter((p) => p.kind === ProductKind.COMBO).map((p) => p.id));
+    const bySlug = new Map(products.map((p) => [p.slug, this.toCard(p, tiers.get(p.id) ?? [])]));
+    return slugs.flatMap((slug) => {
+      const card = bySlug.get(slug);
+      return card ? [card] : [];
+    });
+  }
+
   /** Full product page data; 404 for unknown or unpublished slugs (spec §9.1). */
   async getPublicDetail(slug: string): Promise<PublicProductDetail> {
     const product = await this.dataSource.getRepository(Product).findOne({

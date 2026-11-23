@@ -1,13 +1,13 @@
 import { BadRequestException, Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { ContentTokenGuard } from "../auth/content-token.guard";
 import { Roles } from "../auth/roles.decorator";
-import { RolesGuard } from "../auth/roles.guard";
 import { UserRole } from "../auth/entities/user.entity";
 import { MAX_MEDIA_BYTES, MediaService } from "./media.service";
 
 @Controller("admin/media")
-@UseGuards(JwtAuthGuard, RolesGuard)
+// Admin roles, or the R&D publishing skill with CONTENT_PUBLISH_TOKEN.
+@UseGuards(ContentTokenGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.CATALOG_MANAGER)
 export class AdminMediaController {
   constructor(private readonly media: MediaService) {}

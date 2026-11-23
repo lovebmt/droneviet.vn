@@ -4,6 +4,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { ContentTokenGuard } from "./content-token.guard";
 import { OauthTicket } from "./entities/oauth-ticket.entity";
 import { User } from "./entities/user.entity";
 import { JwtAuthGuard } from "./jwt-auth.guard";
@@ -27,7 +28,7 @@ import { RolesGuard } from "./roles.guard";
     }),
   ],
   controllers: [AuthController, OauthController],
-  providers: [AuthService, OauthService, JwtAuthGuard, RolesGuard],
-  exports: [AuthService, JwtAuthGuard, JwtModule, RolesGuard],
+  providers: [AuthService, OauthService, JwtAuthGuard, RolesGuard, ContentTokenGuard],
+  exports: [AuthService, JwtAuthGuard, JwtModule, RolesGuard, ContentTokenGuard],
 })
 export class AuthModule {}

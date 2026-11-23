@@ -49,6 +49,25 @@ export class Article {
   @Column({ type: "text", nullable: true })
   seoDescription!: string | null;
 
+  @Column({ type: "json", default: () => "'[]'" })
+  tags!: string[];
+
+  @Column({ type: "json", default: () => "'[]'" })
+  levels!: string[];
+
+  @Column({ type: "json", default: () => "'[]'" })
+  attachments!: Array<{ url: string; label: string }>;
+
+  @Column({ type: "json", default: () => "'[]'" })
+  relatedProductSlugs!: string[];
+
+  /** guide | research | news (spec §9.4). */
+  @Column({ type: "varchar", default: "guide" })
+  kind!: string;
+
+  @Column({ type: "int", nullable: true })
+  readingMinutes!: number | null;
+
   @Column({ type: "enum", enum: ContentStatus, default: ContentStatus.DRAFT })
   status!: ContentStatus;
 
