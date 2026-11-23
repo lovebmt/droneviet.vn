@@ -87,7 +87,7 @@ export function EnrollForm({ course, group = false }: { course: Pick<CourseDetai
                   <span className="block text-sm text-muted">{time(s.startsAt)}</span>
                 </span>
               </span>
-              <span className={`text-sm font-semibold ${full ? "text-muted" : "text-teal-ink"}`}>{full ? "Đã đủ chỗ" : `Còn ${s.seatsLeft} chỗ`}</span>
+              <span className={`text-sm font-semibold ${full ? "text-muted" : "text-ink"}`}>{full ? "Đã đủ chỗ" : `Còn ${s.seatsLeft} chỗ`}</span>
             </label>
           );
         })}

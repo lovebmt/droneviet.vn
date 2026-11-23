@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { noHorizontalOverflow } from "./helpers";
 
-const PAGES = ["/", "/giao-duc", "/giao-duc/thcs", "/cua-hang", "/cua-hang/dv-code-fleet", "/cua-hang/combo/combo-lop-hoc-quoc-te", "/cua-hang/so-sanh", "/bao-gia", "/dao-tao", "/dao-tao/chung-chi", "/r-d", "/ho-tro", "/bay-an-toan", "/bay-mo-phong", "/dang-nhap", "/gio-hang", "/tim-kiem?q=drone", "/en", "/en/education"];
+const PAGES = ["/", "/giao-duc", "/giao-duc/thcs", "/cua-hang", "/cua-hang/dv-code-fleet", "/cua-hang/combo/combo-lop-hoc-quoc-te", "/cua-hang/so-sanh", "/bao-gia", "/dao-tao", "/dao-tao/chung-chi", "/dao-tao/cap-phep", "/dao-tao/quy-dinh", "/dao-tao/ban-do", "/giao-duc/workshop", "/r-d", "/ho-tro", "/bay-an-toan", "/bay-mo-phong", "/dang-nhap", "/gio-hang", "/tim-kiem?q=drone", "/en", "/en/education"];
 
 test.describe("legacy URLs redirect permanently", () => {
   const cases: Array<[string, string]> = [
