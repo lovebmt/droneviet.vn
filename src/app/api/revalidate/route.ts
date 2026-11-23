@@ -15,8 +15,10 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "tags must be an array of strings" }, { status: 400 });
   }
 
+  // Called by the API (an external system) after admin writes: expire now, so the next visitor
+  // gets the new price, stock or article instead of one stale view (Next docs: webhooks use expire: 0).
   for (const tag of tags) {
-    revalidateTag(tag, "max");
+    revalidateTag(tag, { expire: 0 });
   }
   return Response.json({ revalidated: tags });
 }

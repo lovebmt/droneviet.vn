@@ -33,8 +33,9 @@ describe("POST /api/revalidate", () => {
     const response = await POST(request("s3cret", ["catalog", "product:dv-mini"]));
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ revalidated: ["catalog", "product:dv-mini"] });
-    expect(revalidateTag).toHaveBeenCalledWith("catalog", "max");
-    expect(revalidateTag).toHaveBeenCalledWith("product:dv-mini", "max");
+    // Admin edits (price, stock, a new article) must show on the very next request, not after one stale view.
+    expect(revalidateTag).toHaveBeenCalledWith("catalog", { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith("product:dv-mini", { expire: 0 });
   });
 
   it("rejects a body without a tag list", async () => {

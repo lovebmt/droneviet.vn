@@ -51,6 +51,19 @@ describe("account", () => {
   });
 });
 
+describe("staff shortcut", () => {
+  it("staff see a link to the admin, customers do not", async () => {
+    routes["/auth/me"] = () => json({ ...user, roles: ["operations"] });
+    const view = render(<AppProviders><AccountPage /></AppProviders>);
+    expect(await screen.findByRole("link", { name: "Quản trị" })).toHaveAttribute("href", "/admin");
+    view.unmount();
+    routes["/auth/me"] = () => json(user);
+    render(<AppProviders><AccountPage /></AppProviders>);
+    await screen.findByText(user.email);
+    expect(screen.queryByRole("link", { name: "Quản trị" })).not.toBeInTheDocument();
+  });
+});
+
 describe("sign-in return path", () => {
   it("safeNextPath keeps same-site paths only", () => {
     expect(safeNextPath("/tai-khoan/don-hang")).toBe("/tai-khoan/don-hang");
