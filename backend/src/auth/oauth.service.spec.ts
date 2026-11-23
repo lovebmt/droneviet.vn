@@ -274,4 +274,21 @@ describe("OauthService", () => {
     expect(text).toContain("zalo signed in");
     expect(text).not.toContain("z-access");
   });
+
+  it("generates a 43-character alphanumeric Zalo code_verifier with upper case, lower case and digits (per Zalo docs)", async () => {
+    const { service, tickets } = setup();
+
+    for (let attempt = 0; attempt < 60; attempt++) {
+      await service.startZalo();
+    }
+
+    const verifiers = [...tickets.rows.values()].map((ticket) => ticket.codeVerifier!);
+    expect(verifiers).toHaveLength(60);
+    for (const verifier of verifiers) {
+      expect(verifier).toMatch(/^[A-Za-z0-9]{43}$/);
+      expect(verifier).toMatch(/[A-Z]/);
+      expect(verifier).toMatch(/[a-z]/);
+      expect(verifier).toMatch(/\d/);
+    }
+  });
 });

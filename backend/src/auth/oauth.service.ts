@@ -25,6 +25,29 @@ export class OauthFailure extends BadRequestException {
   }
 }
 
+const VERIFIER_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+/**
+ * Zalo's PKCE rule (user-access-token-v4, step 2): a code_verifier of exactly 43 characters
+ * containing upper case, lower case and digits. base64url would also allow "-" and "_".
+ */
+function zaloCodeVerifier(): string {
+  for (;;) {
+    let verifier = "";
+    while (verifier.length < 43) {
+      for (const byte of randomBytes(64)) {
+        // 248 = 62 * 4: rejecting larger bytes keeps every character equally likely.
+        if (byte < 248 && verifier.length < 43) {
+          verifier += VERIFIER_ALPHABET[byte % 62];
+        }
+      }
+    }
+    if (/[A-Z]/.test(verifier) && /[a-z]/.test(verifier) && /\d/.test(verifier)) {
+      return verifier;
+    }
+  }
+}
+
 const STATE_TTL_MS = 10 * 60 * 1000;
 const EXCHANGE_TTL_MS = 60 * 1000;
 
@@ -115,9 +138,11 @@ export class OauthService {
 
   async startZalo(): Promise<string> {
     this.assertConfigured("zalo");
-    const codeVerifier = randomBytes(32).toString("base64url");
+    const codeVerifier = zaloCodeVerifier();
     const state = await this.issueState("zalo", codeVerifier);
-    this.logger.log(`zalo start app_id=${this.env("ZALO_APP_ID")} redirect_uri=${this.callbackUrl("zalo")}`);
+    this.logger.log(
+      `zalo start app_id=${this.env("ZALO_APP_ID")} redirect_uri=${this.callbackUrl("zalo")} verifier_length=${codeVerifier.length}`,
+    );
     const params = new URLSearchParams({
       app_id: this.env("ZALO_APP_ID"),
       code_challenge: createHash("sha256").update(codeVerifier).digest("base64url"),
