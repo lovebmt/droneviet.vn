@@ -24,3 +24,8 @@ export function markdownHeadings(source: string): Array<{ depth: 2 | 3; text: st
   }
   return out;
 }
+
+/** Case- and diacritic-insensitive form for matching search queries. */
+export function fold(text: string): string {
+  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[đĐ]/g, "d").toLowerCase().replace(/\s+/g, " ").trim();
+}

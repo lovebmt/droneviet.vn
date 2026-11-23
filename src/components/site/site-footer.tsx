@@ -73,9 +73,10 @@ export function SiteFooter({ settings }: { settings: PublicSettings }) {
         </Container>
         <Container className="flex flex-col gap-3 border-t border-white/10 py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Drone Việt</span>
-          <nav aria-label="Pháp lý" className="flex gap-5">
+          <nav aria-label="Pháp lý" className="flex flex-wrap gap-x-5 gap-y-2">
             <Link href="/chinh-sach-bao-mat" className="hover:text-white">Chính sách bảo mật</Link>
             <Link href="/dieu-khoan-su-dung" className="hover:text-white">Điều khoản sử dụng</Link>
+            <Link href="/en" lang="en" hrefLang="en" className="hover:text-white">English</Link>
           </nav>
         </Container>
       </div>
