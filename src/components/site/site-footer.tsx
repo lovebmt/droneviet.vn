@@ -7,7 +7,7 @@ import { Logo } from "./logo";
 const COLUMNS: Array<{ title: string; links: Array<[string, string]> }> = [
   { title: "Giáo dục", links: [["Tiểu học", "/giao-duc/tieu-hoc"], ["THCS", "/giao-duc/thcs"], ["THPT & quốc tế", "/giao-duc/thpt"], ["Đại học & R&D", "/giao-duc/dai-hoc"]] },
   { title: "Cửa hàng", links: [["Combo lớp học", "/cua-hang?loai=combo"], ["Drone", "/cua-hang?loai=drone"], ["Linh kiện & phụ kiện", "/cua-hang?loai=linh-kien"], ["So sánh combo", "/cua-hang/so-sanh"]] },
-  { title: "Đào tạo", links: [["Khóa học", "/dao-tao"], ["Lộ trình chứng chỉ", "/dao-tao/chung-chi"], ["Bay mô phỏng", "/bay-mo-phong"], ["Bài viết R&D", "/r-d"]] },
+  { title: "Đào tạo", links: [["Chứng chỉ, giấy phép bay", "/dao-tao/chung-chi"], ["Cấp phép bay", "/dao-tao/cap-phep"], ["Bay mô phỏng", "/bay-mo-phong"], ["Bài viết R&D", "/r-d"]] },
   { title: "Hỗ trợ", links: [["Hỗ trợ & bảo hành", "/ho-tro"], ["Theo dõi đơn hàng", "/tai-khoan/don-hang"], ["Bay an toàn & cấp phép", "/bay-an-toan"], ["Nhận báo giá", "/bao-gia"]] },
 ];
 

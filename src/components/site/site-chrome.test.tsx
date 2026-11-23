@@ -153,6 +153,13 @@ describe("SiteFooter", () => {
     expect(screen.getByRole("link", { name: "lienhe@droneviet.vn" })).toHaveAttribute("href", "mailto:lienhe@droneviet.vn");
   });
 
+  it("footer has no link to the removed course list", () => {
+    render(<AppProviders><SiteFooter settings={DEFAULT_SETTINGS} /></AppProviders>);
+    const footer = screen.getByRole("contentinfo");
+    expect(within(footer).queryByRole("link", { name: "Khóa học" })).not.toBeInTheDocument();
+    expect(within(footer).queryAllByRole("link").some((a) => a.getAttribute("href") === "/dao-tao")).toBe(false);
+  });
+
   it("footer links legal pages", () => {
     render(<SiteFooter settings={DEFAULT_SETTINGS} />);
     expect(screen.getByRole("link", { name: "Chính sách bảo mật" })).toHaveAttribute("href", "/chinh-sach-bao-mat");
