@@ -3,6 +3,7 @@ import { EntityManager } from "typeorm";
 import { ComboItem } from "../catalog/entities/combo-item.entity";
 import { Product, ProductKind, ProductStatus, type ProductLevel } from "../catalog/entities/product.entity";
 import { Course } from "../courses/entities/course.entity";
+import { appDataSource } from "./data-source";
 import { seedCatalogProducts } from "./seed-catalog";
 
 /**
@@ -169,7 +170,6 @@ export async function seedV2(manager: EntityManager): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const { appDataSource } = await import("./data-source.js");
   await appDataSource.initialize();
   await appDataSource.transaction((manager) => seedV2(manager));
   await appDataSource.destroy();
