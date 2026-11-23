@@ -30,6 +30,13 @@ export interface DroneState {
 
 export type FlightMode = "angle" | "acro";
 
+export interface FlightOptions {
+  mode: FlightMode;
+  wind?: Vec3;
+  /** Shift held: angle mode may tilt further. */
+  boost?: boolean;
+}
+
 export interface StepEvents {
   crashed: boolean;
   landed: boolean;
@@ -38,9 +45,10 @@ export interface StepEvents {
 
 export const GRAVITY = 9.81;
 export const HOVER_THROTTLE = 0.5;
-const MAX_THRUST = GRAVITY / HOVER_THROTTLE;
-const DRAG = 0.35;
+export const MAX_THRUST = GRAVITY / HOVER_THROTTLE;
+export const DRAG = 0.35;
 const MAX_ANGLE = 0.5; // ~29° in angle mode
+const BOOST_ANGLE = 0.8; // ~46° with Shift held: faster forward flight
 const MAX_RATE = 3.5; // rad/s in acro mode
 const ACRO_LIMIT = 1.4; // no flips: keeps Euler angles well-defined
 const YAW_RATE = 2.2;
@@ -73,15 +81,16 @@ export function bodyUp(a: DroneState["attitude"]): Vec3 {
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 /** One fixed physics step. Mutates `s`. */
-export function stepDrone(s: DroneState, input: Sticks, opts: { mode: FlightMode; wind?: Vec3 }, dt: number): StepEvents {
+export function stepDrone(s: DroneState, input: Sticks, opts: FlightOptions, dt: number): StepEvents {
   const events: StepEvents = { crashed: false, landed: false, impactSpeed: 0 };
   const sticks = { throttle: clamp(input.throttle, 0, 1), yaw: clamp(input.yaw, -1, 1), pitch: clamp(input.pitch, -1, 1), roll: clamp(input.roll, -1, 1) };
   if (s.position.y > 0.05) s.airborne = true;
 
   // Rate commands, then first-order response (inertia).
+  const maxAngle = opts.boost ? BOOST_ANGLE : MAX_ANGLE;
   const cmd =
     opts.mode === "angle"
-      ? { roll: LEVEL_GAIN * (sticks.roll * MAX_ANGLE - s.attitude.roll), pitch: LEVEL_GAIN * (sticks.pitch * MAX_ANGLE - s.attitude.pitch) }
+      ? { roll: LEVEL_GAIN * (sticks.roll * maxAngle - s.attitude.roll), pitch: LEVEL_GAIN * (sticks.pitch * maxAngle - s.attitude.pitch) }
       : { roll: sticks.roll * MAX_RATE, pitch: sticks.pitch * MAX_RATE };
   const k = Math.min(1, dt * RESPONSE);
   s.rates.roll += (cmd.roll - s.rates.roll) * k;
@@ -134,7 +143,7 @@ export function stepDrone(s: DroneState, input: Sticks, opts: { mode: FlightMode
 }
 
 /** Advances one rendered frame in fixed substeps; long gaps (tab switches) are capped. */
-export function simulate(s: DroneState, sticks: Sticks, opts: { mode: FlightMode; wind?: Vec3 }, frameDt: number): StepEvents {
+export function simulate(s: DroneState, sticks: Sticks, opts: FlightOptions, frameDt: number): StepEvents {
   const total: StepEvents = { crashed: false, landed: false, impactSpeed: 0 };
   let remaining = Math.min(Math.max(frameDt, 0), MAX_FRAME);
   while (remaining > 1e-9) {

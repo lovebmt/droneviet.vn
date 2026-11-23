@@ -1,20 +1,36 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Gamepad2, Pause, Play, RotateCcw, Star, Wind, X } from "lucide-react";
+import { Camera, Gamepad2, Pause, Play, RotateCcw, Star, Wind, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "@/components/providers/session-provider";
 import { Button } from "@/components/ui/button";
-import { type Calibration, gamepadSticks, keyboardSticks, mergeSticks } from "@/sim/input";
+import { type Calibration, gamepadSticks, isBoost, keyboardSticks, mergeSticks } from "@/sim/input";
 import { createRun, findMission, type MissionId, objective, type RunScore, scoreRun, updateRun } from "@/sim/missions";
 import { createDrone, type FlightMode, simulate, type Sticks } from "@/sim/physics";
 import { type SimResult, saveResult } from "../results";
 import { GamepadSetup, loadCalibration } from "./gamepad-setup";
-import { SimScene } from "./scene";
+import { CAMERA_LABELS, type CameraMode, SimScene } from "./scene";
 import { TouchSticks } from "./touch-sticks";
 
 const IDLE: Sticks = { throttle: 0, yaw: 0, pitch: 0, roll: 0 };
 const CAPTURED = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"]);
+const CAMERAS: CameraMode[] = ["chase", "fpv", "ground"];
+/** Device in charge of throttle, as an index into the merged inputs. */
+const KEYBOARD = 0;
+const TOUCH = 1;
+const PAD = 2;
+const HINT_SECONDS = 10;
+const KEY_HINTS = [
+  ["W / S", "Lên, xuống (thả phím: giữ độ cao)"],
+  ["← / →", "Nghiêng trái, phải"],
+  ["↑ / ↓", "Tiến, lùi"],
+  ["A / D", "Xoay trái, phải"],
+  ["Shift", "Bay nhanh"],
+  ["V", "Đổi góc camera"],
+  ["M", "Angle / Acro"],
+  ["P", "Tạm dừng"],
+] as const;
 
 /** Vietnamese decimal comma. */
 const dec = (n: number) => n.toFixed(1).replace(".", ",");
@@ -31,7 +47,11 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
   const touch = useRef<Sticks>(IDLE);
   const calibration = useRef<Calibration | null>(null);
   const rotorSpeed = useRef(0);
+  const throttleFrom = useRef(KEYBOARD);
+  const padThrottle = useRef<number | null>(null);
   const [mode, setMode] = useState<FlightMode>("angle");
+  const [camera, setCamera] = useState<CameraMode>("chase");
+  const [hints, setHints] = useState(true);
   const [wind, setWind] = useState(false);
   const [paused, setPaused] = useState(false);
   const [setup, setSetup] = useState(false);
@@ -47,7 +67,9 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
   }, [mode, wind, paused, setup]);
   const setTouch = useCallback((patch: Partial<Sticks>) => {
     touch.current = { ...touch.current, ...patch };
+    if (patch.throttle !== undefined) throttleFrom.current = TOUCH;
   }, []);
+  const nextCamera = useCallback(() => setCamera((c) => CAMERAS[(CAMERAS.indexOf(c) + 1) % CAMERAS.length]), []);
 
   const restart = useCallback(() => {
     drone.current = createDrone();
@@ -60,15 +82,23 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
 
   useEffect(() => {
     calibration.current = loadCalibration();
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- device capability, known only in the browser
-    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
+    setIsTouch(coarse);
+    if (coarse) throttleFrom.current = TOUCH;
+    const hideHints = window.setTimeout(() => setHints(false), HINT_SECONDS * 1000);
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const down = (e: KeyboardEvent) => {
       if (CAPTURED.has(e.code)) e.preventDefault();
+      if (e.repeat) return;
       if (e.code === "KeyM") setMode((m) => (m === "angle" ? "acro" : "angle"));
       else if (e.code === "KeyP" || e.code === "Escape") setPaused((p) => !p);
-      else keys.current.add(e.code);
+      else if (e.code === "KeyV") nextCamera();
+      else {
+        keys.current.add(e.code);
+        if (e.code === "KeyW" || e.code === "KeyS") throttleFrom.current = KEYBOARD;
+      }
     };
     const up = (e: KeyboardEvent) => keys.current.delete(e.code);
     const blur = () => keys.current.clear();
@@ -76,12 +106,13 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
     window.addEventListener("keyup", up);
     window.addEventListener("blur", blur);
     return () => {
+      window.clearTimeout(hideHints);
       document.body.style.overflow = overflow;
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
       window.removeEventListener("blur", blur);
     };
-  }, []);
+  }, [nextCamera]);
 
   const tick = useCallback(
     (delta: number) => {
@@ -97,12 +128,18 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
       }
       if (l.paused || l.done) return;
 
-      keyboard.current = keyboardSticks(keys.current, keyboard.current, delta);
+      keyboard.current = keyboardSticks(keys.current, keyboard.current, delta, drone.current, l.mode);
       const pad = typeof navigator !== "undefined" ? navigator.getGamepads?.().find((g) => g) : null;
-      const sticks = mergeSticks(keyboard.current, touch.current, pad && calibration.current ? gamepadSticks(pad.axes, calibration.current) : IDLE);
+      const padSticks = pad && calibration.current ? gamepadSticks(pad.axes, calibration.current) : IDLE;
+      if (pad) {
+        // The gamepad takes the throttle as soon as its throttle stick moves.
+        if (padThrottle.current !== null && Math.abs(padSticks.throttle - padThrottle.current) > 0.05) throttleFrom.current = PAD;
+        if (padThrottle.current === null || throttleFrom.current === PAD) padThrottle.current = padSticks.throttle;
+      }
+      const sticks = mergeSticks([keyboard.current, touch.current, padSticks], throttleFrom.current);
       l.clock += delta;
       const windVec = l.wind ? { x: 1.2 * Math.sin(l.clock * 0.4), y: 0, z: 0.8 * Math.cos(l.clock * 0.25) } : undefined;
-      const events = simulate(drone.current, sticks, { mode: l.mode, wind: windVec }, delta);
+      const events = simulate(drone.current, sticks, { mode: l.mode, wind: windVec, boost: isBoost(keys.current) }, delta);
       updateRun(run.current, drone.current, events, Math.min(delta, 0.25));
       rotorSpeed.current = 10 + sticks.throttle * 60;
 
@@ -140,7 +177,7 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
   return (
     <div role="dialog" aria-modal="true" aria-label={`Bay mô phỏng: ${mission.title}`} className="fixed inset-0 z-[60] bg-sky-50">
       <Canvas dpr={lowQuality ? 1 : [1, 2]} camera={{ position: [0, 2, 4], fov: 60, near: 0.1, far: 200 }} gl={{ antialias: !lowQuality }}>
-        <SimScene drone={drone} mission={mission} nextGate={hud.nextGate} tick={tick} lowQuality={lowQuality} rotorSpeed={rotorSpeed} />
+        <SimScene drone={drone} mission={mission} nextGate={hud.nextGate} tick={tick} lowQuality={lowQuality} rotorSpeed={rotorSpeed} camera={camera} />
       </Canvas>
 
       {/* HUD */}
@@ -159,6 +196,9 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
           <button type="button" className={`${chip} ${wind ? "bg-sun text-ink hover:bg-sun" : ""}`} onClick={() => setWind(!wind)} aria-pressed={wind}>
             <Wind size={16} strokeWidth={2} aria-hidden="true" /> Gió
           </button>
+          <button type="button" className={chip} onClick={nextCamera} aria-label={`Camera: ${CAMERA_LABELS[camera]}, bấm để đổi`}>
+            <Camera size={16} strokeWidth={2} aria-hidden="true" /> {CAMERA_LABELS[camera]}
+          </button>
           <button type="button" className={chip} onClick={() => setSetup(true)}>
             <Gamepad2 size={16} strokeWidth={2} aria-hidden="true" /> {hud.gamepad ? "Tay cầm" : "Kết nối tay cầm"}
           </button>
@@ -176,11 +216,22 @@ export function SimulatorApp({ missionId, onExit, onResult }: { missionId: Missi
 
       {isTouch && !result && !setup ? <TouchSticks onChange={setTouch} /> : null}
 
+      {hints && !isTouch && !result && !setup && !paused ? (
+        <dl className="pointer-events-none absolute bottom-4 left-4 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-2xl bg-ink/70 px-4 py-3 text-sm text-white backdrop-blur">
+          {KEY_HINTS.map(([key, action]) => (
+            <div key={key} className="contents">
+              <dt className="font-semibold tabular-nums">{key}</dt>
+              <dd className="opacity-90">{action}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+
       {paused && !result && !setup ? (
         <div className="absolute inset-0 grid place-items-center bg-ink/40">
           <div className="max-w-sm rounded-2xl bg-white p-6 text-center">
             <p className="text-xl font-semibold">Đang tạm dừng</p>
-            <p className="mt-2 text-sm text-muted">W/S lên xuống, A/D xoay, mũi tên tiến lùi và nghiêng. M đổi chế độ, P tạm dừng.</p>
+            <p className="mt-2 text-sm text-muted">W/S lên xuống, A/D xoay, mũi tên tiến lùi và nghiêng, Shift bay nhanh. V đổi camera, M đổi chế độ, P tạm dừng.</p>
             <div className="mt-5 flex justify-center gap-3">
               <Button variant="sun" onClick={() => setPaused(false)}>Bay tiếp</Button>
               <Button variant="secondary" onClick={onExit}>Thoát</Button>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const CONTROLS = [
-  { Icon: Keyboard, title: "Bàn phím", rows: ["W / S: bay lên, hạ xuống (thả phím để giữ độ cao)", "A / D: xoay trái, phải", "Mũi tên: tiến, lùi, nghiêng trái, phải", "M: đổi chế độ Angle / Acro, P: tạm dừng"] },
+  { Icon: Keyboard, title: "Bàn phím", rows: ["W / S: bay lên, hạ xuống (thả phím để giữ độ cao)", "A / D: xoay trái, phải", "Mũi tên: tiến, lùi, nghiêng trái, phải", "Shift: bay nhanh, V: đổi góc camera", "M: đổi chế độ Angle / Acro, P: tạm dừng"] },
   { Icon: Gamepad2, title: "Tay cầm hoặc bộ điều khiển RC", rows: ["Cắm qua USB hoặc Bluetooth", "Cần trái: ga và xoay, cần phải: tiến lùi và nghiêng", "Hiệu chỉnh trục trong màn hình bay"] },
   { Icon: Smartphone, title: "Điện thoại, máy tính bảng", rows: ["Cần ảo trái: ga và xoay", "Cần ảo phải: tiến lùi và nghiêng", "Nên xoay ngang màn hình"] },
 ];
