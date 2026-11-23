@@ -15,9 +15,11 @@ import {
 
 interface PayosWebhookData {
   amount: number;
+  /** PayOS webhooks report success as code "00"; they carry no `status`. */
+  code?: string;
   id?: string;
   orderCode: number;
-  status: string;
+  status?: string;
 }
 
 @Injectable()
@@ -115,7 +117,10 @@ export class PaymentsService {
         return false;
       }
 
-      return this.settlePayosPayment(manager, payment.id, data);
+      return this.settlePayosPayment(manager, payment.id, {
+        ...data,
+        status: data.status ?? (data.code === "00" ? "PAID" : undefined),
+      });
     });
   }
 

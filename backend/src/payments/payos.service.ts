@@ -1,6 +1,6 @@
 import { Injectable, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 interface PayosPaymentLinkInput {
   amountVnd: number;
@@ -91,16 +91,27 @@ export class PayosService {
     data: Record<string, unknown>,
     signature: string,
   ): boolean {
+    if (!signature) {
+      return false;
+    }
+
+    // PayOS signs EVERY key it sends; null and "" are rendered as `key=`. Dropping them
+    // (as this used to) rejects every real bank-transfer webhook, which always carries
+    // empty counter-account fields. Lesson from we3d's production payments.
     const signData = Object.keys(data)
       .sort()
-      .filter((key) => {
+      .filter((key) => data[key] !== undefined)
+      .map((key) => {
         const value = data[key];
-        return value !== null && value !== undefined && value !== "";
+        const empty =
+          value === null || value === "" || value === "null" || value === "undefined";
+        return `${key}=${empty ? "" : String(value)}`;
       })
-      .map((key) => `${key}=${data[key]}`)
       .join("&");
 
-    return this.hmacSha256(signData).toLowerCase() === signature.toLowerCase();
+    const expected = Buffer.from(this.hmacSha256(signData));
+    const actual = Buffer.from(signature.toLowerCase());
+    return expected.length === actual.length && timingSafeEqual(expected, actual);
   }
 
   private hmacSha256(value: string): string {

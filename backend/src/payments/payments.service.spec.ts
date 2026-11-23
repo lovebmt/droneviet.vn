@@ -185,6 +185,52 @@ describe("PaymentsService", () => {
     expect(order.status).toBe(OrderStatus.PAID);
   });
 
+  it("treats a PayOS webhook with code 00 and no status field as paid", async () => {
+    const order = { id: "order-1", status: OrderStatus.PENDING_PAYMENT };
+    const payment = {
+      amountVnd: 9_500_000,
+      id: "payment-1",
+      order,
+      orderId: "order-1",
+      provider: PaymentProvider.PAYOS,
+      providerOrderCode: 123456,
+      status: PaymentStatus.PENDING,
+    };
+    const builder = {
+      andWhere: vi.fn().mockReturnThis(),
+      getOne: vi.fn().mockResolvedValue(payment),
+      leftJoinAndSelect: vi.fn().mockReturnThis(),
+      setLock: vi.fn().mockReturnThis(),
+      where: vi.fn().mockReturnThis(),
+    };
+    const manager = {
+      getRepository: vi.fn(() => ({
+        createQueryBuilder: () => builder,
+        save: vi.fn(async (value: unknown) => value),
+      })),
+    };
+    const dataSource = {
+      transaction: vi.fn((work: (m: unknown) => unknown) => work(manager)),
+    };
+    const reservations = { commitForOrder: vi.fn(), releaseForOrder: vi.fn() };
+    const service = new PaymentsService(
+      dataSource as never,
+      { verifyWebhookSignature: vi.fn().mockReturnValue(true) } as never,
+      reservations as never,
+      { confirmEnrollmentsForOrder: vi.fn() } as never,
+      { recordWithManager: vi.fn() } as never,
+    );
+
+    await expect(
+      service.handlePayosWebhook(
+        { amount: 9_500_000, code: "00", desc: "success", orderCode: 123456 } as never,
+        "valid-signature",
+      ),
+    ).resolves.toBe(true);
+    expect(order.status).toBe(OrderStatus.PAID);
+    expect(payment.status).toBe(PaymentStatus.PAID);
+  });
+
   it("flags a late paid callback for refund after reservation expiry", async () => {
     const order = {
       id: "order-1",

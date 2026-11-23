@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PayosService } from "./payos.service";
 
@@ -56,5 +57,38 @@ describe("PayosService", () => {
         "invalid",
       ),
     ).toBe(false);
+  });
+
+  it("verifies a real-shaped bank transfer webhook whose empty fields PayOS signs as key=", () => {
+    const data = {
+      accountNumber: "473327",
+      amount: 9_500_000,
+      code: "00",
+      counterAccountBankId: "",
+      counterAccountBankName: "",
+      counterAccountName: null,
+      counterAccountNumber: "",
+      currency: "VND",
+      desc: "success",
+      description: "DV123456",
+      orderCode: 123456,
+      paymentLinkId: "f7acaaac718043338f130a8d5bf9babc",
+      reference: "FT26327",
+      transactionDateTime: "2026-11-23 10:00:00",
+      virtualAccountName: "",
+      virtualAccountNumber: "",
+    };
+    // Written out by hand from PayOS's rule: every key, sorted, null/"" rendered empty.
+    const signed =
+      "accountNumber=473327&amount=9500000&code=00&counterAccountBankId=&counterAccountBankName=" +
+      "&counterAccountName=&counterAccountNumber=&currency=VND&desc=success&description=DV123456" +
+      "&orderCode=123456&paymentLinkId=f7acaaac718043338f130a8d5bf9babc&reference=FT26327" +
+      "&transactionDateTime=2026-11-23 10:00:00&virtualAccountName=&virtualAccountNumber=";
+    const signature = createHmac("sha256", "checksum-key").update(signed).digest("hex");
+    const config = { get: vi.fn((key: string) => (key === "PAYOS_CHECKSUM_KEY" ? "checksum-key" : "")) };
+    const service = new PayosService(config as never);
+
+    expect(service.verifyWebhookSignature(data, signature)).toBe(true);
+    expect(service.verifyWebhookSignature({ ...data, amount: 1 }, signature)).toBe(false);
   });
 });
