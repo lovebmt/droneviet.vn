@@ -1,7 +1,10 @@
 import "reflect-metadata";
 import { DataSource, DataSourceOptions } from "typeorm";
+import { CatalogV21795421260457 } from "./migrations/1795421260457-CatalogV2";
 import { PostgresInitial1795401062894 } from "./migrations/1795401062894-PostgresInitial";
 import { OauthSignIn1795405151810 } from "./migrations/1795405151810-OauthSignIn";
+import { ComboItem } from "../catalog/entities/combo-item.entity";
+import { ComboSizeTier } from "../catalog/entities/combo-size-tier.entity";
 import { ProductVariant } from "../catalog/entities/product-variant.entity";
 import { Product } from "../catalog/entities/product.entity";
 import { Article } from "../content/entities/article.entity";
@@ -60,8 +63,10 @@ export function createDatabaseOptions(
       AuditEvent,
       PromoCode,
       OauthTicket,
+      ComboItem,
+      ComboSizeTier,
     ],
-    migrations: [PostgresInitial1795401062894, OauthSignIn1795405151810],
+    migrations: [PostgresInitial1795401062894, OauthSignIn1795405151810, CatalogV21795421260457],
     synchronize: false,
   };
 }

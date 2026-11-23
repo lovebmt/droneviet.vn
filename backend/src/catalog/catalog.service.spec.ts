@@ -61,10 +61,16 @@ describe("CatalogService", () => {
         slug: "dv-primary-lab",
         name: "DV Primary Lab",
         summary: "Drone STEM cho lớp học tiểu học.",
+        nameEn: null,
         kind: ProductKind.DRONE,
+        levels: [],
         coverImageUrl: "/products/primary-lab.webp",
-        startingPriceVnd: 9_500_000,
+        badge: null,
+        featured: false,
+        fromPriceVnd: 9_500_000,
         purchaseMode: PurchaseMode.CHECKOUT,
+        // No inventory row loaded for the checkout variant → nothing to sell.
+        inStock: false,
       },
     ]);
   });
