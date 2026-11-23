@@ -39,6 +39,13 @@ describe("legal pages under training", () => {
     expect(screen.getByText("Luyện bay mô phỏng")).toBeInTheDocument();
   });
 
+  it("licence steps say practice for Hạng B is done at a training facility", async () => {
+    render(<AppProviders>{await LicencePage()}</AppProviders>);
+    const step = screen.getByRole("heading", { name: "Thực hành bay có hướng dẫn" }).closest("li")!;
+    expect(step).toHaveTextContent("cơ sở đào tạo");
+    expect(step).not.toHaveTextContent("Khóa học Drone Việt");
+  });
+
   it("renders the frame when the article is missing", async () => {
     api.getArticle.mockResolvedValue(null);
     render(<AppProviders>{await PermitPage()}</AppProviders>);

@@ -30,7 +30,7 @@ Giấy phép đã cấp theo Nghị định 36/2008 vẫn dùng được theo n�
 
 ## Những điều bắt buộc, tóm tắt
 
-- **Đăng ký drone:** drone phải có giấy chứng nhận đăng ký hoặc đăng ký tạm thời còn hiệu lực (Nghị định 288/2025, Điều 19 khoản 1). Việc đăng ký do cơ quan Công an thực hiện (Điều 20). Hồ sơ cần giấy tờ chứng minh sở hữu hợp pháp, như hóa đơn của đơn vị đủ điều kiện kinh doanh drone hoặc tờ khai hải quan với drone nhập khẩu (Điều 18 khoản 1).
+- **Đăng ký drone:** mọi drone, không phân biệt trọng lượng, phải có giấy chứng nhận đăng ký hoặc đăng ký tạm thời còn hiệu lực (Nghị định 288/2025, Điều 19 khoản 1). Việc đăng ký do cơ quan Công an thực hiện (Điều 20). Hồ sơ cần giấy tờ chứng minh sở hữu hợp pháp, như hóa đơn của đơn vị đủ điều kiện kinh doanh drone hoặc tờ khai hải quan với drone nhập khẩu (Điều 18 khoản 1).
 - **Giấy phép điều khiển:** bắt buộc với drone từ 0,25 kg trở lên (Điều 19 khoản 3). Xem trang Chứng chỉ, giấy phép bay.
 - **Phép bay:** xin cho từng hoạt động bay, trừ drone vui chơi dưới 0,25 kg bay ngoài khu vực cấm và hạn chế bay (Điều 21 khoản 1). Xem trang Cấp phép bay.
 - **Khu vực bay:** không bay trong khu vực cấm bay; bay trong khu vực hạn chế bay phải đáp ứng yêu cầu của cơ quan cấp phép (Quyết định 18/2020/QĐ-TTg, Điều 3, 4). Xem trang Bản đồ khu vực bay.
@@ -47,7 +47,8 @@ Khi bay sai quy định, cơ quan quân đội, công an, an ninh hàng không c
 - Ưu tiên **drone dưới 0,25 kg có khung bảo vệ cánh quạt** cho học sinh: học sinh dưới 18 tuổi được điều khiển loại này, không cần giấy phép điều khiển (Điều 19 khoản 2, 3).
 - Bay **trong nhà** (lớp học, nhà thể chất) là cách an toàn và đơn giản nhất về thủ tục.
 - Bay ngoài trời: kiểm tra trường có nằm gần sân bay, biên giới hay khu quân sự không; nếu có, liên hệ cơ quan quân sự địa phương trước.
-- Drone từ 0,25 kg trở lên dùng cho lớp học cần được đăng ký, và người điều khiển (thường là giáo viên) cần giấy phép Hạng A.
+- Mọi drone, kể cả drone dưới 0,25 kg, đều phải đăng ký từ 01/7/2026 (Điều 19 khoản 1, Điều 34 khoản 2). Mốc 0,25 kg chỉ quyết định việc cần giấy phép điều khiển và việc được miễn xin phép bay.
+- Drone từ 0,25 kg trở lên dùng cho lớp học: người điều khiển (thường là giáo viên) cần giấy phép Hạng A.
 - Sân trường trong ngày lễ, sự kiện là khu vực tập trung đông người, thuộc khu vực hạn chế bay (Quyết định 18/2020/QĐ-TTg, Điều 4 khoản 2), nên bay quay phim, chụp ảnh khi đó cần xin phép bay.
 
 ## Nguồn
