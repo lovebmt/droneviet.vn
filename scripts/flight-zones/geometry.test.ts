@@ -1,10 +1,17 @@
 import { area, booleanPointInPolygon, point } from "@turf/turf";
 import { describe, expect, it } from "vitest";
-import { airportRectangles, destination } from "./geometry.mjs";
+import { airportRectangles as build, destination } from "./geometry.mjs";
+
+/** The builder returns turf's nullable features; a runway always yields both polygons. */
+const airportRectangles = (runways: Parameters<typeof build>[0]) => {
+  const { cam, hanChe } = build(runways);
+  if (!cam || !hanChe) throw new Error("expected both zones");
+  return { cam, hanChe };
+};
 
 // A 3 km north-south runway at Nội Bài's latitude.
 const start: [number, number] = [105.8, 21.2];
-const end = destination(start, 0, 3000);
+const end = destination(start, 0, 3000) as [number, number];
 
 describe("airport zones (QĐ 18/2020/QĐ-TTg Điều 3 khoản 4, Điều 4 khoản 4)", () => {
   it("a 3 km runway gives a 33 km × 10 km no-fly rectangle", () => {
@@ -27,7 +34,7 @@ describe("airport zones (QĐ 18/2020/QĐ-TTg Điều 3 khoản 4, Điều 4 kho�
   });
 
   it("parallel runways are wrapped together", () => {
-    const shifted = (p: [number, number]) => destination(p, 90, 2000);
+    const shifted = (p: [number, number]) => destination(p, 90, 2000) as [number, number];
     const { cam } = airportRectangles([{ name: "A", ends: [start, end] }, { name: "B", ends: [shifted(start), shifted(end)] }]);
     // 33 km × (5 + 2 + 5) km = 396 km²
     expect(area(cam) / 1e6).toBeGreaterThan(396 * 0.98);
