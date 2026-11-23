@@ -71,8 +71,12 @@ describe("product page", () => {
   it("product page JSON-LD contains name and price", async () => {
     api.getProduct.mockResolvedValue(detail());
     const { container } = render(<AppProviders>{await ProductPage({ params: params({ slug: "dv-code-fleet" }) })}</AppProviders>);
-    const json = JSON.parse(container.querySelector('script[type="application/ld+json"]')!.textContent!);
-    expect(json).toMatchObject({ "@type": "Product", name: "DV Code Fleet", offers: { price: 24_900_000, priceCurrency: "VND" } });
+    const nodes = [...container.querySelectorAll('script[type="application/ld+json"]')].flatMap((s) => {
+      const json = JSON.parse(s.textContent!);
+      return json["@graph"] ?? [json];
+    });
+    expect(nodes.find((n) => n["@type"] === "Product")).toMatchObject({ name: "DV Code Fleet", offers: { price: 24_900_000, priceCurrency: "VND" } });
+    expect(nodes.some((n) => n["@type"] === "BreadcrumbList")).toBe(true);
   });
 });
 

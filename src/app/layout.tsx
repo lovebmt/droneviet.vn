@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro } from "next/font/google";
 import { AppProviders } from "@/components/providers/app-providers";
+import { SiteJsonLd } from "@/components/seo/site-json-ld";
 import { AnnouncementBar } from "@/components/site/announcement-bar";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
     template: "%s | Drone Việt",
   },
   description: "Drone Việt cung cấp giải pháp drone trọn bộ cho giáo dục: combo lớp học, drone, linh kiện, đào tạo và chứng chỉ.",
+  // Pages without their own openGraph inherit this; og:title and og:description fall back to the page's title and description.
+  openGraph: { type: "website", siteName: "Drone Việt", locale: "vi_VN" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -35,6 +39,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <a href="#noi-dung" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2">
           Bỏ qua tới nội dung
         </a>
+        <SiteJsonLd settings={settings} />
         <AppProviders>
           <AnnouncementBar announcement={settings.announcement} />
           <SiteHeader />

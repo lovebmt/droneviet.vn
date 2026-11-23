@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd, productJsonLd } from "@/lib/seo/json-ld";
+import { openGraphFor } from "@/lib/seo/metadata";
 import { notFound, redirect } from "next/navigation";
 import { BuyBox } from "@/components/catalog/buy-box";
 import { FaqList } from "@/components/catalog/faq-list";
@@ -11,7 +13,6 @@ import { DetailSection } from "@/components/page/detail-section";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { getProduct } from "@/lib/api/server";
-import type { ProductDetail } from "@/lib/api/types";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -23,32 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: product.seoTitle ?? product.name,
     description: product.seoDescription ?? product.summary,
     alternates: { canonical: productHref(product) },
-    openGraph: product.coverImageUrl ? { images: [product.coverImageUrl] } : undefined,
-  };
-}
-
-function jsonLd(product: ProductDetail) {
-  const variant = product.variants[0];
-  const price = variant?.priceVnd ?? product.fromPriceVnd;
-  return {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: product.summary,
-    image: product.gallery.map((g) => g.url),
-    sku: variant?.sku,
-    brand: { "@type": "Brand", name: "Drone Việt" },
-    ...(price !== null
-      ? {
-          offers: {
-            "@type": "Offer",
-            price,
-            priceCurrency: "VND",
-            availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-            url: `https://www.droneviet.vn${productHref(product)}`,
-          },
-        }
-      : {}),
+    openGraph: openGraphFor({ title: product.seoTitle ?? product.name, description: product.seoDescription ?? product.summary, path: productHref(product), images: product.coverImageUrl ? [product.coverImageUrl] : undefined }),
   };
 }
 
@@ -62,7 +38,7 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(product)).replace(/</g, "\\u003c") }} />
+      <JsonLd data={productJsonLd(product)} />
       <Container className="py-8 sm:py-12">
         <Breadcrumbs items={[{ label: "Trang chủ", href: "/" }, { label: "Cửa hàng", href: "/cua-hang" }, { label: product.name }]} />
         <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:gap-16">

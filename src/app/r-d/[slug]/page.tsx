@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/seo/metadata";
 import { notFound } from "next/navigation";
 import { FileDown } from "lucide-react";
 import { ProductCard } from "@/components/catalog/product-card";
@@ -20,7 +21,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: article.seoTitle ?? article.title,
     description: article.seoDescription ?? article.summary ?? undefined,
     alternates: { canonical: `/r-d/${article.slug}` },
-    openGraph: { type: "article", publishedTime: article.publishedAt ?? undefined, images: article.coverImageUrl ? [article.coverImageUrl] : undefined },
+    openGraph: openGraphFor({
+      title: article.seoTitle ?? article.title,
+      description: article.seoDescription ?? article.summary ?? undefined,
+      path: `/r-d/${article.slug}`,
+      images: article.coverImageUrl ? [article.coverImageUrl] : undefined,
+      type: "article",
+      publishedTime: article.publishedAt ?? undefined,
+    }),
   };
 }
 
