@@ -43,6 +43,13 @@ export default function RootLayout({
       lang="vi"
       className={`${manrope.variable} ${newsreader.variable} h-full antialiased`}
     >
+      <head>
+        {/* Zalo Platform domain verification: must be near the top of <head>, not streamed metadata. */}
+        <meta
+          name="zalo-platform-site-verification"
+          content="PzQUCUMW91XYhF8xX8af0KEYinklr6XDDJCo"
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         <CartProvider>
           <LocalizedChrome content={content}>{children}</LocalizedChrome>
