@@ -1,7 +1,15 @@
 import type { ComponentProps, ReactNode } from "react";
 
 const control =
-  "mt-1.5 w-full rounded-xl border border-line bg-white px-4 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/30";
+  "rounded-xl border border-line bg-white px-4 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-sky focus:outline-none focus:ring-2 focus:ring-sky/30";
+
+/** Default width and top margin, unless the caller sets its own (Tailwind can't tell which wins). */
+function controlClass(extra = ""): string {
+  const tokens = extra.split(/\s+/);
+  const width = tokens.some((t) => /^(max-)?w-/.test(t) || /:w-/.test(t)) ? "" : "w-full";
+  const margin = tokens.some((t) => /^mt-/.test(t)) ? "" : "mt-1.5";
+  return [margin, width, control, extra].filter(Boolean).join(" ");
+}
 
 /** Label + control + optional hint; required fields are marked in words, not just colour. */
 export function Field({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: ReactNode }) {
@@ -18,15 +26,15 @@ export function Field({ label, hint, required, children }: { label: string; hint
 }
 
 export function Input(props: ComponentProps<"input">) {
-  return <input {...props} className={`${control} ${props.className ?? ""}`} />;
+  return <input {...props} className={controlClass(props.className)} />;
 }
 
 export function Select(props: ComponentProps<"select">) {
-  return <select {...props} className={`${control} ${props.className ?? ""}`} />;
+  return <select {...props} className={controlClass(props.className)} />;
 }
 
 export function Textarea(props: ComponentProps<"textarea">) {
-  return <textarea {...props} className={`${control} ${props.className ?? ""}`} />;
+  return <textarea {...props} className={controlClass(props.className)} />;
 }
 
 export function FormError({ message }: { message: string | null }) {
