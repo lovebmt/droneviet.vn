@@ -4,6 +4,7 @@ export interface NavChild {
   description?: string;
 }
 
+/** A section with `children` is a menu: its label opens the sub-items and does not navigate. */
 export interface NavItem {
   label: string;
   href: string;
@@ -17,6 +18,7 @@ export const mainNav: NavItem[] = [
     label: "Giáo dục",
     href: "/giao-duc",
     children: [
+      { label: "Tổng quan giáo dục", href: "/giao-duc", description: "Giải pháp drone cho nhà trường" },
       { label: "Tiểu học", href: "/giao-duc/tieu-hoc", description: "Bay an toàn, học qua trò chơi" },
       { label: "THCS", href: "/giao-duc/thcs", description: "Lắp ráp, lập trình, cảm biến" },
       { label: "THPT & quốc tế", href: "/giao-duc/thpt", description: "Dự án STEM, chương trình song ngữ" },
@@ -28,6 +30,7 @@ export const mainNav: NavItem[] = [
     label: "Cửa hàng",
     href: "/cua-hang",
     children: [
+      { label: "Tất cả sản phẩm", href: "/cua-hang", description: "Combo, drone, linh kiện" },
       { label: "Combo lớp học", href: "/cua-hang?loai=combo", description: "Trọn bộ cho một lớp, nhận báo giá" },
       { label: "Drone", href: "/cua-hang?loai=drone", description: "Drone cho học sinh và giáo viên" },
       { label: "Linh kiện & phụ kiện", href: "/cua-hang?loai=linh-kien", description: "Motor, pin, cánh quạt, mạch bay" },

@@ -57,13 +57,17 @@ export function MobileMenu({ onClose }: { onClose(): void }) {
         <ul className="grid gap-1">
           {mainNav.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} onClick={onClose} className={`block rounded-xl px-3 py-3 text-lg font-semibold ${item.highlight ? `bg-sun ${PRESS.highlight}` : `hover:bg-sky-50 ${PRESS.item}`}`}>
-                {item.label}
-              </Link>
+              {item.children ? (
+                <p className="px-3 pb-1 pt-3 text-lg font-semibold">{item.label}</p>
+              ) : (
+                <Link href={item.href} onClick={onClose} className={`block rounded-xl px-3 py-3 text-lg font-semibold ${item.highlight ? `bg-sun ${PRESS.highlight}` : `hover:bg-sky-50 ${PRESS.item}`}`}>
+                  {item.label}
+                </Link>
+              )}
               {item.children ? (
                 <ul className="mb-2 ml-3 grid gap-0.5 border-l border-line pl-3">
                   {item.children.map((child) => (
-                    <li key={child.href}>
+                    <li key={`${child.href}-${child.label}`}>
                       <Link href={child.href} onClick={onClose} className={`block rounded-lg px-2 py-2 text-muted hover:text-ink active:text-ink ${PRESS.child}`}>
                         {child.label}
                       </Link>

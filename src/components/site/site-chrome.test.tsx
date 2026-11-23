@@ -19,22 +19,57 @@ describe("SiteHeader", () => {
     vi.unstubAllGlobals();
   });
 
-  it("header links every main section with the simulator highlighted", () => {
+  it("header shows every main section; sections with sub-items are menus, not links", () => {
     signedOut();
     render(<AppProviders><SiteHeader /></AppProviders>);
     const nav = screen.getByRole("navigation", { name: "Điều hướng chính" });
-    for (const [name, href] of [
-      ["Giáo dục", "/giao-duc"],
-      ["Cửa hàng", "/cua-hang"],
-      ["Đào tạo & chứng chỉ", "/dao-tao"],
-      ["R&D", "/r-d"],
-      ["Bay mô phỏng", "/bay-mo-phong"],
-      ["Hỗ trợ", "/ho-tro"],
-    ]) {
+    for (const name of ["Giáo dục", "Cửa hàng", "Đào tạo & chứng chỉ"]) {
+      const trigger = within(nav).getByRole("button", { name });
+      expect(trigger).toHaveAttribute("aria-haspopup", "true");
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
+      expect(within(nav).queryByRole("link", { name })).not.toBeInTheDocument();
+    }
+    for (const [name, href] of [["R&D", "/r-d"], ["Bay mô phỏng", "/bay-mo-phong"], ["Hỗ trợ", "/ho-tro"]]) {
       expect(within(nav).getByRole("link", { name })).toHaveAttribute("href", href);
     }
     expect(within(nav).getByRole("link", { name: "Bay mô phỏng" }).className).toContain("bg-sun");
     expect(screen.getByRole("link", { name: "Nhận tư vấn" })).toHaveAttribute("href", "/bao-gia");
+  });
+
+  it("a sub-menu opens on hover, closes when the pointer leaves, and its parent never navigates", () => {
+    signedOut();
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    const nav = screen.getByRole("navigation", { name: "Điều hướng chính" });
+    const trigger = within(nav).getByRole("button", { name: "Giáo dục" });
+    const item = trigger.parentElement!;
+    expect(within(nav).queryByRole("link", { name: /Workshop trải nghiệm/ })).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(item);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(within(nav).getByRole("link", { name: /Workshop trải nghiệm/ })).toHaveAttribute("href", "/giao-duc/workshop");
+    expect(within(nav).getByRole("link", { name: /Tổng quan giáo dục/ })).toHaveAttribute("href", "/giao-duc");
+
+    fireEvent.click(trigger); // pressing the parent keeps the menu open and goes nowhere
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    fireEvent.mouseLeave(item);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(within(nav).queryByRole("link", { name: /Workshop trải nghiệm/ })).not.toBeInTheDocument();
+  });
+
+  it("a sub-menu opens from the keyboard and closes on Escape or after choosing an item", () => {
+    signedOut();
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    const nav = screen.getByRole("navigation", { name: "Điều hướng chính" });
+    const trigger = within(nav).getByRole("button", { name: "Cửa hàng" });
+    fireEvent.click(trigger); // Enter or Space on a button
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    fireEvent.keyDown(trigger, { key: "Escape" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(trigger);
+    fireEvent.click(within(nav).getByRole("link", { name: /Tất cả sản phẩm/ }));
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
   });
 
   it("menu items and sub-items give feedback when pressed", () => {
@@ -42,15 +77,27 @@ describe("SiteHeader", () => {
     render(<AppProviders><SiteHeader /></AppProviders>);
     const nav = screen.getByRole("navigation", { name: "Điều hướng chính" });
     const pressable = (el: HTMLElement) => /active:scale-/.test(el.className) && /active:bg-/.test(el.className);
-    expect(pressable(within(nav).getByRole("link", { name: "Giáo dục" }))).toBe(true);
+    expect(pressable(within(nav).getByRole("button", { name: "Giáo dục" }))).toBe(true);
     expect(pressable(within(nav).getByRole("link", { name: "Bay mô phỏng" }))).toBe(true);
+    fireEvent.mouseEnter(within(nav).getByRole("button", { name: "Giáo dục" }).parentElement!);
     expect(pressable(within(nav).getByRole("link", { name: /Workshop trải nghiệm/ }))).toBe(true);
     expect(pressable(screen.getByRole("link", { name: /Giỏ hàng/ }))).toBe(true);
 
     act(() => screen.getByRole("button", { name: "Mở menu" }).click());
     const dialog = screen.getByRole("dialog", { name: "Menu" });
-    expect(pressable(within(dialog).getByRole("link", { name: "Cửa hàng" }))).toBe(true);
+    expect(pressable(within(dialog).getByRole("link", { name: "Combo lớp học" }))).toBe(true);
     expect(pressable(within(dialog).getByRole("link", { name: "Cấp phép bay" }))).toBe(true);
+  });
+
+  it("mobile menu shows section names as headings and only sub-items as links", () => {
+    signedOut();
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    act(() => screen.getByRole("button", { name: "Mở menu" }).click());
+    const dialog = screen.getByRole("dialog", { name: "Menu" });
+    expect(within(dialog).queryByRole("link", { name: "Giáo dục" })).not.toBeInTheDocument();
+    expect(within(dialog).getByText("Giáo dục")).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Tổng quan giáo dục" })).toHaveAttribute("href", "/giao-duc");
+    expect(within(dialog).getByRole("link", { name: "Bay mô phỏng" })).toHaveAttribute("href", "/bay-mo-phong");
   });
 
   it("cart icon shows the item count", async () => {
