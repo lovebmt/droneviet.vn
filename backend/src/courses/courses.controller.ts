@@ -79,7 +79,7 @@ export class CoursesController {
       level: course.level,
       format: course.format,
       durationHours: course.durationHours,
-      tuitionVnd: course.tuitionVnd,
+      tuitionVnd: course.tuitionVnd === null ? null : Number(course.tuitionVnd),
       certificateTrack: course.certificateTrack,
     };
   }

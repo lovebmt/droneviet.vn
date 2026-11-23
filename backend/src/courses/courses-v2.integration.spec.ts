@@ -44,6 +44,11 @@ describe.skipIf(!integrationDatabaseUrl)("courses v2", () => {
     expect(detail.sessions).toEqual(expect.arrayContaining([expect.objectContaining({ id: openSession, seatsLeft: 10 })]));
   });
 
+  it("course tuition is a JSON number, not a bigint string", async () => {
+    const detail = await (await fetch(`${ctx.baseUrl}/courses/${slug}`)).json();
+    expect(typeof detail.tuitionVnd).toBe("number");
+  });
+
   it("course enroll reserves a seat, decrements seats left and shows in my courses", async () => {
     expect((await enroll(openSession, student)).status).toBe(201);
     const detail = await (await fetch(`${ctx.baseUrl}/courses/${slug}`)).json();
