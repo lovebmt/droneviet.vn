@@ -14,7 +14,7 @@
 
 - Work on branch `rewrite/v2`; do not push to `main`, do not deploy production.
 - Migrations are **additive only** (no dropped/renamed columns or tables); generate with `DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet npx typeorm-ts-node-commonjs migration:generate src/database/migrations/<Name> -d src/database/data-source.ts`, register in `data-source.ts`, bump `data-source.spec.ts` migration count.
-- TDD: failing test first. Full suite: `cd backend && TEST_DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet npx vitest run --config vitest.config.mts`; plus `npm run build`.
+- TDD: failing test first. Full suite: `cd backend && TEST_DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet_test npx vitest run --config vitest.config.mts`; plus `npm run build`.
 - TypeScript `module: node16`: ESM-only packages only via `await import()`; relative dynamic imports need `.js`.
 - Request body limit on Vercel ≈ 4.5MB → media upload max **4 MB**.
 - No secrets in the repo; new env vars documented in `backend/.env.example`.
