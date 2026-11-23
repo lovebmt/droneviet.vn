@@ -1,3 +1,5 @@
+import { apiFetch } from "@/lib/api/client";
+import { apiBase } from "@/lib/api/base";
 export interface CustomerSession {
   accessToken: string;
   user: {
@@ -7,31 +9,11 @@ export interface CustomerSession {
   };
 }
 
-function apiUrl(path: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_COMMERCE_API_URL?.replace(/\/$/, "");
-
-  if (!baseUrl) {
-    throw new Error("Commerce API is not configured");
-  }
-
-  return `${baseUrl}${path}`;
-}
-
-async function request(
-  path: string,
-  payload: Record<string, string>,
-): Promise<CustomerSession> {
-  const response = await fetch(apiUrl(path), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
+/** Sign-in calls go through apiFetch so the browser stores the httpOnly session cookie. */
+function request(path: string, payload: Record<string, string>): Promise<CustomerSession> {
+  return apiFetch<CustomerSession>(path, { method: "POST", body: JSON.stringify(payload) }).catch(() => {
     throw new Error("Không thể xác thực tài khoản.");
-  }
-
-  return response.json() as Promise<CustomerSession>;
+  });
 }
 
 export function loginCustomer(email: string, password: string) {
@@ -50,13 +32,13 @@ export type OauthProvider = "google" | "zalo";
 
 /** Where the browser goes to start a Google/Zalo sign-in (the API redirects onward). */
 export function oauthStartUrl(provider: OauthProvider): string {
-  return apiUrl(`/auth/${provider}`);
+  return `${apiBase()}/auth/${provider}`;
 }
 
 /** Which social sign-ins the API has credentials for; none if the API is unreachable. */
 export async function fetchOauthProviders(): Promise<Record<OauthProvider, boolean>> {
   try {
-    const response = await fetch(apiUrl("/auth/providers"));
+    const response = await fetch(`${apiBase()}/auth/providers`);
     if (response.ok) {
       const body = (await response.json()) as Partial<Record<OauthProvider, boolean>>;
       return { google: body.google === true, zalo: body.zalo === true };
