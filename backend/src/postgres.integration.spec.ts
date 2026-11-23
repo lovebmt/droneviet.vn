@@ -24,6 +24,11 @@ describe.skipIf(!databaseUrl)("commerce API on postgres", () => {
     baseUrl = await app.getUrl();
     dataSource = app.get(DataSource);
     await dataSource.runMigrations();
+    // Start every run from a clean order/reservation state.
+    await dataSource.query(
+      "TRUNCATE order_lines, payment_attempts, course_enrollments, orders RESTART IDENTITY CASCADE",
+    );
+    await dataSource.query("UPDATE inventory_items SET reserved = 0");
   }, 60_000);
 
   afterAll(async () => {
@@ -68,5 +73,28 @@ describe.skipIf(!databaseUrl)("commerce API on postgres", () => {
 
     expect(released).toBeGreaterThan(0);
     expect(await reserved()).toBe(0);
+  });
+
+  it("releases expired reservations before creating a new order", async () => {
+    const order = (lines: number) =>
+      fetch(`${baseUrl}/orders`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          contactName: "Integration",
+          contactPhone: "0900000002",
+          paymentMethod: "cod",
+          shippingAddress: "HCM",
+          lines: [{ variantId: VARIANT_ID, quantity: lines }],
+        }),
+      });
+    expect((await order(1)).status).toBe(201);
+    await dataSource.query(
+      `UPDATE orders SET "reservationExpiresAt" = now() - interval '1 hour' WHERE status = 'pending_payment'`,
+    );
+
+    expect((await order(1)).status).toBe(201);
+
+    expect(await reserved()).toBe(1);
   });
 });

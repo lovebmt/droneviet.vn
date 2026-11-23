@@ -12,7 +12,7 @@ import { AuthModule } from "../auth/auth.module";
 import { AdminOrdersController } from "./admin-orders.controller";
 import { OrdersController } from "./orders.controller";
 import { OrdersService } from "./orders.service";
-import { ReservationCleanupService } from "./reservation-cleanup.service";
+import { CronController } from "./cron.controller";
 
 @Module({
   imports: [
@@ -24,8 +24,8 @@ import { ReservationCleanupService } from "./reservation-cleanup.service";
     CoursesModule,
     TypeOrmModule.forFeature([InventoryItem, Order, OrderLine]),
   ],
-  controllers: [OrdersController, AdminOrdersController],
-  providers: [OrdersService, ReservationCleanupService],
+  controllers: [OrdersController, AdminOrdersController, CronController],
+  providers: [OrdersService],
   exports: [OrdersService],
 })
 export class OrdersModule {}

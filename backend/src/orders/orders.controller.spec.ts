@@ -6,6 +6,7 @@ import { OrderStatus } from "./order-workflow";
 describe("OrdersController", () => {
   it("forwards a guest checkout request to the order service", async () => {
     const ordersService = {
+      releaseExpiredReservations: vi.fn().mockResolvedValue(0),
       createOrder: vi.fn().mockResolvedValue({
         orderNumber: "DV-12345678",
         paymentMethod: OrderPaymentMethod.PAYOS,
