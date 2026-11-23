@@ -62,7 +62,8 @@ describe("createDatabaseOptions", () => {
     const options = createDatabaseOptions({ DATABASE_URL: url });
 
     expect(options).toMatchObject({ type: "postgres", url });
-    expect((options as { ssl?: unknown }).ssl).toBeTruthy();
+    // Neon serves publicly trusted certificates: verify them, never disable verification.
+    expect((options as { ssl?: unknown }).ssl).toBe(true);
   });
 
   it("uses a local DATABASE_URL without TLS", () => {

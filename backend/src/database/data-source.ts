@@ -26,7 +26,7 @@ export function createDatabaseOptions(
     ? {
         url,
         ssl: url.includes("sslmode=require")
-          ? { rejectUnauthorized: false }
+          ? true
           : false,
       }
     : {
