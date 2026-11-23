@@ -6,6 +6,7 @@ import remarkDirective from "remark-directive";
 import remarkGfm from "remark-gfm";
 import { visit } from "unist-util-visit";
 import { formatVnd } from "@/lib/format";
+import { slugify } from "@/lib/slug";
 import type { ProductCard } from "@/lib/api/types";
 
 const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
@@ -44,9 +45,18 @@ function remarkDroneVietDirectives() {
   };
 }
 
+function textOf(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (node && typeof node === "object" && "props" in node) return textOf((node.props as { children?: ReactNode }).children);
+  return "";
+}
+
 export function Markdown({ source, relatedProducts = [] }: { source: string; relatedProducts?: ProductCard[] }) {
   const bySlug = new Map(relatedProducts.map((p) => [p.slug, p]));
   const components = {
+    h2: ({ children }: { children?: ReactNode }) => <h2 id={slugify(textOf(children))}>{children}</h2>,
+    h3: ({ children }: { children?: ReactNode }) => <h3 id={slugify(textOf(children))}>{children}</h3>,
     "dv-youtube": ({ videoId }: { videoId: string }) => (
       <span className="my-6 block aspect-video overflow-hidden rounded-xl bg-ink">
         <iframe
