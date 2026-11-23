@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { DataSource, DataSourceOptions } from "typeorm";
+import { PostgresInitial1795401062894 } from "./migrations/1795401062894-PostgresInitial";
 import { ProductVariant } from "../catalog/entities/product-variant.entity";
 import { Product } from "../catalog/entities/product.entity";
 import { Article } from "../content/entities/article.entity";
@@ -16,34 +17,29 @@ import { CourseSession } from "../courses/entities/course-session.entity";
 import { CourseEnrollment } from "../courses/entities/course-enrollment.entity";
 import { AuditEvent } from "../audit/entities/audit-event.entity";
 import { PromoCode } from "../promotions/entities/promo-code.entity";
-import { InitialCatalogMigration1766918700000 } from "./migrations/1766918700000-initial-catalog";
-import { ContentMigration1766918800000 } from "./migrations/1766918800000-content";
-import { UsersMigration1766918900000 } from "./migrations/1766918900000-users";
-import { OrdersMigration1766919000000 } from "./migrations/1766919000000-orders";
-import { QuoteRequestsMigration1766919100000 } from "./migrations/1766919100000-quote-requests";
-import { InventoryMigration1766919050000 } from "./migrations/1766919050000-inventory";
-import { PaymentsMigration1766919200000 } from "./migrations/1766919200000-payments";
-import { ProductContentMigration1766919300000 } from "./migrations/1766919300000-product-content";
-import { CommerceHardeningMigration1766919400000 } from "./migrations/1766919400000-commerce-hardening";
-import { CoursesMigration1766919500000 } from "./migrations/1766919500000-courses";
-import { CourseOrderReservationsMigration1766919600000 } from "./migrations/1766919600000-course-order-reservations";
-import { AuditEventsMigration1766919700000 } from "./migrations/1766919700000-audit-events";
-import { PromotionsMigration1766919800000 } from "./migrations/1766919800000-promotions";
-import { OrderLineInventoryReservationMigration1766919900000 } from "./migrations/1766919900000-order-line-inventory-reservation";
-import { CourseVariantLinkMigration1766920000000 } from "./migrations/1766920000000-course-variant-link";
-import { PaymentRefundReferenceMigration1766920100000 } from "./migrations/1766920100000-payment-refund-reference";
 
 export function createDatabaseOptions(
   environment: NodeJS.ProcessEnv,
 ): DataSourceOptions {
+  const url = environment.DATABASE_URL;
+  const connection = url
+    ? {
+        url,
+        ssl: url.includes("sslmode=require")
+          ? { rejectUnauthorized: false }
+          : false,
+      }
+    : {
+        host: environment.DATABASE_HOST ?? "localhost",
+        port: Number(environment.DATABASE_PORT ?? 5432),
+        username: environment.DATABASE_USER ?? "droneviet",
+        password: environment.DATABASE_PASSWORD ?? "droneviet",
+        database: environment.DATABASE_NAME ?? "droneviet",
+      };
+
   return {
-    type: "mysql",
-    host: environment.DATABASE_HOST ?? "localhost",
-    port: Number(environment.DATABASE_PORT ?? 3306),
-    username: environment.DATABASE_USER ?? "droneviet",
-    password: environment.DATABASE_PASSWORD ?? "droneviet",
-    database: environment.DATABASE_NAME ?? "droneviet",
-    charset: "utf8mb4",
+    type: "postgres",
+    ...connection,
     entities: [
       Product,
       ProductVariant,
@@ -62,24 +58,7 @@ export function createDatabaseOptions(
       AuditEvent,
       PromoCode,
     ],
-    migrations: [
-      InitialCatalogMigration1766918700000,
-      ContentMigration1766918800000,
-      UsersMigration1766918900000,
-      OrdersMigration1766919000000,
-      InventoryMigration1766919050000,
-      QuoteRequestsMigration1766919100000,
-      PaymentsMigration1766919200000,
-      ProductContentMigration1766919300000,
-      CommerceHardeningMigration1766919400000,
-      CoursesMigration1766919500000,
-      CourseOrderReservationsMigration1766919600000,
-      AuditEventsMigration1766919700000,
-      PromotionsMigration1766919800000,
-      OrderLineInventoryReservationMigration1766919900000,
-      CourseVariantLinkMigration1766920000000,
-      PaymentRefundReferenceMigration1766920100000,
-    ],
+    migrations: [PostgresInitial1795401062894],
     synchronize: false,
   };
 }

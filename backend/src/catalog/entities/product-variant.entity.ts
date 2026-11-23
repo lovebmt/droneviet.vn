@@ -32,12 +32,11 @@ export class ProductVariant {
   @Column()
   title!: string;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   priceVnd!: number;
 
   @Column({
     type: "bigint",
-    unsigned: true,
     nullable: true,
     transformer: bigintVndTransformer,
   })

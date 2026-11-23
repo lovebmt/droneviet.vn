@@ -5,11 +5,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from "typeorm";
 import { Product } from "../../catalog/entities/product.entity";
 
 @Entity("product_content")
+@Unique("UQ_product_content_locale", ["productId", "locale"])
 export class ProductContent {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -20,10 +22,10 @@ export class ProductContent {
   @Column({ length: 16 })
   locale!: string;
 
-  @Column({ type: "longtext" })
+  @Column({ type: "text" })
   bodyMarkdown!: string;
 
-  @Column({ type: "longtext" })
+  @Column({ type: "text" })
   renderedHtml!: string;
 
   @Column({ type: "json" })

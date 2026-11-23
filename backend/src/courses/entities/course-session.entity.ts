@@ -27,10 +27,10 @@ export class CourseSession {
   @Column({ type: "timestamp" })
   startsAt!: Date;
 
-  @Column({ type: "int", unsigned: true })
+  @Column({ type: "int" })
   capacity!: number;
 
-  @Column({ type: "int", unsigned: true, default: 0 })
+  @Column({ type: "int", default: 0 })
   reservedSeats!: number;
 
   @Column({ type: "enum", enum: CourseSessionStatus })

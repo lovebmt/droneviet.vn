@@ -45,7 +45,7 @@ export class CoursesService {
       .createQueryBuilder("session")
       .leftJoinAndSelect("session.course", "course")
       .where("session.id = :id", { id: input.sessionId })
-      .setLock("pessimistic_write")
+      .setLock("pessimistic_write", undefined, ['"session"'])
       .getOne();
 
     if (!session || session.status !== CourseSessionStatus.OPEN) {
@@ -99,7 +99,7 @@ export class CoursesService {
       .andWhere("enrollment.status IN (:...statuses)", {
         statuses: ["reserved", "confirmed"],
       })
-      .setLock("pessimistic_write")
+      .setLock("pessimistic_write", undefined, ['"enrollment"'])
       .getMany();
     const sessionRepository = manager.getRepository(CourseSession);
 

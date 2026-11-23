@@ -31,10 +31,10 @@ export class Article {
   @Column({ type: "text", nullable: true })
   summary!: string | null;
 
-  @Column({ type: "longtext" })
+  @Column({ type: "text" })
   bodyMarkdown!: string;
 
-  @Column({ type: "longtext", nullable: true })
+  @Column({ type: "text", nullable: true })
   renderedHtml!: string | null;
 
   @Column({ type: "json", nullable: true })

@@ -18,10 +18,9 @@ import { PromoCode } from "../promotions/entities/promo-code.entity";
 import { createDatabaseOptions } from "./data-source";
 
 describe("createDatabaseOptions", () => {
-  it("uses explicit MySQL migrations and never synchronizes schema at runtime", () => {
+  it("uses postgres from discrete vars and never synchronizes schema at runtime", () => {
     const options = createDatabaseOptions({
       DATABASE_HOST: "localhost",
-      DATABASE_PORT: "3306",
       DATABASE_NAME: "droneviet",
       DATABASE_PASSWORD: "droneviet",
       DATABASE_USER: "droneviet",
@@ -30,9 +29,9 @@ describe("createDatabaseOptions", () => {
     expect(options).toMatchObject({
       database: "droneviet",
       host: "localhost",
-      port: 3306,
+      port: 5432,
       synchronize: false,
-      type: "mysql",
+      type: "postgres",
       username: "droneviet",
     });
     expect(options.entities).toEqual(
@@ -55,6 +54,22 @@ describe("createDatabaseOptions", () => {
         PromoCode,
       ]),
     );
-    expect(options.migrations).toHaveLength(16);
+    expect(options.migrations).toHaveLength(1);
+  });
+
+  it("uses DATABASE_URL with TLS when sslmode=require", () => {
+    const url = "postgres://u:p@ep-x.neon.tech/db?sslmode=require";
+    const options = createDatabaseOptions({ DATABASE_URL: url });
+
+    expect(options).toMatchObject({ type: "postgres", url });
+    expect((options as { ssl?: unknown }).ssl).toBeTruthy();
+  });
+
+  it("uses a local DATABASE_URL without TLS", () => {
+    const options = createDatabaseOptions({
+      DATABASE_URL: "postgres://droneviet:droneviet@localhost:5433/droneviet",
+    });
+
+    expect((options as { ssl?: unknown }).ssl).toBeFalsy();
   });
 });

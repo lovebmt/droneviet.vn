@@ -129,7 +129,7 @@ export class PaymentsService {
       .leftJoinAndSelect("payment.order", "order")
       .leftJoinAndSelect("order.lines", "line")
       .where("payment.provider = :provider", { provider: PaymentProvider.PAYOS })
-      .setLock("pessimistic_write");
+      .setLock("pessimistic_write", undefined, ['"payment"']);
 
     if (filter.id) {
       builder.andWhere("payment.id = :id", { id: filter.id });

@@ -1,40 +1,21 @@
 name: droneviet-commerce
 
 services:
-  mysql:
-    image: mysql:8.4
+  postgres:
+    image: postgres:16-alpine
     environment:
-      MYSQL_DATABASE: droneviet
-      MYSQL_USER: droneviet
-      MYSQL_PASSWORD: droneviet
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_DB: droneviet
+      POSTGRES_USER: droneviet
+      POSTGRES_PASSWORD: droneviet
     ports:
-      - "3307:3306"
+      - "5433:5432"
     volumes:
-      - droneviet_mysql_data:/var/lib/mysql
+      - droneviet_pg_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "mysqladmin ping -h localhost -u root -proot --silent",
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  redis:
-    image: redis:7.4-alpine
-    ports:
-      - "6380:6379"
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - droneviet_redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "pg_isready -U droneviet -d droneviet"]
       interval: 5s
       timeout: 5s
       retries: 20
 
 volumes:
-  droneviet_mysql_data:
-  droneviet_redis_data:
+  droneviet_pg_data:

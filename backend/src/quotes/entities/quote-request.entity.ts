@@ -34,13 +34,12 @@ export class QuoteRequest {
 
   @Column({
     type: "bigint",
-    unsigned: true,
     nullable: true,
     transformer: bigintVndTransformer,
   })
   budgetVnd!: number | null;
 
-  @Column({ type: "int", unsigned: true })
+  @Column({ type: "int" })
   quantity!: number;
 
   @Column({ type: "text", nullable: true })

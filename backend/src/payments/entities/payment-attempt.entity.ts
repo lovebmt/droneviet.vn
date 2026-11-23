@@ -32,13 +32,13 @@ export class PaymentAttempt {
   @Column({ type: "enum", enum: PaymentProvider })
   provider!: PaymentProvider;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   providerOrderCode!: number;
 
   @Column({ type: "enum", enum: PaymentStatus, default: PaymentStatus.PENDING })
   status!: PaymentStatus;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   amountVnd!: number;
 
   @Column({ type: "text", nullable: true })

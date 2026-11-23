@@ -22,19 +22,19 @@ export class PromoCode {
   @Column({ type: "enum", enum: PromoType })
   type!: PromoType;
 
-  @Column({ type: "int", unsigned: true })
+  @Column({ type: "int" })
   value!: number;
 
-  @Column({ type: "bigint", unsigned: true, nullable: true })
+  @Column({ type: "bigint", nullable: true })
   minimumOrderVnd!: number | null;
 
-  @Column({ type: "bigint", unsigned: true, nullable: true })
+  @Column({ type: "bigint", nullable: true })
   maxDiscountVnd!: number | null;
 
-  @Column({ type: "int", unsigned: true, nullable: true })
+  @Column({ type: "int", nullable: true })
   usageLimit!: number | null;
 
-  @Column({ type: "int", unsigned: true, default: 0 })
+  @Column({ type: "int", default: 0 })
   usageCount!: number;
 
   @Column({ default: true })

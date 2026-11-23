@@ -71,7 +71,7 @@ export class OrdersService {
         .leftJoinAndSelect("variant.product", "product")
         .leftJoinAndSelect("variant.inventory", "inventory")
         .where("variant.id IN (:...variantIds)", { variantIds })
-        .setLock("pessimistic_write")
+        .setLock("pessimistic_write", undefined, ['"variant"'])
         .getMany();
       const variantsById = new Map(
         variants.map((variant) => [variant.id, variant]),
@@ -215,7 +215,7 @@ export class OrdersService {
           status: OrderStatus.PENDING_PAYMENT,
         })
         .andWhere("order.reservationExpiresAt <= :now", { now })
-        .setLock("pessimistic_write")
+        .setLock("pessimistic_write", undefined, ['"order"'])
         .getMany();
 
       for (const order of expiredOrders) {
@@ -254,7 +254,7 @@ export class OrdersService {
         .createQueryBuilder("order")
         .leftJoinAndSelect("order.lines", "line")
         .where("order.id = :id", { id: input.orderId })
-        .setLock("pessimistic_write")
+        .setLock("pessimistic_write", undefined, ['"order"'])
         .getOne();
 
       if (!order) {

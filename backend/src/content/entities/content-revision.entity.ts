@@ -5,10 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import { Article } from "./article.entity";
 
 @Entity("content_revisions")
+@Unique("UQ_content_revisions_article_revision", ["articleId", "revisionNumber"])
 export class ContentRevision {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -19,10 +21,10 @@ export class ContentRevision {
   @Column({ type: "int" })
   revisionNumber!: number;
 
-  @Column({ type: "longtext" })
+  @Column({ type: "text" })
   bodyMarkdown!: string;
 
-  @Column({ type: "longtext" })
+  @Column({ type: "text" })
   renderedHtml!: string;
 
   @Column({ type: "json" })

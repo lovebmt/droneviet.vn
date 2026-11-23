@@ -28,7 +28,7 @@ export class CourseEnrollment {
   @Column({ type: "varchar", nullable: true })
   contactEmail!: string | null;
 
-  @Column({ type: "int", unsigned: true })
+  @Column({ type: "int" })
   quantity!: number;
 
   @Column({

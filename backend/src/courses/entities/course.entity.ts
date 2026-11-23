@@ -36,7 +36,7 @@ export class Course {
   @Column({ type: "enum", enum: CoursePurchaseMode })
   purchaseMode!: CoursePurchaseMode;
 
-  @Column({ type: "bigint", unsigned: true, nullable: true })
+  @Column({ type: "bigint", nullable: true })
   tuitionVnd!: number | null;
 
   @OneToMany(() => CourseSession, (session) => session.course)

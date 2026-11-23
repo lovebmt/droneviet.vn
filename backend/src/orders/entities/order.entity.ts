@@ -27,7 +27,6 @@ export class Order {
 
   @Column({
     type: "bigint",
-    unsigned: true,
     unique: true,
     generated: "increment",
     transformer: bigintVndTransformer,
@@ -40,13 +39,13 @@ export class Order {
   @Column({ type: "enum", enum: OrderPaymentMethod })
   paymentMethod!: OrderPaymentMethod;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   totalVnd!: number;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   subtotalVnd!: number;
 
-  @Column({ type: "bigint", unsigned: true, default: 0, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", default: 0, transformer: bigintVndTransformer })
   discountVnd!: number;
 
   @Column({ type: "varchar", nullable: true })

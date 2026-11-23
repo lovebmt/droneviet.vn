@@ -17,10 +17,10 @@ export class InventoryItem {
   @Column({ unique: true })
   productVariantId!: string;
 
-  @Column({ type: "int", unsigned: true, default: 0 })
+  @Column({ type: "int", default: 0 })
   onHand!: number;
 
-  @Column({ type: "int", unsigned: true, default: 0 })
+  @Column({ type: "int", default: 0 })
   reserved!: number;
 
   @OneToOne(() => ProductVariant, (variant) => variant.inventory, {

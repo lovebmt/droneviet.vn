@@ -29,16 +29,16 @@ export class OrderLine {
   @Column()
   title!: string;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   unitPriceVnd!: number;
 
-  @Column({ type: "int", unsigned: true })
+  @Column({ type: "int" })
   quantity!: number;
 
   @Column({ default: false })
   reservesInventory!: boolean;
 
-  @Column({ type: "bigint", unsigned: true, transformer: bigintVndTransformer })
+  @Column({ type: "bigint", transformer: bigintVndTransformer })
   subtotalVnd!: number;
 
   @ManyToOne(() => Order, (order) => order.lines, { onDelete: "CASCADE" })
