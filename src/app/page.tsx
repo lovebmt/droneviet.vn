@@ -71,7 +71,7 @@ export default async function HomePage() {
   ];
 
   return (
-    <main>
+    <div>
       <HeroCarousel slides={slides} />
 
       <Container className="py-3">
@@ -130,6 +130,6 @@ export default async function HomePage() {
           <LinkButton href="/bao-gia" size="lg">Nhận tư vấn cho trường bạn</LinkButton>
         </div>
       </Section>
-    </main>
+    </div>
   );
 }

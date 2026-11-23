@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <AppProviders>
           <AnnouncementBar announcement={settings.announcement} />
           <SiteHeader />
-          <div id="noi-dung" className="flex-1">{children}</div>
+          <main id="noi-dung" className="flex-1">{children}</main>
           <SiteFooter settings={settings} />
         </AppProviders>
       </body>

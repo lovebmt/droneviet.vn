@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { OauthCallback } from "./oauth-callback";
+const navigate = vi.hoisted(() => ({ goTo: vi.fn() }));
+vi.mock("@/lib/navigate", () => navigate);
+const { OauthCallback } = await import("./oauth-callback");
 
 describe("OauthCallback", () => {
   afterEach(() => {
@@ -20,6 +22,7 @@ describe("OauthCallback", () => {
 
     expect(await screen.findByRole("heading", { name: "Đăng nhập thành công" })).toBeInTheDocument();
     expect(screen.getByText("an@example.com")).toBeInTheDocument();
+    expect(navigate.goTo).toHaveBeenCalledWith("/tai-khoan");
     expect(fetchMock).toHaveBeenCalledWith(
       "https://api.test/auth/oauth/exchange",
       expect.objectContaining({ method: "POST", body: JSON.stringify({ code: "one-time" }) }),
