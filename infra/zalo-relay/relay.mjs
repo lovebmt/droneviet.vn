@@ -6,7 +6,7 @@ const ALLOWED_FIELDS = new Set(["id", "name", "picture"]);
 
 /**
  * Zalo only returns personal info to callers with a Vietnam IP, but our API runs on Vercel (US).
- * This relay runs on a Vietnam host and does exactly one thing: GET the Zalo profile for a token.
+ * This relay runs on a Vietnam host (server103) and does exactly one thing: GET the Zalo profile for a token.
  * It stores nothing and holds no Zalo app secret.
  */
 export function createRelayServer({ secret, fetchImpl = fetch, upstream = UPSTREAM }) {
