@@ -10,6 +10,9 @@ import { formatDate } from "@/lib/format";
 import { Field, FormError, Input, Textarea } from "./field";
 
 const time = (iso: string) => new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(iso));
+/** Workshops: "Thứ Bảy, 12/12/2026" and "9:00". */
+const weekday = (iso: string) => new Intl.DateTimeFormat("vi-VN", { weekday: "long", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(iso));
+const clock = (iso: string) => new Intl.DateTimeFormat("vi-VN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(iso));
 
 /**
  * Reserves a seat; staff confirm by phone (no online payment for courses, spec §16 Q5).
@@ -83,8 +86,8 @@ export function EnrollForm({ course, group = false }: { course: Pick<CourseDetai
               <span className="flex items-center gap-3">
                 <input type="radio" name="session" value={s.id} disabled={full} checked={sessionId === s.id} onChange={() => setSessionId(s.id)} className="accent-[#0B6FE0]" />
                 <span>
-                  <span className="block font-semibold">{group ? "Ngày" : "Khai giảng"} {formatDate(s.startsAt)}</span>
-                  <span className="block text-sm text-muted">{time(s.startsAt)}</span>
+                  <span className="block font-semibold">{group ? `${weekday(s.startsAt)}, ${formatDate(s.startsAt)}` : `Khai giảng ${formatDate(s.startsAt)}`}</span>
+                  <span className="block text-sm text-muted">{group ? clock(s.startsAt) : time(s.startsAt)}</span>
                 </span>
               </span>
               <span className={`text-sm font-semibold ${full ? "text-muted" : "text-ink"}`}>{full ? "Đã đủ chỗ" : `Còn ${s.seatsLeft} chỗ`}</span>

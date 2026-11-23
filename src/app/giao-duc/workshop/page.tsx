@@ -38,33 +38,11 @@ export default async function WorkshopPage() {
         </div>
       </PageHeader>
 
-      <Section>
-        <h2 className="text-3xl font-light tracking-tight">Một buổi workshop gồm những gì</h2>
-        <ul className="mt-8 grid gap-5 sm:grid-cols-2">
-          {WORKSHOP_INTRO.points.map((p) => (
-            <li key={p.title} className="rounded-2xl border border-line p-6">
-              <Check size={22} strokeWidth={2} className="text-teal-ink" aria-hidden="true" />
-              <h3 className="mt-3 text-lg font-semibold">{p.title}</h3>
-              <p className="mt-1 text-muted">{p.text}</p>
-            </li>
-          ))}
-        </ul>
-        <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {WORKSHOP_INTRO.facts.map((f) => (
-            <div key={f.label} className="rounded-2xl bg-sky-50 p-5">
-              <dt className="text-sm text-muted">{f.label}</dt>
-              <dd className="mt-1 font-semibold">{f.value}</dd>
-            </div>
-          ))}
-        </dl>
-        {workshop?.descriptionMarkdown ? <div className="mt-10 max-w-3xl"><Markdown source={workshop.descriptionMarkdown} /></div> : null}
-      </Section>
-
-      <Section tone="sky" id="dang-ky">
+      <Section id="dang-ky">
         <div className="grid gap-10 lg:grid-cols-[1fr_32rem]">
           <div>
             <h2 className="text-3xl font-light tracking-tight">Lịch và đăng ký</h2>
-            <p className="mt-3 text-muted">Chọn buổi phù hợp và để lại thông tin. Drone Việt gọi lại để xác nhận thời gian, địa điểm và số người.</p>
+            <p className="mt-3 text-muted">Workshop diễn ra lúc 9:00 sáng thứ Bảy và Chủ nhật. Chọn ngày và để lại thông tin, Drone Việt gọi lại để xác nhận địa điểm và số người.</p>
             <div className="mt-6 flex flex-wrap gap-3">
               {groupZalo ? (
                 <LinkButton href={groupZalo} variant="secondary" target="_blank" rel="noopener noreferrer">
@@ -78,7 +56,7 @@ export default async function WorkshopPage() {
               ) : null}
             </div>
           </div>
-          <div className="rounded-2xl bg-white p-6">
+          <div className="rounded-2xl border border-line bg-white p-6">
             {workshop?.sessions.length ? (
               <EnrollForm course={workshop} group />
             ) : (
@@ -86,6 +64,28 @@ export default async function WorkshopPage() {
             )}
           </div>
         </div>
+      </Section>
+
+      <Section tone="sky">
+        <h2 className="text-3xl font-light tracking-tight">Một buổi workshop gồm những gì</h2>
+        <ul className="mt-8 grid gap-5 sm:grid-cols-2">
+          {WORKSHOP_INTRO.points.map((p) => (
+            <li key={p.title} className="rounded-2xl bg-white p-6">
+              <Check size={22} strokeWidth={2} className="text-teal-ink" aria-hidden="true" />
+              <h3 className="mt-3 text-lg font-semibold">{p.title}</h3>
+              <p className="mt-1 text-muted">{p.text}</p>
+            </li>
+          ))}
+        </ul>
+        <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {WORKSHOP_INTRO.facts.map((f) => (
+            <div key={f.label} className="rounded-2xl bg-white p-5">
+              <dt className="text-sm text-muted">{f.label}</dt>
+              <dd className="mt-1 font-semibold">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+        {workshop?.descriptionMarkdown ? <div className="mt-10 max-w-3xl"><Markdown source={workshop.descriptionMarkdown} /></div> : null}
       </Section>
     </>
   );

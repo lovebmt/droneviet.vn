@@ -8,6 +8,7 @@ import {
   CourseSession,
   CourseSessionStatus,
 } from "./entities/course-session.entity";
+import { nextWeekendMornings, WORKSHOP_CAPACITY } from "./workshop-schedule";
 
 export interface ReserveEnrollmentInput {
   contactEmail?: string;
@@ -29,6 +30,24 @@ export class CoursesService {
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
+
+  /**
+   * Makes sure a workshop has its coming Saturday and Sunday 9:00 sessions (30 seats, open) and
+   * returns those two times. Sessions an admin already has (even closed ones) are left as they are.
+   */
+  async ensureWorkshopSessions(courseId: string, now = new Date()): Promise<Date[]> {
+    const mornings = nextWeekendMornings(now);
+    await this.dataSource.transaction(async (manager) => {
+      // One request at a time per course, so concurrent page views cannot create duplicates.
+      await manager.query("SELECT pg_advisory_xact_lock(hashtext($1))", [courseId]);
+      const repo = manager.getRepository(CourseSession);
+      for (const startsAt of mornings) {
+        if (await repo.findOne({ where: { courseId, startsAt } })) continue;
+        await repo.save(repo.create({ courseId, startsAt, capacity: WORKSHOP_CAPACITY, reservedSeats: 0, status: CourseSessionStatus.OPEN }));
+      }
+    });
+    return mornings;
+  }
 
   async reserveEnrollment(
     input: ReserveEnrollmentInput,

@@ -10,7 +10,7 @@ export const WORKSHOP_INTRO = {
   ],
   facts: [
     { label: "Đối tượng", value: "Học sinh tiểu học đến THPT, giáo viên" },
-    { label: "Thời lượng", value: "Khoảng 2 giờ một buổi" },
+    { label: "Lịch", value: "9:00 sáng thứ Bảy, Chủ nhật, khoảng 2 giờ" },
     { label: "Hình thức", value: "Tại trường hoặc tại Drone Việt" },
     { label: "Quy mô", value: "Theo lớp hoặc nhóm, báo trước số người" },
   ],

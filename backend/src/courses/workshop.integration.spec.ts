@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { bootIntegrationApp, createUserToken, integrationDatabaseUrl, type IntegrationApp, uniqueSuffix } from "../test/integration-app.js";
+import { nextWeekendMornings } from "./workshop-schedule.js";
 
 const ZALO = "https://zalo.me/g/workshop-drone";
 
@@ -21,9 +22,13 @@ describe.skipIf(!integrationDatabaseUrl)("workshops (courses with level workshop
       `INSERT INTO courses (slug,"productVariantId",locale,title,summary,"purchaseMode",level,format,"zaloGroupUrl")
        VALUES ($1,$2,'vi','Workshop trải nghiệm','Bay thử drone','quote_only','workshop','truc-tiep',$3) RETURNING id`,
       [slug, v.id, ZALO]);
-    const future = new Date(Date.now() + 5 * 86_400_000).toISOString();
-    const [s] = await ds.query(`INSERT INTO course_sessions ("courseId","startsAt",capacity,"reservedSeats",status) VALUES ($1,$2,20,0,'open') RETURNING id`, [c.id, future]);
-    session = s.id;
+    // A weekday session an admin might have opened: workshops only offer weekend mornings.
+    const weekday = new Date(Date.now() + 86_400_000);
+    weekday.setUTCHours(2, 0, 0, 0);
+    while ([0, 6].includes(weekday.getUTCDay())) weekday.setUTCDate(weekday.getUTCDate() + 1);
+    await ds.query(`INSERT INTO course_sessions ("courseId","startsAt",capacity,"reservedSeats",status) VALUES ($1,$2,20,0,'open')`, [c.id, weekday]);
+    const detail = (await (await fetch(`${ctx.baseUrl}/courses/${slug}`)).json()) as { sessions: Array<{ id: string }> };
+    session = detail.sessions[0].id;
   }, 60_000);
 
   afterAll(async () => {
@@ -38,6 +43,18 @@ describe.skipIf(!integrationDatabaseUrl)("workshops (courses with level workshop
     });
   const seatsLeft = async () => ((await (await fetch(`${ctx.baseUrl}/courses/${slug}`)).json()) as { sessions: Array<{ id: string; seatsLeft: number }> }).sessions.find((x) => x.id === session)!.seatsLeft;
 
+  it("offers only the coming Saturday and Sunday at 9:00, with 30 seats", async () => {
+    const detail = (await (await fetch(`${ctx.baseUrl}/courses/${slug}`)).json()) as { sessions: Array<{ startsAt: string; capacity: number }> };
+    expect(detail.sessions.map((s) => new Date(s.startsAt).toISOString())).toEqual(nextWeekendMornings(new Date()).map((d) => d.toISOString()));
+    expect(detail.sessions.every((s) => s.capacity === 30)).toBe(true);
+  });
+
+  it("repeated visits do not create duplicate sessions", async () => {
+    await Promise.all([1, 2, 3].map(() => fetch(`${ctx.baseUrl}/courses/${slug}`)));
+    const [{ n }] = await ctx.dataSource.query(`SELECT count(*)::int AS n FROM course_sessions s JOIN courses c ON c.id = s."courseId" WHERE c.slug = $1`, [slug]);
+    expect(n).toBe(3); // the weekday one plus Saturday and Sunday
+  });
+
   it("lists only workshops with ?level=workshop", async () => {
     const list = (await (await fetch(`${ctx.baseUrl}/courses?level=workshop`)).json()) as Array<{ slug: string; level: string; zaloGroupUrl: string | null }>;
     expect(list.find((c) => c.slug === slug)).toMatchObject({ level: "workshop", zaloGroupUrl: ZALO });
@@ -50,12 +67,12 @@ describe.skipIf(!integrationDatabaseUrl)("workshops (courses with level workshop
     expect(await res.json()).toMatchObject({ status: "reserved", zaloGroupUrl: ZALO });
     const [row] = await ctx.dataSource.query(`SELECT organization, note, quantity FROM course_enrollments WHERE "sessionId" = $1 ORDER BY "createdAt" DESC LIMIT 1`, [session]);
     expect(row).toEqual({ organization: "THCS Nguyễn Du", note: "Lớp 7A", quantity: 12 });
-    expect(await seatsLeft()).toBe(8);
+    expect(await seatsLeft()).toBe(18);
   });
 
   it("rejects a group larger than the seats left", async () => {
-    expect((await enroll({ quantity: 9 })).status).toBe(409);
-    expect(await seatsLeft()).toBe(8);
+    expect((await enroll({ quantity: 19 })).status).toBe(409);
+    expect(await seatsLeft()).toBe(18);
   });
 
   it("admin sets the Zalo group link", async () => {

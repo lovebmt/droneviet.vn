@@ -17,7 +17,10 @@ const card: CourseCard = {
 const workshop: CourseDetail = {
   ...card,
   descriptionMarkdown: "Chương trình chi tiết",
-  sessions: [{ id: "11111111-1111-4111-8111-111111111111", startsAt: "2026-12-12T01:00:00.000Z", capacity: 30, seatsLeft: 18 }],
+  sessions: [
+    { id: "11111111-1111-4111-8111-111111111111", startsAt: "2026-12-12T02:00:00.000Z", capacity: 30, seatsLeft: 18 },
+    { id: "22222222-2222-4222-8222-222222222222", startsAt: "2026-12-13T02:00:00.000Z", capacity: 30, seatsLeft: 30 },
+  ],
 };
 
 let fetchMock: ReturnType<typeof vi.fn>;
@@ -40,6 +43,21 @@ describe("workshop page", () => {
     const groupLinks = screen.getAllByRole("link", { name: /Tham gia nhóm Zalo/ });
     expect(groupLinks.length).toBeGreaterThan(0);
     for (const link of groupLinks) expect(link).toHaveAttribute("href", ZALO);
+  });
+
+  it("puts the schedule and registration before the programme", async () => {
+    await page();
+    const register = screen.getByRole("heading", { name: "Lịch và đăng ký" });
+    const programme = screen.getByRole("heading", { name: "Một buổi workshop gồm những gì" });
+    expect(register.compareDocumentPosition(programme) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("offers Saturday and Sunday at 9:00 by name", async () => {
+    await page();
+    const sessions = screen.getByRole("radiogroup", { name: "Chọn buổi workshop" });
+    expect(within(sessions).getByText("Thứ Bảy, 12/12/2026")).toBeInTheDocument();
+    expect(within(sessions).getByText("Chủ Nhật, 13/12/2026")).toBeInTheDocument();
+    expect(within(sessions).getAllByText("9:00")).toHaveLength(2);
   });
 
   it("shows the default intro without a workshop course", async () => {

@@ -6,13 +6,14 @@ test("a school registers for a workshop and is offered the Zalo group", async ({
   const staff = await browser.newContext();
   await signInAs(staff.request, "admin@droneviet.vn", "admin123");
   expect((await staff.request.patch(`${API}/admin/courses/workshop-trai-nghiem-drone`, { data: { zaloGroupUrl: zalo } })).ok()).toBeTruthy();
-  const startsAt = new Date(Date.now() + 10 * 86_400_000).toISOString();
-  expect((await staff.request.post(`${API}/admin/courses/workshop-trai-nghiem-drone/sessions`, { data: { startsAt, capacity: 40 } })).ok()).toBeTruthy();
   await staff.close();
 
   await page.goto("/giao-duc/workshop");
   await expect(page.getByRole("heading", { level: 1, name: "Workshop trải nghiệm drone" })).toBeVisible();
-  await expect(page.getByRole("radiogroup", { name: "Chọn buổi workshop" })).toBeVisible();
+  const sessions = page.getByRole("radiogroup", { name: "Chọn buổi workshop" });
+  await expect(sessions.getByText(/^Thứ Bảy, /)).toBeVisible();
+  await expect(sessions.getByText(/^Chủ Nhật, /)).toBeVisible();
+  await expect(sessions.getByText("9:00")).toHaveCount(2);
   await page.getByLabel(/Họ và tên/).fill("Cô Lan");
   await page.getByLabel(/Số điện thoại/).fill("0912345678");
   await page.getByLabel(/Trường hoặc đơn vị/).fill(`THCS E2E ${unique()}`);

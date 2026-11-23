@@ -42,10 +42,17 @@ export class CoursesController {
     if (!course) {
       throw new NotFoundException("Course not found");
     }
+    let sessions = this.upcoming(course.sessions);
+    if (course.level === "workshop") {
+      // Workshops: only the coming Saturday and Sunday at 9:00, created on demand.
+      const mornings = (await this.courses.ensureWorkshopSessions(course.id)).map((d) => d.getTime());
+      const all = await this.dataSource.getRepository(CourseSession).find({ where: { courseId: course.id } });
+      sessions = this.upcoming(all).filter((s) => mornings.includes(new Date(s.startsAt).getTime()));
+    }
     return {
       ...this.card(course),
       descriptionMarkdown: course.descriptionMarkdown,
-      sessions: this.upcoming(course.sessions).map((session) => ({
+      sessions: sessions.map((session) => ({
         id: session.id,
         startsAt: session.startsAt,
         capacity: session.capacity,
