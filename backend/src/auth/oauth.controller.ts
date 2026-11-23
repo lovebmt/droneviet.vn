@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Logger, Param, Post, Query, Res } from "@nestjs/common";
 import type { Response } from "express";
 import type { OauthProvider } from "./entities/oauth-ticket.entity";
+import { SessionService } from "./session.service";
 import { OauthFailure, OauthService } from "./oauth.service";
 
 const PROVIDERS: readonly OauthProvider[] = ["google", "zalo"];
@@ -16,7 +17,10 @@ function asProvider(value: string): OauthProvider {
 export class OauthController {
   private readonly logger = new Logger(OauthController.name);
 
-  constructor(private readonly oauth: OauthService) {}
+  constructor(
+    private readonly oauth: OauthService,
+    private readonly sessions: SessionService,
+  ) {}
 
   /** Lets the web app show only the sign-in buttons that are configured. */
   @Get("providers")
@@ -24,9 +28,10 @@ export class OauthController {
     return this.oauth.providers();
   }
 
+  /** Trades the one-time code for a session and sets the dv_session cookie (spec §9.2). */
   @Post("oauth/exchange")
-  exchange(@Body("code") code: string) {
-    return this.oauth.exchange(String(code ?? ""));
+  async exchange(@Body("code") code: string, @Res({ passthrough: true }) res: Response) {
+    return this.sessions.start(await this.oauth.exchange(String(code ?? "")), res);
   }
 
   @Get(":provider")

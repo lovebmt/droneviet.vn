@@ -14,7 +14,7 @@ function setup(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
   const res = { redirect: vi.fn() };
-  return { controller: new OauthController(oauth as never), oauth, res };
+  return { controller: new OauthController(oauth as never, { start: vi.fn(async (session: unknown) => session) } as never), oauth, res };
 }
 
 describe("OauthController", () => {

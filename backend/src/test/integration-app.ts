@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { randomBytes } from "node:crypto";
 import { DataSource } from "typeorm";
@@ -23,7 +23,8 @@ export async function bootIntegrationApp(extraEnv: Record<string, string> = {}):
   const { AppModule } = await import("../app.module.js");
   const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
   const app = moduleRef.createNestApplication();
-  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }));
+  const { configureApp } = await import("../app-setup.js");
+  configureApp(app);
   await app.listen(0);
   const dataSource = app.get(DataSource);
   await dataSource.runMigrations();

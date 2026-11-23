@@ -8,6 +8,8 @@ import { ContentTokenGuard } from "./content-token.guard";
 import { OauthTicket } from "./entities/oauth-ticket.entity";
 import { User } from "./entities/user.entity";
 import { JwtAuthGuard } from "./jwt-auth.guard";
+import { OptionalAuthGuard } from "./optional-auth.guard";
+import { SessionService } from "./session.service";
 import { resolveJwtSecret } from "./jwt-config";
 import { OauthController } from "./oauth.controller";
 import { OauthService } from "./oauth.service";
@@ -28,7 +30,7 @@ import { RolesGuard } from "./roles.guard";
     }),
   ],
   controllers: [AuthController, OauthController],
-  providers: [AuthService, OauthService, JwtAuthGuard, RolesGuard, ContentTokenGuard],
-  exports: [AuthService, JwtAuthGuard, JwtModule, RolesGuard, ContentTokenGuard],
+  providers: [AuthService, OauthService, JwtAuthGuard, OptionalAuthGuard, RolesGuard, ContentTokenGuard, SessionService],
+  exports: [AuthService, JwtAuthGuard, OptionalAuthGuard, JwtModule, RolesGuard, ContentTokenGuard],
 })
 export class AuthModule {}

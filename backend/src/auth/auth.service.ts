@@ -8,6 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository } from "typeorm";
 import { User, UserRole } from "./entities/user.entity";
+import { SESSION_TTL_SECONDS } from "./session-cookie";
 
 export interface LoginInput {
   email: string;
@@ -61,6 +62,19 @@ export class AuthService {
     );
 
     return this.issueSession(user);
+  }
+
+  /** Long-lived token stored in the httpOnly dv_session cookie. */
+  signSessionToken(user: { id: string; email: string; roles: UserRole[] }): Promise<string> {
+    return this.jwtService.signAsync({ sub: user.id, email: user.email, roles: user.roles }, { expiresIn: SESSION_TTL_SECONDS });
+  }
+
+  async profile(userId: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new UnauthorizedException("Account no longer exists");
+    }
+    return { id: user.id, email: user.email, displayName: user.displayName, roles: user.roles };
   }
 
   async issueSession(user: User) {
