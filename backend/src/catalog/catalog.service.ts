@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, Optional } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource, In } from "typeorm";
 import { PurchaseMode, ProductVariant } from "./entities/product-variant.entity";
@@ -8,6 +8,9 @@ import { InventoryItem } from "../inventory/entities/inventory-item.entity";
 import type { CatalogFilter, PublicProductCard, PublicProductDetail } from "./catalog-public.types";
 import { ComboItem } from "./entities/combo-item.entity";
 import { ComboSizeTier } from "./entities/combo-size-tier.entity";
+import { WebRevalidator } from "../common/web-revalidator";
+import type { ReplaceComboItemsDto, ReplaceSizeTiersDto } from "./dto/combo.dto";
+import type { UpdateProductDto, UpdateVariantDto } from "./dto/update-product.dto";
 
 export type { PublicProductCard, PublicProductDetail } from "./catalog-public.types";
 
@@ -44,7 +47,99 @@ export class CatalogService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    @Optional() private readonly revalidator?: WebRevalidator,
   ) {}
+
+  /** Admin list: every status, with variants and stock. */
+  async listForAdmin(): Promise<Product[]> {
+    return this.dataSource.getRepository(Product).find({
+      relations: { variants: { inventory: true } },
+      order: { sortOrder: "ASC", name: "ASC" },
+    });
+  }
+
+  async updateProduct(id: string, input: UpdateProductDto): Promise<Product> {
+    const repository = this.dataSource.getRepository(Product);
+    const product = await repository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
+    Object.assign(product, input);
+    const saved = await repository.save(product);
+    await this.revalidator?.revalidate(["catalog", `product:${saved.slug}`]);
+    return saved;
+  }
+
+  async updateVariant(id: string, input: UpdateVariantDto): Promise<ProductVariant> {
+    return this.dataSource.transaction(async (manager) => {
+      const variant = await manager.getRepository(ProductVariant).findOne({ where: { id }, relations: { product: true } });
+      if (!variant) {
+        throw new NotFoundException("Variant not found");
+      }
+      const { stock, ...fields } = input;
+      Object.assign(variant, fields);
+      const saved = await manager.getRepository(ProductVariant).save(variant);
+      if (stock !== undefined) {
+        const inventory = manager.getRepository(InventoryItem);
+        const existing = await inventory.findOneBy({ productVariantId: id });
+        await inventory.save(existing ? Object.assign(existing, { onHand: stock }) : inventory.create({ productVariantId: id, onHand: stock, reserved: 0 }));
+      }
+      await this.revalidator?.revalidate(["catalog", `product:${variant.product.slug}`]);
+      return saved;
+    });
+  }
+
+  async replaceComboItems(comboId: string, input: ReplaceComboItemsDto): Promise<void> {
+    const combo = await this.requireCombo(comboId);
+    const slugs = input.items.map((item) => item.productSlug);
+    const products = slugs.length
+      ? await this.dataSource.getRepository(Product).find({ where: { slug: In(slugs) } })
+      : [];
+    const bySlug = new Map(products.map((product) => [product.slug, product]));
+    const missing = slugs.filter((slug) => !bySlug.has(slug));
+    if (missing.length) {
+      throw new BadRequestException(`Unknown product slugs: ${missing.join(", ")}`);
+    }
+
+    await this.dataSource.transaction(async (manager) => {
+      const repository = manager.getRepository(ComboItem);
+      await repository.delete({ comboId });
+      await repository.save(
+        input.items.map((item, index) =>
+          repository.create({
+            comboId,
+            productId: bySlug.get(item.productSlug)!.id,
+            quantity: item.quantity,
+            note: item.note ?? null,
+            sortOrder: index,
+          }),
+        ),
+      );
+    });
+    await this.revalidator?.revalidate(["catalog", `product:${combo.slug}`]);
+  }
+
+  async replaceSizeTiers(comboId: string, input: ReplaceSizeTiersDto): Promise<void> {
+    const combo = await this.requireCombo(comboId);
+    await this.dataSource.transaction(async (manager) => {
+      const repository = manager.getRepository(ComboSizeTier);
+      await repository.delete({ comboId });
+      await repository.save(
+        input.tiers.map((tier) =>
+          repository.create({ comboId, students: tier.students, priceVnd: tier.priceVnd, label: tier.label ?? null }),
+        ),
+      );
+    });
+    await this.revalidator?.revalidate(["catalog", `product:${combo.slug}`]);
+  }
+
+  private async requireCombo(id: string): Promise<Product> {
+    const combo = await this.dataSource.getRepository(Product).findOneBy({ id });
+    if (!combo || combo.kind !== ProductKind.COMBO) {
+      throw new NotFoundException("Combo not found");
+    }
+    return combo;
+  }
 
   async listPublic(filter: CatalogFilter = {}): Promise<PublicProductCard[]> {
     const products = await this.dataSource.getRepository(Product).find({

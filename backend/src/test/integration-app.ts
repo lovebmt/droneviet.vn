@@ -35,3 +35,24 @@ export async function bootIntegrationApp(extraEnv: Record<string, string> = {}):
 export function uniqueSuffix(): string {
   return randomBytes(4).toString("hex");
 }
+
+/** Registers a user through the API and returns a bearer token; `roles` are applied directly in the DB. */
+export async function createUserToken(ctx: IntegrationApp, roles: string[] = ["customer"]): Promise<string> {
+  const email = `it-${uniqueSuffix()}@example.com`;
+  const password = "Integration-Password-123";
+  const register = await fetch(`${ctx.baseUrl}/auth/register`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ displayName: "Integration", email, password }),
+  });
+  if (!register.ok) {
+    throw new Error(`register failed: ${register.status} ${await register.text()}`);
+  }
+  await ctx.dataSource.query(`UPDATE users SET roles = $1 WHERE email = $2`, [JSON.stringify(roles), email]);
+  const login = await fetch(`${ctx.baseUrl}/auth/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  return ((await login.json()) as { accessToken: string }).accessToken;
+}

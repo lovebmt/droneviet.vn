@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { DataSource } from "typeorm";
-import { bootIntegrationApp, integrationDatabaseUrl, type IntegrationApp, uniqueSuffix } from "../test/integration-app.js";
+import { bootIntegrationApp, createUserToken, integrationDatabaseUrl, type IntegrationApp, uniqueSuffix } from "../test/integration-app.js";
 
 describe.skipIf(!integrationDatabaseUrl)("catalog v2 (public)", () => {
   let ctx: IntegrationApp;
@@ -115,5 +115,82 @@ describe.skipIf(!integrationDatabaseUrl)("catalog v2 (public)", () => {
   it("unknown or draft slug returns 404", async () => {
     expect((await get(`/catalog/products/${slug.draft}`)).status).toBe(404);
     expect((await get(`/catalog/products/khong-co-${s}`)).status).toBe(404);
+  });
+});
+
+describe.skipIf(!integrationDatabaseUrl)("catalog v2 (admin)", () => {
+  let ctx: IntegrationApp;
+  let admin: string;
+  let customer: string;
+  let productId: string;
+  let variantId: string;
+  let comboId: string;
+  const s = uniqueSuffix();
+  const productSlug = `a-drone-${s}`;
+  const comboSlug = `a-combo-${s}`;
+
+  beforeAll(async () => {
+    ctx = await bootIntegrationApp();
+    admin = await createUserToken(ctx, ["super_admin"]);
+    customer = await createUserToken(ctx, ["customer"]);
+    const [p] = await ctx.dataSource.query(
+      `INSERT INTO products (slug,name,summary,kind,status) VALUES ($1,'A Drone','s','drone','published') RETURNING id`, [productSlug]);
+    productId = p.id;
+    const [v] = await ctx.dataSource.query(
+      `INSERT INTO product_variants ("productId",sku,title,"priceVnd","purchaseMode","isActive") VALUES ($1,$2,'Mặc định',1000000,'checkout',true) RETURNING id`,
+      [productId, `A-${s}`]);
+    variantId = v.id;
+    await ctx.dataSource.query(`INSERT INTO inventory_items ("productVariantId","onHand",reserved) VALUES ($1,1,0)`, [variantId]);
+    const [c] = await ctx.dataSource.query(
+      `INSERT INTO products (slug,name,summary,kind,status) VALUES ($1,'A Combo','s','combo','published') RETURNING id`, [comboSlug]);
+    comboId = c.id;
+  }, 60_000);
+
+  afterAll(async () => {
+    await ctx?.close();
+  });
+
+  const send = (method: string, path: string, token: string, body: unknown) =>
+    fetch(`${ctx.baseUrl}${path}`, {
+      method,
+      headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+    });
+
+  it("admin can update specs and see them in public detail", async () => {
+    const specs = [{ group: "Pin", items: [{ label: "Dung lượng", value: "1S 450mAh" }] }];
+    expect((await send("PATCH", `/admin/catalog/products/${productId}`, admin, { specs, badge: "Mới", levels: ["thcs"] })).status).toBe(200);
+    expect((await send("PATCH", `/admin/catalog/variants/${variantId}`, admin, { priceVnd: 1_200_000, stock: 7 })).status).toBe(200);
+
+    const detail = await (await fetch(`${ctx.baseUrl}/catalog/products/${productSlug}`)).json();
+    expect(detail).toMatchObject({ specs, badge: "Mới", levels: ["thcs"], fromPriceVnd: 1_200_000 });
+    expect(detail.variants[0].stock).toBe(7);
+  });
+
+  it("replacing combo items rejects unknown product slugs with 400", async () => {
+    const bad = await send("PUT", `/admin/catalog/products/${comboId}/combo-items`, admin, {
+      items: [{ productSlug: `khong-co-${s}`, quantity: 2 }],
+    });
+    expect(bad.status).toBe(400);
+
+    const ok = await send("PUT", `/admin/catalog/products/${comboId}/combo-items`, admin, {
+      items: [{ productSlug, quantity: 12, note: "1 drone / 2 học sinh" }],
+    });
+    expect(ok.status).toBe(200);
+    const combo = await (await fetch(`${ctx.baseUrl}/catalog/products/${comboSlug}`)).json();
+    expect(combo.comboItems).toEqual([expect.objectContaining({ quantity: 12, note: "1 drone / 2 học sinh" })]);
+  });
+
+  it("size tiers must have positive students and price", async () => {
+    expect((await send("PUT", `/admin/catalog/products/${comboId}/size-tiers`, admin, { tiers: [{ students: 0, priceVnd: 1 }] })).status).toBe(400);
+    expect((await send("PUT", `/admin/catalog/products/${comboId}/size-tiers`, admin, { tiers: [{ students: 20, priceVnd: -5 }] })).status).toBe(400);
+    expect((await send("PUT", `/admin/catalog/products/${comboId}/size-tiers`, admin, { tiers: [{ students: 20, priceVnd: 150_000_000 }] })).status).toBe(200);
+    const combo = await (await fetch(`${ctx.baseUrl}/catalog/products/${comboSlug}`)).json();
+    expect(combo.fromPriceVnd).toBe(150_000_000);
+  });
+
+  it("customer role gets 403", async () => {
+    expect((await send("PATCH", `/admin/catalog/products/${productId}`, customer, { badge: "x" })).status).toBe(403);
+    expect((await fetch(`${ctx.baseUrl}/admin/catalog/products`, { headers: { authorization: `Bearer ${customer}` } })).status).toBe(403);
   });
 });

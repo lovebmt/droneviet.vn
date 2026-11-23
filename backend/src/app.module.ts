@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { CommonModule } from "./common/web-revalidator";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
@@ -17,6 +18,7 @@ import { PromotionsModule } from "./promotions/promotions.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    CommonModule,
     DatabaseModule,
     AuthModule,
     CatalogModule,
