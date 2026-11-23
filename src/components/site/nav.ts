@@ -18,7 +18,6 @@ export const mainNav: NavItem[] = [
     label: "Giáo dục",
     href: "/giao-duc",
     children: [
-      { label: "Tổng quan giáo dục", href: "/giao-duc", description: "Giải pháp drone cho nhà trường" },
       { label: "Tiểu học", href: "/giao-duc/tieu-hoc", description: "Bay an toàn, học qua trò chơi" },
       { label: "THCS", href: "/giao-duc/thcs", description: "Lắp ráp, lập trình, cảm biến" },
       { label: "THPT & quốc tế", href: "/giao-duc/thpt", description: "Dự án STEM, chương trình song ngữ" },

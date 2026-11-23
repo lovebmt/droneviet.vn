@@ -47,7 +47,7 @@ describe("SiteHeader", () => {
     fireEvent.mouseEnter(item);
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(within(nav).getByRole("link", { name: /Workshop trải nghiệm/ })).toHaveAttribute("href", "/giao-duc/workshop");
-    expect(within(nav).getByRole("link", { name: /Tổng quan giáo dục/ })).toHaveAttribute("href", "/giao-duc");
+    expect(within(nav).queryByRole("link", { name: /Tổng quan giáo dục/ })).not.toBeInTheDocument();
 
     fireEvent.click(trigger); // pressing the parent keeps the menu open and goes nowhere
     expect(trigger).toHaveAttribute("aria-expanded", "true");
@@ -96,7 +96,8 @@ describe("SiteHeader", () => {
     const dialog = screen.getByRole("dialog", { name: "Menu" });
     expect(within(dialog).queryByRole("link", { name: "Giáo dục" })).not.toBeInTheDocument();
     expect(within(dialog).getByText("Giáo dục")).toBeInTheDocument();
-    expect(within(dialog).getByRole("link", { name: "Tổng quan giáo dục" })).toHaveAttribute("href", "/giao-duc");
+    expect(within(dialog).queryByRole("link", { name: "Tổng quan giáo dục" })).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Tiểu học" })).toHaveAttribute("href", "/giao-duc/tieu-hoc");
     expect(within(dialog).getByRole("link", { name: "Bay mô phỏng" })).toHaveAttribute("href", "/bay-mo-phong");
   });
 
