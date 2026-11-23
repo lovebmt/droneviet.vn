@@ -40,7 +40,6 @@ export const mainNav: NavItem[] = [
     label: "Đào tạo & chứng chỉ",
     href: "/dao-tao",
     children: [
-      { label: "Khóa học", href: "/dao-tao", description: "Lịch học, học phí, giữ chỗ" },
       { label: "Chứng chỉ, giấy phép bay", href: "/dao-tao/chung-chi", description: "Hạng A, Hạng B, học ở đâu" },
       { label: "Cấp phép bay", href: "/dao-tao/cap-phep", description: "Hồ sơ, thời hạn, khi nào được miễn" },
       { label: "Quy định pháp lý", href: "/dao-tao/quy-dinh", description: "Văn bản đang áp dụng" },
