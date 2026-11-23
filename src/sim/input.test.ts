@@ -1,16 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { calibrateFromSamples, defaultCalibration, gamepadSticks, keyboardSticks, mergeSticks } from "./input";
-import type { Sticks } from "./physics";
+import { createDrone, HOVER_THROTTLE, simulate, type Sticks } from "./physics";
 
 const idle: Sticks = { throttle: 0, yaw: 0, pitch: 0, roll: 0 };
 
 describe("input", () => {
-  it("keyboard raises throttle and it holds", () => {
+  it("keyboard W climbs, S descends and releasing returns to hover", () => {
     let s = idle;
-    for (let i = 0; i < 30; i++) s = keyboardSticks(new Set(["KeyW"]), s, 1 / 60);
-    expect(s.throttle).toBeGreaterThan(0.3);
-    const held = keyboardSticks(new Set(), s, 1 / 60);
-    expect(held.throttle).toBe(s.throttle);
+    for (let i = 0; i < 60; i++) s = keyboardSticks(new Set(["KeyW"]), s, 1 / 60);
+    expect(s.throttle).toBeGreaterThan(HOVER_THROTTLE + 0.2);
+    for (let i = 0; i < 60; i++) s = keyboardSticks(new Set(), s, 1 / 60);
+    expect(s.throttle).toBeCloseTo(HOVER_THROTTLE, 2);
+    for (let i = 0; i < 60; i++) s = keyboardSticks(new Set(["KeyS"]), s, 1 / 60);
+    expect(s.throttle).toBeLessThan(HOVER_THROTTLE);
+    expect(s.throttle).toBeGreaterThan(HOVER_THROTTLE - 0.15);
     expect(keyboardSticks(new Set(["ArrowUp", "ArrowRight", "KeyD"]), s, 1 / 60)).toMatchObject({ pitch: 1, roll: 1, yaw: 1 });
     expect(keyboardSticks(new Set(), s, 1 / 60)).toMatchObject({ pitch: 0, roll: 0, yaw: 0 });
   });
@@ -40,5 +43,18 @@ describe("input", () => {
 
   it("merge keeps the strongest input per axis", () => {
     expect(mergeSticks({ ...idle, roll: 0.2, throttle: 0.5 }, { ...idle, roll: -0.8, throttle: 0.3 })).toEqual({ throttle: 0.5, yaw: 0, pitch: 0, roll: -0.8 });
+  });
+
+  it("holding S from 3 m lands without crashing", () => {
+    const drone = createDrone();
+    drone.position.y = 3;
+    let s: Sticks = { ...idle, throttle: HOVER_THROTTLE };
+    let crashes = 0;
+    for (let i = 0; i < 10 * 60; i++) {
+      s = keyboardSticks(new Set(["KeyS"]), s, 1 / 60);
+      crashes += simulate(drone, s, { mode: "angle" }, 1 / 60).crashed ? 1 : 0;
+    }
+    expect(drone.position.y).toBe(0);
+    expect(crashes).toBe(0);
   });
 });

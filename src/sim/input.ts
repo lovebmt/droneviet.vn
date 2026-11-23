@@ -1,13 +1,18 @@
-import type { Sticks } from "./physics";
+import { HOVER_THROTTLE, type Sticks } from "./physics";
 
-/** Keyboard: W/S throttle (holds like a real throttle), A/D yaw, arrows pitch and roll. */
-const THROTTLE_RATE = 0.8; // per second while held
+/**
+ * Keyboard: W climbs, S descends gently (slow enough to touch down without a crash), neither holds
+ * a hover — easier for beginners than a held throttle. A/D yaw, arrows pitch and roll.
+ */
+const CLIMB = HOVER_THROTTLE + 0.3;
+const DESCEND = HOVER_THROTTLE - 0.08;
+const THROTTLE_SLEW = 2; // per second
 
 export function keyboardSticks(pressed: ReadonlySet<string>, prev: Sticks, dt: number): Sticks {
   const has = (...codes: string[]) => codes.some((c) => pressed.has(c));
-  let throttle = prev.throttle;
-  if (has("KeyW")) throttle += THROTTLE_RATE * dt;
-  if (has("KeyS")) throttle -= THROTTLE_RATE * dt;
+  const target = has("KeyW") && !has("KeyS") ? CLIMB : has("KeyS") && !has("KeyW") ? DESCEND : HOVER_THROTTLE;
+  const step = THROTTLE_SLEW * dt;
+  const throttle = prev.throttle + Math.max(-step, Math.min(step, target - prev.throttle));
   return {
     throttle: Math.min(1, Math.max(0, throttle)),
     yaw: (has("KeyD") ? 1 : 0) - (has("KeyA") ? 1 : 0),
