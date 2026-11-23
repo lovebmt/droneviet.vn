@@ -61,6 +61,14 @@ describe.skipIf(!integrationDatabaseUrl)("media uploads", () => {
     expect((await upload(handler, "y.svg", "image/svg+xml")).status).toBe(400);
   });
 
+  it("serves media sandboxed so an SVG can never run script on the API origin", async () => {
+    const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4"/></svg>');
+    const media = (await (await upload(svg, "so-do.svg", "image/svg+xml")).json()) as { url: string };
+    const served = await fetch(`${ctx.baseUrl}${new URL(media.url).pathname}`);
+    expect(served.headers.get("content-security-policy")).toBe("default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
+    expect(served.headers.get("x-content-type-options")).toBe("nosniff");
+  });
+
   it("GET unknown id returns 404", async () => {
     expect((await fetch(`${ctx.baseUrl}/media/00000000-0000-4000-8000-000000000000/x.webp`)).status).toBe(404);
   });

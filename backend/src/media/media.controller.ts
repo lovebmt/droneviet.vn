@@ -13,6 +13,8 @@ export class MediaController {
     const { body, contentType } = await this.media.read(id);
     res.setHeader("Content-Type", contentType);
     res.setHeader("X-Content-Type-Options", "nosniff");
+    // Uploaded SVGs are sanitised, but never let any media file run script on the API origin.
+    res.setHeader("Content-Security-Policy", "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
     res.send(body);
   }
 }
