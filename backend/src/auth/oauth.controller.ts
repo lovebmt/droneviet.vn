@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Logger, Param, Post, Query, Res } from "@nestjs/common";
 import type { Response } from "express";
 import type { OauthProvider } from "./entities/oauth-ticket.entity";
-import { OauthService } from "./oauth.service";
+import { OauthFailure, OauthService } from "./oauth.service";
 
 const PROVIDERS: readonly OauthProvider[] = ["google", "zalo"];
 
@@ -46,10 +46,13 @@ export class OauthController {
   ) {
     const which = asProvider(provider);
     const web = this.oauth.frontendUrl();
+    this.logger.log(
+      `${which} callback: code=${code ? "present" : "missing"} state=${state ? "present" : "missing"} provider_error=${error ?? "none"}`,
+    );
 
     try {
       if (error || !code) {
-        throw new BadRequestException(error ?? "Missing authorization code");
+        throw new OauthFailure("denied", error ?? "Missing authorization code");
       }
       const exchangeCode =
         which === "google"
@@ -58,8 +61,12 @@ export class OauthController {
       const params = new URLSearchParams({ code: exchangeCode, provider: which });
       return res.redirect(`${web}/dang-nhap/callback?${params}`);
     } catch (failure) {
-      this.logger.warn(`${which} sign-in failed: ${failure instanceof Error ? failure.message : failure}`);
-      return res.redirect(`${web}/dang-nhap?error=${which}`);
+      const reason = failure instanceof OauthFailure ? failure.reason : "unknown";
+      this.logger.error(
+        `${which} sign-in failed (reason=${reason}): ${failure instanceof Error ? failure.message : String(failure)}`,
+        failure instanceof Error && !(failure instanceof OauthFailure) ? failure.stack : undefined,
+      );
+      return res.redirect(`${web}/dang-nhap?error=${which}&reason=${reason}`);
     }
   }
 }

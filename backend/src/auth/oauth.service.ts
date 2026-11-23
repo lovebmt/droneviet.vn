@@ -7,6 +7,24 @@ import { AuthService } from "./auth.service";
 import { OauthProvider, OauthTicket } from "./entities/oauth-ticket.entity";
 import { User, UserRole } from "./entities/user.entity";
 
+export type OauthFailureReason =
+  | "config"
+  | "denied"
+  | "profile"
+  | "state"
+  | "token_exchange"
+  | "unknown";
+
+/** A sign-in failure that names the step that broke; the web shows `reason` as an error code. */
+export class OauthFailure extends BadRequestException {
+  constructor(
+    readonly reason: OauthFailureReason,
+    message: string,
+  ) {
+    super({ message, reason });
+  }
+}
+
 const STATE_TTL_MS = 10 * 60 * 1000;
 const EXCHANGE_TTL_MS = 60 * 1000;
 
@@ -66,7 +84,7 @@ export class OauthService {
     this.assertConfigured("google");
     await this.consumeState("google", state);
 
-    const token = await this.postForm<{ access_token?: string }>("https://oauth2.googleapis.com/token", {
+    const token = await this.postForm<{ access_token?: string }>("google token exchange", "https://oauth2.googleapis.com/token", {
       client_id: this.env("GOOGLE_CLIENT_ID"),
       client_secret: this.env("GOOGLE_CLIENT_SECRET"),
       code,
@@ -74,15 +92,16 @@ export class OauthService {
       redirect_uri: this.callbackUrl("google"),
     });
     if (!token.access_token) {
-      throw new BadRequestException("Google token exchange failed");
+      throw new OauthFailure("token_exchange", "Google token exchange failed");
     }
 
     const profile = await this.getJson<{ id?: string; email?: string; name?: string }>(
+      "google profile",
       "https://www.googleapis.com/oauth2/v2/userinfo",
       { Authorization: `Bearer ${token.access_token}` },
     );
     if (!profile.id || !profile.email) {
-      throw new BadRequestException("Google profile is missing an id or email");
+      throw new OauthFailure("profile", "Google profile is missing an id or email");
     }
 
     const user = await this.upsertUser("googleId", {
@@ -90,6 +109,7 @@ export class OauthService {
       email: profile.email,
       providerId: profile.id,
     });
+    this.logger.log(`google signed in user=${user.id}`);
     return this.issueExchange("google", user.id);
   }
 
@@ -97,6 +117,7 @@ export class OauthService {
     this.assertConfigured("zalo");
     const codeVerifier = randomBytes(32).toString("base64url");
     const state = await this.issueState("zalo", codeVerifier);
+    this.logger.log(`zalo start app_id=${this.env("ZALO_APP_ID")} redirect_uri=${this.callbackUrl("zalo")}`);
     const params = new URLSearchParams({
       app_id: this.env("ZALO_APP_ID"),
       code_challenge: createHash("sha256").update(codeVerifier).digest("base64url"),
@@ -112,6 +133,7 @@ export class OauthService {
     const ticket = await this.consumeState("zalo", state);
 
     const token = await this.postForm<{ access_token?: string }>(
+      "zalo token exchange",
       "https://oauth.zaloapp.com/v4/access_token",
       {
         app_id: this.env("ZALO_APP_ID"),
@@ -122,15 +144,16 @@ export class OauthService {
       { secret_key: this.env("ZALO_APP_SECRET") },
     );
     if (!token.access_token) {
-      throw new BadRequestException("Zalo token exchange failed");
+      throw new OauthFailure("token_exchange", "Zalo token exchange failed");
     }
 
     const profile = await this.getJson<{ id?: string | number; name?: string }>(
+      "zalo profile",
       "https://graph.zalo.me/v2.0/me?fields=id,name",
       { access_token: token.access_token },
     );
     if (!profile.id) {
-      throw new BadRequestException("Zalo profile is missing an id");
+      throw new OauthFailure("profile", "Zalo profile is missing an id");
     }
 
     const zaloId = String(profile.id);
@@ -140,6 +163,7 @@ export class OauthService {
       email: `zalo_${zaloId}@users.droneviet.vn`,
       providerId: zaloId,
     });
+    this.logger.log(`zalo signed in user=${user.id}`);
     return this.issueExchange("zalo", user.id);
   }
 
@@ -150,6 +174,7 @@ export class OauthService {
       await this.tickets.delete({ id: ticket.id });
     }
     if (!ticket || !ticket.userId || ticket.expiresAt.getTime() < Date.now()) {
+      this.logger.warn(`exchange rejected: ${ticket ? "expired" : "unknown code"}`);
       throw new BadRequestException("Sign-in link expired - please try again");
     }
 
@@ -209,7 +234,10 @@ export class OauthService {
       await this.tickets.delete({ id: ticket.id });
     }
     if (!ticket || ticket.expiresAt.getTime() < Date.now()) {
-      throw new BadRequestException("Sign-in session expired - please try again");
+      this.logger.warn(
+        `${provider} state rejected: ${!state ? "missing" : ticket ? "expired" : "unknown or already used"}`,
+      );
+      throw new OauthFailure("state", "Sign-in session expired - please try again");
     }
     return ticket;
   }
@@ -231,7 +259,8 @@ export class OauthService {
 
   private assertConfigured(provider: OauthProvider): void {
     if (!this.providers()[provider]) {
-      throw new BadRequestException(`${provider} sign-in is not configured`);
+      this.logger.warn(`${provider} config missing: client id/secret not set`);
+      throw new OauthFailure("config", `${provider} sign-in is not configured`);
     }
   }
 
@@ -239,17 +268,62 @@ export class OauthService {
     return (this.config.get<string>(key) ?? "").trim();
   }
 
-  private async postForm<T>(url: string, form: Record<string, string>, headers: Record<string, string> = {}) {
+  private async postForm<T>(
+    label: string,
+    url: string,
+    form: Record<string, string>,
+    headers: Record<string, string> = {},
+  ) {
     const response = await fetch(url, {
       body: new URLSearchParams(form),
       headers: { "content-type": "application/x-www-form-urlencoded", ...headers },
       method: "POST",
     });
-    return (await response.json()) as T;
+    return this.readJson<T>(label, response);
   }
 
-  private async getJson<T>(url: string, headers: Record<string, string>) {
+  private async getJson<T>(label: string, url: string, headers: Record<string, string>) {
     const response = await fetch(url, { headers });
-    return (await response.json()) as T;
+    return this.readJson<T>(label, response);
   }
+
+  /** Parses a provider response and logs its status plus only its error fields (never tokens or secrets). */
+  private async readJson<T>(label: string, response: Response): Promise<T> {
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      this.logger.warn(`${label}: HTTP ${response.status} with a non-JSON body`);
+      return {} as T;
+    }
+
+    const failure = describeProviderError(body);
+    if (failure) {
+      this.logger.warn(`${label}: HTTP ${response.status} ${failure}`);
+    } else {
+      this.logger.log(`${label}: HTTP ${response.status} ok`);
+    }
+    return body as T;
+  }
+}
+
+const PROVIDER_ERROR_FIELDS = [
+  "error",
+  "error_name",
+  "error_reason",
+  "error_description",
+  "error_uri",
+  "message",
+];
+
+/** Returns the provider's error fields as JSON, or null when the body carries none. */
+function describeProviderError(body: unknown): string | null {
+  if (!body || typeof body !== "object") {
+    return null;
+  }
+  const record = body as Record<string, unknown>;
+  const picked = Object.fromEntries(
+    PROVIDER_ERROR_FIELDS.filter((key) => record[key] !== undefined).map((key) => [key, record[key]]),
+  );
+  return Object.keys(picked).length > 0 ? JSON.stringify(picked) : null;
 }

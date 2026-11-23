@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, Logger } from "@nestjs/common";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OauthTicket } from "./entities/oauth-ticket.entity";
 import { User, UserRole } from "./entities/user.entity";
@@ -53,7 +53,8 @@ function setup(env: Record<string, string> = ENV) {
 }
 
 function stubFetch(responses: Record<string, unknown>) {
-  const fetchMock = vi.fn(async (url: string) => {
+  const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+    void init;
     const match = Object.keys(responses).find((prefix) => String(url).startsWith(prefix));
     if (!match) throw new Error(`unexpected fetch ${url}`);
     return { ok: true, json: async () => responses[match] };
@@ -64,7 +65,19 @@ function stubFetch(responses: Record<string, unknown>) {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
+
+/** Collects every message the Nest Logger would print. */
+function capturedLogs(): string[] {
+  const lines: string[] = [];
+  for (const level of ["log", "warn", "error"] as const) {
+    vi.spyOn(Logger.prototype, level).mockImplementation((message: unknown) => {
+      lines.push(String(message));
+    });
+  }
+  return lines;
+}
 
 describe("OauthService", () => {
   it("reports only providers whose credentials are configured", () => {
@@ -186,5 +199,79 @@ describe("OauthService", () => {
     const url = new URL(await service.startZalo());
 
     expect(url.searchParams.get("redirect_uri")).toBe("https://www.droneviet.vn/auth/zalo/callback");
+  });
+
+  it("reports a Zalo token-exchange failure with a reason code and Zalo's error, never secrets", async () => {
+    const logs = capturedLogs();
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": {
+        error: -14002,
+        error_name: "Invalid code",
+        error_reason: "code expired",
+      },
+    });
+
+    const failure = await service.finishZalo("auth-code-123", state).catch((error: unknown) => error);
+
+    expect(failure).toBeInstanceOf(BadRequestException);
+    expect(failure).toMatchObject({ reason: "token_exchange" });
+    const text = logs.join("\n");
+    expect(text).toContain("zalo token exchange");
+    expect(text).toContain("Invalid code");
+    expect(text).toContain("code expired");
+    expect(text).not.toContain("zalo-secret");
+    expect(text).not.toContain("auth-code-123");
+  });
+
+  it("reports a Zalo profile failure without leaking the access token", async () => {
+    const logs = capturedLogs();
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access-token" },
+      "https://graph.zalo.me/v2.0/me": { error: -216, message: "Access token is invalid" },
+    });
+
+    const failure = await service.finishZalo("auth-code", state).catch((error: unknown) => error);
+
+    expect(failure).toMatchObject({ reason: "profile" });
+    const text = logs.join("\n");
+    expect(text).toContain("zalo profile");
+    expect(text).toContain("Access token is invalid");
+    expect(text).not.toContain("z-access-token");
+  });
+
+  it("reports an unknown or replayed state, and a missing configuration, with their own reasons", async () => {
+    const logs = capturedLogs();
+
+    const forged = await setup().service.finishZalo("code", "forged").catch((error: unknown) => error);
+    const unconfigured = await setup({ ...ENV, ZALO_APP_ID: "" }).service
+      .finishZalo("code", "s")
+      .catch((error: unknown) => error);
+
+    expect(forged).toMatchObject({ reason: "state" });
+    expect(unconfigured).toMatchObject({ reason: "config" });
+    expect(logs.join("\n")).toContain("zalo state");
+  });
+
+  it("logs each successful Zalo step so a healthy sign-in can be followed in the logs", async () => {
+    const logs = capturedLogs();
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access" },
+      "https://graph.zalo.me/v2.0/me": { id: "z-9", name: "Bình" },
+    });
+
+    await service.finishZalo("auth-code", state);
+
+    const text = logs.join("\n");
+    expect(text).toContain("zalo start");
+    expect(text).toContain("zalo token exchange");
+    expect(text).toContain("zalo profile");
+    expect(text).toContain("zalo signed in");
+    expect(text).not.toContain("z-access");
   });
 });

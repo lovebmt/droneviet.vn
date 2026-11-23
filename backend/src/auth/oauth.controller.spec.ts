@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { OauthController } from "./oauth.controller";
+import { OauthFailure } from "./oauth.service";
 
 function setup(overrides: Record<string, unknown> = {}) {
   const oauth = {
@@ -40,8 +41,18 @@ describe("OauthController", () => {
     const { controller, res } = setup({ finishGoogle: vi.fn(async () => { throw new Error("boom"); }) });
     await controller.callback("google", "auth-code", "s", undefined, res as never);
     await controller.callback("google", undefined, "s", "access_denied", res as never);
-    expect(res.redirect).toHaveBeenNthCalledWith(1, "https://www.droneviet.vn/dang-nhap?error=google");
-    expect(res.redirect).toHaveBeenNthCalledWith(2, "https://www.droneviet.vn/dang-nhap?error=google");
+    expect(res.redirect).toHaveBeenNthCalledWith(1, "https://www.droneviet.vn/dang-nhap?error=google&reason=unknown");
+    expect(res.redirect).toHaveBeenNthCalledWith(2, "https://www.droneviet.vn/dang-nhap?error=google&reason=denied");
+  });
+
+  it("passes the failing step back to the web so the login page can show a reason code", async () => {
+    const { controller, res } = setup({
+      finishZalo: vi.fn(async () => {
+        throw new OauthFailure("token_exchange", "Zalo token exchange failed");
+      }),
+    });
+    await controller.callback("zalo", "auth-code", "s", undefined, res as never);
+    expect(res.redirect).toHaveBeenCalledWith("https://www.droneviet.vn/dang-nhap?error=zalo&reason=token_exchange");
   });
 
   it("rejects unknown providers on start", async () => {

@@ -17,9 +17,11 @@ const providerLabels: Record<OauthProvider, string> = { google: "Google", zalo: 
 export function CustomerGate({
   mode,
   oauthError,
+  oauthReason,
 }: {
   mode: "login" | "register";
   oauthError?: OauthProvider;
+  oauthReason?: string;
 }) {
   const [message, setMessage] = useState(
     oauthError ? `Đăng nhập ${providerLabels[oauthError]} không thành công. Vui lòng thử lại.` : "",
@@ -190,6 +192,9 @@ export function CustomerGate({
                   : "Đăng nhập"}
             </button>
             {message ? <p className="mt-4 text-sm text-red-700">{message}</p> : null}
+            {oauthError && oauthReason ? (
+              <p className="mt-1 text-xs text-slate-500">Mã lỗi: {oauthReason}</p>
+            ) : null}
           </form>
 
           <p className="mt-6 text-sm text-slate-600">

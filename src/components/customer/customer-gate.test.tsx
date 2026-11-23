@@ -43,4 +43,11 @@ describe("CustomerGate social sign-in", () => {
 
     expect(await screen.findByText("Đăng nhập Zalo không thành công. Vui lòng thử lại.")).toBeInTheDocument();
   });
+
+  it("shows the failing step as a reason code so a failed sign-in can be debugged", async () => {
+    mockProviders({ google: true, zalo: true });
+    render(<CustomerGate mode="login" oauthError="zalo" oauthReason="token_exchange" />);
+
+    expect(await screen.findByText("Mã lỗi: token_exchange")).toBeInTheDocument();
+  });
 });
