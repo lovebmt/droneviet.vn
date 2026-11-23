@@ -54,7 +54,7 @@ describe("createDatabaseOptions", () => {
         PromoCode,
       ]),
     );
-    expect(options.migrations).toHaveLength(5);
+    expect(options.migrations).toHaveLength(6);
   });
 
   it("uses DATABASE_URL with TLS when sslmode=require", () => {

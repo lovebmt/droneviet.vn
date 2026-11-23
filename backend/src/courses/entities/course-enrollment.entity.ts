@@ -19,6 +19,10 @@ export class CourseEnrollment {
   @Column({ type: "varchar", nullable: true })
   orderId!: string | null;
 
+  /** Account that reserved the seat, when signed in. */
+  @Column({ type: "uuid", nullable: true })
+  userId!: string | null;
+
   @Column()
   contactName!: string;
 

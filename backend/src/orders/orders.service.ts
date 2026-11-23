@@ -21,6 +21,8 @@ import { OrderLine } from "./entities/order-line.entity";
 import { canTransitionOrder, OrderStatus } from "./order-workflow";
 
 export interface CreateOrderInput {
+  /** Signed-in buyer, if any. */
+  userId?: string | null;
   contactEmail?: string;
   contactName: string;
   contactPhone: string;
@@ -145,6 +147,7 @@ export class OrdersService {
           contactEmail: input.contactEmail ?? null,
           contactName: input.contactName,
           contactPhone: input.contactPhone,
+          userId: input.userId ?? null,
           orderNumber: `DV-${randomUUID().slice(0, 8).toUpperCase()}`,
           paymentMethod: input.paymentMethod,
           reservationExpiresAt: new Date(Date.now() + 30 * 60 * 1000),

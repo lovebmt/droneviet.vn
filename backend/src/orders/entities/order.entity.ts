@@ -1,4 +1,6 @@
 import {
+  JoinColumn,
+  ManyToOne,
   Column,
   CreateDateColumn,
   Entity,
@@ -16,6 +18,8 @@ export enum OrderPaymentMethod {
   COD = "cod",
   PAYOS = "payos",
 }
+
+import { User } from "../../auth/entities/user.entity";
 
 @Entity("orders")
 export class Order {
@@ -65,6 +69,14 @@ export class Order {
 
   @Column({ type: "timestamp", nullable: true })
   reservationExpiresAt!: Date | null;
+
+  /** Set when the buyer was signed in; guest orders stay null (spec §9.2). */
+  @Column({ type: "uuid", nullable: true })
+  userId!: string | null;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "userId" })
+  user!: User | null;
 
   @OneToMany(() => OrderLine, (line) => line.order)
   lines!: OrderLine[];

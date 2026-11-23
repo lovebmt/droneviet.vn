@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { DataSource, DataSourceOptions } from "typeorm";
+import { OrdersUser1795421997305 } from "./migrations/1795421997305-OrdersUser";
 import { ContentV21795421727838 } from "./migrations/1795421727838-ContentV2";
 import { Media1795421508316 } from "./migrations/1795421508316-Media";
 import { CatalogV21795421260457 } from "./migrations/1795421260457-CatalogV2";
@@ -70,7 +71,7 @@ export function createDatabaseOptions(
       ComboSizeTier,
       Media,
     ],
-    migrations: [PostgresInitial1795401062894, OauthSignIn1795405151810, CatalogV21795421260457, Media1795421508316, ContentV21795421727838],
+    migrations: [PostgresInitial1795401062894, OauthSignIn1795405151810, CatalogV21795421260457, Media1795421508316, ContentV21795421727838, OrdersUser1795421997305],
     synchronize: false,
   };
 }

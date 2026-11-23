@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
+  IsUUID,
   Min,
   ValidateNested,
 } from "class-validator";
@@ -18,7 +19,7 @@ export class CreateOrderLineDto {
   @IsString()
   courseSessionId?: string;
 
-  @IsString()
+  @IsUUID()
   variantId!: string;
 }
 

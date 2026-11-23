@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -6,7 +7,10 @@ import {
   Param,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from "@nestjs/common";
+import { OptionalAuthGuard } from "../auth/optional-auth.guard";
 import { OrderPaymentMethod } from "./entities/order.entity";
 import { PaymentsService } from "../payments/payments.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
@@ -22,7 +26,8 @@ export class OrdersController {
   ) {}
 
   @Post()
-  async createOrder(@Body() input: CreateOrderDto) {
+  @UseGuards(OptionalAuthGuard)
+  async createOrder(@Body() input: CreateOrderDto, @Req() request: { user?: { sub?: string } } = {}) {
     // Serverless has no background timer; free stock held by expired orders before reserving more.
     await this.ordersService.releaseExpiredReservations().catch((error: unknown) => {
       this.logger.error(
@@ -30,7 +35,7 @@ export class OrdersController {
       );
     });
 
-    const order = await this.ordersService.createOrder(input);
+    const order = await this.ordersService.createOrder({ ...input, userId: request.user?.sub ?? null });
 
     if (order.paymentMethod === OrderPaymentMethod.PAYOS) {
       const payment = await this.paymentsService.createPayosCheckout(order);
@@ -45,6 +50,9 @@ export class OrdersController {
     @Param("orderNumber") orderNumber: string,
     @Query("phone") phone: string,
   ) {
+    if (!phone?.trim()) {
+      throw new BadRequestException("Enter the phone number used for the order");
+    }
     return this.ordersService.findOrderForContact(orderNumber, phone);
   }
 }
