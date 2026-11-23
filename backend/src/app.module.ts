@@ -3,6 +3,8 @@ import { ConfigModule } from "@nestjs/config";
 import { CommonModule } from "./common/web-revalidator";
 import { MediaModule } from "./media/media.module";
 import { MeModule } from "./me/me.module";
+import { SettingsModule } from "./settings/settings.module";
+import { SimulatorModule } from "./simulator/simulator.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
@@ -23,6 +25,8 @@ import { PromotionsModule } from "./promotions/promotions.module";
     CommonModule,
     MediaModule,
     MeModule,
+    SettingsModule,
+    SimulatorModule,
     DatabaseModule,
     AuthModule,
     CatalogModule,

@@ -1,4 +1,5 @@
 import {
+  IsIn,
   IsEmail,
   IsInt,
   IsOptional,
@@ -33,4 +34,17 @@ export class CreateQuoteRequestDto {
   @IsOptional()
   @IsString()
   requirements?: string;
+
+  @IsOptional()
+  @IsString()
+  productSlug?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  students?: number;
+
+  @IsOptional()
+  @IsIn(["school", "center", "university", "company", "other"])
+  organizationType?: string;
 }

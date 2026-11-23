@@ -39,6 +39,24 @@ export class Course {
   @Column({ type: "bigint", nullable: true })
   tuitionVnd!: number | null;
 
+  /** co-ban | nang-cao | chung-chi */
+  @Column({ type: "varchar", default: "co-ban" })
+  level!: string;
+
+  /** truc-tiep | online | ket-hop */
+  @Column({ type: "varchar", default: "truc-tiep" })
+  format!: string;
+
+  @Column({ type: "int", nullable: true })
+  durationHours!: number | null;
+
+  @Column({ type: "text", nullable: true })
+  descriptionMarkdown!: string | null;
+
+  /** Certificate path this course belongs to (spec §8.5). */
+  @Column({ type: "varchar", nullable: true })
+  certificateTrack!: string | null;
+
   @OneToMany(() => CourseSession, (session) => session.course)
   sessions!: CourseSession[];
 

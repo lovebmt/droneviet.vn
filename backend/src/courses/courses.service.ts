@@ -1,4 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException,
+  ConflictException,
+} from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource, EntityManager } from "typeorm";
 import { CourseEnrollment } from "./entities/course-enrollment.entity";
@@ -15,6 +17,8 @@ export interface ReserveEnrollmentInput {
   productVariantId: string;
   quantity: number;
   sessionId: string;
+  /** Signed-in account reserving the seat. */
+  userId?: string | null;
 }
 
 @Injectable()
@@ -57,7 +61,7 @@ export class CoursesService {
     }
 
     if (session.capacity - session.reservedSeats < input.quantity) {
-      throw new BadRequestException("Course session no longer has enough seats");
+      throw new ConflictException("Course session no longer has enough seats");
     }
 
     session.reservedSeats += input.quantity;
@@ -70,6 +74,7 @@ export class CoursesService {
         contactName: input.contactName,
         contactPhone: input.contactPhone,
         orderId: input.orderId ?? null,
+        userId: input.userId ?? null,
         quantity: input.quantity,
         sessionId: session.id,
         status: "reserved",

@@ -21,6 +21,9 @@ export class QuotesService {
         phone: input.phone,
         quantity: input.quantity,
         requirements: input.requirements ?? null,
+        productSlug: input.productSlug ?? null,
+        students: input.students ?? null,
+        organizationType: input.organizationType ?? null,
         status: QuoteStatus.NEW,
       }),
     );

@@ -45,6 +45,17 @@ export class QuoteRequest {
   @Column({ type: "text", nullable: true })
   requirements!: string | null;
 
+  /** Combo or product the request is about (spec §8.3). */
+  @Column({ type: "varchar", nullable: true })
+  productSlug!: string | null;
+
+  @Column({ type: "int", nullable: true })
+  students!: number | null;
+
+  /** school | center | university | company | other */
+  @Column({ type: "varchar", nullable: true })
+  organizationType!: string | null;
+
   @Column({ type: "enum", enum: QuoteStatus, default: QuoteStatus.NEW })
   status!: QuoteStatus;
 
