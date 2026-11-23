@@ -39,14 +39,14 @@ export function OauthCallback({ code }: { code?: string }) {
             <CheckCircle2 size={40} strokeWidth={1.5} className="mx-auto text-teal-ink" aria-hidden="true" />
             <h1 className="mt-3 text-2xl font-semibold">Đăng nhập thành công</h1>
             <p className="mt-2 text-muted">{state.session.user.email}</p>
-            <Link href={state.next} className="mt-6 inline-flex font-semibold text-sky underline underline-offset-4">Tiếp tục</Link>
+            <Link href={state.next} className="mt-6 inline-flex font-semibold text-sky-ink underline underline-offset-4">Tiếp tục</Link>
           </>
         ) : (
           <>
             <CircleAlert size={40} strokeWidth={1.5} className="mx-auto text-muted" aria-hidden="true" />
             <h1 className="mt-3 text-2xl font-semibold">Đăng nhập không thành công</h1>
             <p className="mt-2 text-muted">Liên kết đăng nhập đã hết hạn hoặc không hợp lệ.</p>
-            <Link href="/dang-nhap" className="mt-6 inline-flex font-semibold text-sky underline underline-offset-4">Thử lại</Link>
+            <Link href="/dang-nhap" className="mt-6 inline-flex font-semibold text-sky-ink underline underline-offset-4">Thử lại</Link>
           </>
         )}
       </section>

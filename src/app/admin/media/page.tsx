@@ -12,7 +12,7 @@ type Item = { id: string; url: string; filename: string; mime: string; bytes: nu
 function CopyButton({ value }: { value: string }) {
   const [done, setDone] = useState(false);
   return (
-    <button type="button" onClick={() => void navigator.clipboard?.writeText(value).then(() => setDone(true))} className="inline-flex items-center gap-1 text-sm font-semibold text-sky">
+    <button type="button" onClick={() => void navigator.clipboard?.writeText(value).then(() => setDone(true))} className="inline-flex items-center gap-1 text-sm font-semibold text-sky-ink">
       <Copy size={14} strokeWidth={1.75} aria-hidden="true" /> {done ? "Đã chép" : "Chép link"}
     </button>
   );

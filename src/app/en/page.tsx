@@ -41,8 +41,8 @@ export default async function EnHomePage() {
             {combos.map((c) => (
               <li key={c.slug}>
                 <Link href={`/en/combo/${c.slug}`} className="group flex h-full flex-col rounded-2xl bg-white p-6">
-                  <span className="text-xl font-semibold group-hover:text-sky">{c.nameEn ?? c.name}</span>
-                  <span className="mt-auto inline-flex items-center gap-0.5 pt-4 font-semibold text-sky">View kit <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></span>
+                  <span className="text-xl font-semibold group-hover:text-sky-ink">{c.nameEn ?? c.name}</span>
+                  <span className="mt-auto inline-flex items-center gap-0.5 pt-4 font-semibold text-sky-ink">View kit <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></span>
                 </Link>
               </li>
             ))}

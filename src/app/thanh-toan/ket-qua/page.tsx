@@ -26,7 +26,7 @@ const OUTCOMES = {
   },
   pending: {
     Icon: Clock,
-    tone: "text-sky",
+    tone: "text-sky-ink",
     title: "Đang chờ xác nhận thanh toán",
     body: "PayOS chưa báo kết quả cuối cùng. Kiểm tra lại trạng thái đơn sau ít phút.",
     action: { href: "/tai-khoan/don-hang", label: "Xem đơn hàng của tôi" },

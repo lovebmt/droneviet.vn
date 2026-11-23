@@ -10,7 +10,7 @@ export function OfferGrid() {
         const Icon = ICONS[item.icon];
         return (
           <li key={item.title}>
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-sky-50 text-sky">
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-sky-50 text-sky-ink">
               <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
             </span>
             <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>

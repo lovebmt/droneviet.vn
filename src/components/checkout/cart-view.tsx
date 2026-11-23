@@ -22,7 +22,7 @@ export function CartView() {
             <ProductImage src={line.imageUrl} alt={line.name} sizes="112px" className="h-24 w-28 shrink-0 bg-sky-50" />
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <Link href={`/cua-hang/${line.slug}`} className="font-semibold hover:text-sky">{line.name}</Link>
+                <Link href={`/cua-hang/${line.slug}`} className="font-semibold hover:text-sky-ink">{line.name}</Link>
                 <p className="text-sm text-muted">{formatVnd(line.priceVnd)}</p>
               </div>
               <div className="flex items-center gap-3">
@@ -43,7 +43,7 @@ export function CartView() {
         </div>
         <p className="mt-2 text-sm text-muted">Phí giao hàng và tồn kho được xác nhận khi đặt hàng.</p>
         <LinkButton href="/thanh-toan" size="lg" className="mt-6 w-full">Tiến hành đặt hàng</LinkButton>
-        <Link href="/cua-hang" className="mt-4 block text-center text-sm font-semibold text-sky hover:underline underline-offset-4">Tiếp tục mua sắm</Link>
+        <Link href="/cua-hang" className="mt-4 block text-center text-sm font-semibold text-sky-ink hover:underline underline-offset-4">Tiếp tục mua sắm</Link>
       </aside>
     </div>
   );

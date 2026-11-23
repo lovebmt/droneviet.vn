@@ -29,7 +29,7 @@ export default function CertificatePage() {
               <p className="mt-1 text-muted">{step.text}</p>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <Badge tone={step.status === "Đang cập nhật" ? "neutral" : "teal"}>{step.status}</Badge>
-                {step.href ? <Link href={step.href} className="text-sm font-semibold text-sky hover:underline underline-offset-4">Bắt đầu luyện bay</Link> : null}
+                {step.href ? <Link href={step.href} className="text-sm font-semibold text-sky-ink hover:underline underline-offset-4">Bắt đầu luyện bay</Link> : null}
               </div>
             </li>
           ))}

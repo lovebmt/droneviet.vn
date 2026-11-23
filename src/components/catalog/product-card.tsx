@@ -14,7 +14,7 @@ export function ProductCard({ product }: { product: Card }) {
         {product.badge ? <Badge tone={product.badge === "Bán chạy" ? "sun" : "teal"}>{product.badge}</Badge> : null}
         {!product.inStock ? <Badge>Hết hàng</Badge> : null}
       </div>
-      <h3 className="mt-2 text-lg font-semibold group-hover:text-sky">{product.name}</h3>
+      <h3 className="mt-2 text-lg font-semibold group-hover:text-sky-ink">{product.name}</h3>
       {product.levels.length ? <p className="text-sm text-muted">{levelLabels(product.levels)}</p> : null}
       <p className="mt-2 line-clamp-2 text-sm text-muted">{product.summary}</p>
       <p className="mt-auto pt-4 font-semibold">

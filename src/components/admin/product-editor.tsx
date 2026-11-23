@@ -229,7 +229,7 @@ function ComboEditor({ product, catalog }: { product: AdminProductDetail; catalo
           </li>
         ))}
       </ul>
-      <button type="button" onClick={() => setTiers([...tiers, { students: "", priceVnd: "", label: "" }])} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-sky"><Plus size={16} strokeWidth={1.75} aria-hidden="true" /> Thêm bậc giá</button>
+      <button type="button" onClick={() => setTiers([...tiers, { students: "", priceVnd: "", label: "" }])} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-sky-ink"><Plus size={16} strokeWidth={1.75} aria-hidden="true" /> Thêm bậc giá</button>
 
       <div className="mt-6 flex flex-wrap items-center gap-4">
         <Button type="button" onClick={() => void submit()} disabled={save.state === "saving"}>Lưu combo</Button>
@@ -254,7 +254,7 @@ export function ProductEditor({ id }: { id: string }) {
           <h1 className="text-3xl font-light tracking-tight">{product.name}</h1>
           <span className="text-sm text-muted">{KIND_LABEL[product.kind] ?? product.kind}, {STATUS_LABEL[product.status] ?? product.status}</span>
           {product.status === "published" ? (
-            <a href={productHref(product)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-sky">Xem trên web <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" /></a>
+            <a href={productHref(product)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-sky-ink">Xem trên web <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" /></a>
           ) : null}
         </div>
       </div>

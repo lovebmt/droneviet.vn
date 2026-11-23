@@ -53,12 +53,12 @@ export default async function ComboPage({ params }: Props) {
             <div className="mt-8"><ComboQuotePanel product={product} /></div>
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm">
               {zalo ? (
-                <a href={`https://zalo.me/${zalo}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-sky hover:underline underline-offset-4">
+                <a href={`https://zalo.me/${zalo}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-sky-ink hover:underline underline-offset-4">
                   <MessageCircle size={18} strokeWidth={1.75} aria-hidden="true" /> Chat Zalo {zalo}
                 </a>
               ) : null}
               {product.brochureUrl ? (
-                <a href={product.brochureUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-sky hover:underline underline-offset-4">
+                <a href={product.brochureUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-sky-ink hover:underline underline-offset-4">
                   <FileText size={18} strokeWidth={1.75} aria-hidden="true" /> Tải brochure (PDF)
                 </a>
               ) : null}
@@ -76,7 +76,7 @@ export default async function ComboPage({ params }: Props) {
                 <ProductImage src={item.product.coverImageUrl} alt={item.product.name} sizes="96px" className="h-20 w-24 shrink-0 bg-sky-50" />
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-teal-ink">{item.quantity} ×</p>
-                  <Link href={productHref(item.product)} className="font-semibold hover:text-sky">{item.product.name}</Link>
+                  <Link href={productHref(item.product)} className="font-semibold hover:text-sky-ink">{item.product.name}</Link>
                   {item.note ? <p className="text-sm text-muted">{item.note}</p> : null}
                 </div>
               </li>
@@ -97,7 +97,7 @@ export default async function ComboPage({ params }: Props) {
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {DEPLOYMENT_STEPS.map((step, i) => (
             <li key={step.title} className="rounded-2xl bg-sky-50 p-5">
-              <p className="text-sm font-semibold text-sky">Bước {i + 1}</p>
+              <p className="text-sm font-semibold text-sky-ink">Bước {i + 1}</p>
               <p className="mt-1 font-semibold">{step.title}</p>
               <p className="mt-1 text-sm text-muted">{step.text}</p>
             </li>

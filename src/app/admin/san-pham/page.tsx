@@ -44,7 +44,7 @@ export default function AdminProductsPage() {
                 const stock = p.variants.reduce((n, x) => n + Math.max(0, (x.inventory?.onHand ?? 0) - (x.inventory?.reserved ?? 0)), 0);
                 return (
                   <tr key={p.id}>
-                    <td className="p-3"><Link href={`/admin/san-pham/${p.id}`} className="font-semibold hover:text-sky">{p.name}</Link><span className="block text-xs text-muted">{p.slug}</span></td>
+                    <td className="p-3"><Link href={`/admin/san-pham/${p.id}`} className="font-semibold hover:text-sky-ink">{p.name}</Link><span className="block text-xs text-muted">{p.slug}</span></td>
                     <td className="p-3">{KIND_LABEL[p.kind] ?? p.kind}</td>
                     <td className="p-3"><Badge tone={p.status === "published" ? "teal" : "neutral"}>{STATUS_LABEL[p.status] ?? p.status}</Badge></td>
                     <td className="p-3 text-right tabular-nums">{v ? formatVnd(v.priceVnd) : "—"}</td>

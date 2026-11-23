@@ -51,13 +51,13 @@ function QuoteRow({ quote }: { quote: Quote }) {
           <div className="space-y-1">
             <p>{quote.contactName}</p>
             <p className="flex flex-wrap gap-x-4">
-              <a href={`tel:${zalo}`} className="font-semibold text-sky">{quote.phone}</a>
-              <a href={`https://zalo.me/${zalo}`} target="_blank" rel="noopener noreferrer" className="text-sky">Nhắn Zalo</a>
-              {quote.email ? <a href={`mailto:${quote.email}`} className="text-sky">{quote.email}</a> : null}
+              <a href={`tel:${zalo}`} className="font-semibold text-sky-ink">{quote.phone}</a>
+              <a href={`https://zalo.me/${zalo}`} target="_blank" rel="noopener noreferrer" className="text-sky-ink">Nhắn Zalo</a>
+              {quote.email ? <a href={`mailto:${quote.email}`} className="text-sky-ink">{quote.email}</a> : null}
             </p>
           </div>
           <div className="space-y-1">
-            {quote.productSlug ? <p>Sản phẩm: <Link href={`/cua-hang/combo/${quote.productSlug}`} className="text-sky">{quote.productSlug}</Link></p> : null}
+            {quote.productSlug ? <p>Sản phẩm: <Link href={`/cua-hang/combo/${quote.productSlug}`} className="text-sky-ink">{quote.productSlug}</Link></p> : null}
             <p>{quote.students ? `${quote.students} học sinh, ` : ""}{quote.quantity} lớp hoặc bộ</p>
           </div>
         </div>

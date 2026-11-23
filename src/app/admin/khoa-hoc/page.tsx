@@ -38,7 +38,7 @@ function Enrollments({ sessionId, onChanged }: { sessionId: string; onChanged():
       <ul className="divide-y divide-line text-sm">
         {data.map((e) => (
           <li key={e.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
-            <span><span className="font-semibold">{e.contactName}</span>, <a href={`tel:${e.contactPhone}`} className="text-sky">{e.contactPhone}</a>{e.contactEmail ? `, ${e.contactEmail}` : ""}</span>
+            <span><span className="font-semibold">{e.contactName}</span>, <a href={`tel:${e.contactPhone}`} className="text-sky-ink">{e.contactPhone}</a>{e.contactEmail ? `, ${e.contactEmail}` : ""}</span>
             <span className="flex items-center gap-2">
               <Badge tone={e.status === "confirmed" ? "teal" : "neutral"}>{ENROLL[e.status] ?? e.status}</Badge>
               {e.status === "reserved" ? <Button type="button" variant="secondary" onClick={() => void set(e, "confirmed")} aria-label={`Xác nhận ${e.contactName}`}>Xác nhận</Button> : null}

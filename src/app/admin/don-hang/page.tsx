@@ -60,8 +60,8 @@ function OrderRow({ order, onChanged }: { order: AdminOrder; onChanged(): void }
             {order.lines.map((l) => <li key={l.id}>{l.quantity} × {l.title}</li>)}
           </ul>
           <div>
-            <p>{order.contactName}, <a href={`tel:${order.contactPhone}`} className="font-semibold text-sky">{order.contactPhone}</a></p>
-            {order.contactEmail ? <p><a href={`mailto:${order.contactEmail}`} className="text-sky">{order.contactEmail}</a></p> : null}
+            <p>{order.contactName}, <a href={`tel:${order.contactPhone}`} className="font-semibold text-sky-ink">{order.contactPhone}</a></p>
+            {order.contactEmail ? <p><a href={`mailto:${order.contactEmail}`} className="text-sky-ink">{order.contactEmail}</a></p> : null}
             <p className="whitespace-pre-line text-muted">{order.shippingAddress ?? "Chưa có địa chỉ"}</p>
           </div>
         </div>

@@ -34,19 +34,19 @@ export default async function SupportPage() {
         <div className="grid gap-12 lg:grid-cols-[22rem_1fr]">
           <div>
             <h2 className="text-2xl font-semibold">Liên hệ</h2>
-            <dl className="mt-6 space-y-5">
+            <ul className="mt-6 space-y-5">
               {rows.map(({ Icon, label, value, href }) => (
-                <div key={label} className="flex gap-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sky-50 text-sky"><Icon size={20} strokeWidth={1.75} aria-hidden="true" /></span>
+                <li key={label} className="flex gap-4">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sky-50 text-sky-ink"><Icon size={20} strokeWidth={1.75} aria-hidden="true" /></span>
                   <div>
-                    <dt className="text-sm text-muted">{label}</dt>
-                    <dd className="font-semibold">
-                      {value ? (href ? <a href={href} className="hover:text-sky" {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{value}</a> : value) : "Đang cập nhật"}
-                    </dd>
+                    <p className="text-sm text-muted">{label}</p>
+                    <p className="font-semibold">
+                      {value ? (href ? <a href={href} className="hover:text-sky-ink" {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{value}</a> : value) : "Đang cập nhật"}
+                    </p>
                   </div>
-                </div>
+                </li>
               ))}
-            </dl>
+            </ul>
             <Link href="/bay-an-toan" className="mt-8 flex items-center gap-3 rounded-2xl border border-line p-4 hover:border-sky">
               <ShieldCheck size={22} strokeWidth={1.75} className="text-teal-ink" aria-hidden="true" />
               <span className="font-semibold">Bay an toàn & cấp phép</span>
@@ -61,7 +61,7 @@ export default async function SupportPage() {
       <Section tone="sky" id="tra-cuu">
         <h2 className="text-2xl font-semibold">Tra cứu đơn hàng</h2>
         <p className="mt-2 text-muted">
-          Đã có tài khoản? <Link href="/tai-khoan/don-hang" className="font-semibold text-sky underline underline-offset-4">Xem đơn hàng của tôi</Link>. Nếu đặt hàng không đăng nhập, nhập mã đơn và số điện thoại.
+          Đã có tài khoản? <Link href="/tai-khoan/don-hang" className="font-semibold text-sky-ink underline underline-offset-4">Xem đơn hàng của tôi</Link>. Nếu đặt hàng không đăng nhập, nhập mã đơn và số điện thoại.
         </p>
         <div className="mt-6 max-w-3xl"><OrderLookup /></div>
       </Section>

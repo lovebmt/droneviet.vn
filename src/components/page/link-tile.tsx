@@ -8,7 +8,7 @@ export function LinkTile({ href, context, title, text, tone = "sky" }: { href: s
       <span className="text-sm text-muted">{context}</span>
       <span className="mt-2 text-3xl font-light tracking-tight">{title}</span>
       <span className="mt-2 font-semibold">{text}</span>
-      <span className="mt-4 inline-flex items-center gap-0.5 text-[15px] font-medium text-sky group-hover:underline underline-offset-4">
+      <span className="mt-4 inline-flex items-center gap-0.5 text-[15px] font-medium text-sky-ink group-hover:underline underline-offset-4">
         Xem <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" />
       </span>
     </Link>

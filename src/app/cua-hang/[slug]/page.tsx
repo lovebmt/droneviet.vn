@@ -78,7 +78,7 @@ export default async function ProductPage({ params }: Props) {
             <ul className="mt-8 space-y-2 border-t border-line pt-6 text-sm text-muted">
               <li>Giao hàng toàn quốc, kiểm tra hàng khi nhận.</li>
               <li>Hỗ trợ kỹ thuật qua Zalo trong giờ hành chính.</li>
-              <li>Cần số lượng lớn cho trường? <a href={`/bao-gia?san-pham=${product.slug}`} className="font-semibold text-sky underline underline-offset-4">Nhận báo giá</a></li>
+              <li>Cần số lượng lớn cho trường? <a href={`/bao-gia?san-pham=${product.slug}`} className="font-semibold text-sky-ink underline underline-offset-4">Nhận báo giá</a></li>
             </ul>
           </div>
         </div>

@@ -9,7 +9,7 @@ export function ZaloContactLink() {
       href={ZALO_CONTACT_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className="font-semibold text-sky underline underline-offset-4"
+      className="font-semibold text-sky-ink underline underline-offset-4"
     >
       Zalo 0384070636
     </a>
@@ -46,7 +46,7 @@ export function LegalPage({
         <p className="mt-6 text-lg leading-8 text-muted">{intro}</p>
         {children}
         <p className="mt-12 border-t border-line pt-6 text-sm text-muted">
-          <Link href="/" className="text-sky underline underline-offset-4">
+          <Link href="/" className="text-sky-ink underline underline-offset-4">
             Về trang chủ Drone Việt
           </Link>
         </p>

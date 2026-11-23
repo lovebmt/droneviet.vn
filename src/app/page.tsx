@@ -102,7 +102,7 @@ export default async function HomePage() {
         <Section>
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-3xl font-light tracking-tight">Bài viết R&amp;D mới</h2>
-            <Link href="/r-d" className="inline-flex items-center gap-0.5 font-medium text-sky hover:underline underline-offset-4">
+            <Link href="/r-d" className="inline-flex items-center gap-0.5 font-medium text-sky-ink hover:underline underline-offset-4">
               Tất cả bài viết <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" />
             </Link>
           </div>
@@ -110,7 +110,7 @@ export default async function HomePage() {
             {articles.map((a) => (
               <Link key={a.slug} href={`/r-d/${a.slug}`} className="group rounded-2xl border border-line p-6 hover:border-sky">
                 {a.publishedAt ? <p className="text-sm text-muted">{formatDate(a.publishedAt)}{a.readingMinutes ? `, ${a.readingMinutes} phút đọc` : ""}</p> : null}
-                <h3 className="mt-2 text-xl font-semibold group-hover:text-sky">{a.title}</h3>
+                <h3 className="mt-2 text-xl font-semibold group-hover:text-sky-ink">{a.title}</h3>
                 {a.summary ? <p className="mt-2 text-muted">{a.summary}</p> : null}
               </Link>
             ))}

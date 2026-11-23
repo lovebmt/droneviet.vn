@@ -38,7 +38,7 @@ export default async function TrainingPage() {
             <p className="text-sm text-muted">Lộ trình</p>
             <p className="mt-1 text-2xl font-semibold">Hướng dẫn lấy chứng chỉ</p>
             <p className="mt-2 text-muted">Các bước từ lý thuyết an toàn đến thi thực hành.</p>
-            <span className="mt-4 inline-flex items-center gap-0.5 font-semibold text-sky group-hover:underline underline-offset-4">Xem lộ trình <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></span>
+            <span className="mt-4 inline-flex items-center gap-0.5 font-semibold text-sky-ink group-hover:underline underline-offset-4">Xem lộ trình <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></span>
           </Link>
           <Link href="/bay-mo-phong" className="group rounded-2xl bg-sun p-8 text-ink">
             <p className="text-sm">Luyện tập miễn phí</p>

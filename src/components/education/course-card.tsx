@@ -12,7 +12,7 @@ export function CourseCard({ course }: { course: Course }) {
         <Badge tone="sky">{COURSE_LEVEL[course.level] ?? course.level}</Badge>
         <Badge>{COURSE_FORMAT[course.format] ?? course.format}</Badge>
       </div>
-      <h3 className="mt-4 text-xl font-semibold group-hover:text-sky">{course.title}</h3>
+      <h3 className="mt-4 text-xl font-semibold group-hover:text-sky-ink">{course.title}</h3>
       <p className="mt-2 text-muted">{course.summary}</p>
       <ul className="mt-4 space-y-1 text-sm text-muted">
         {course.durationHours ? <li className="flex items-center gap-2"><Clock size={16} strokeWidth={1.75} aria-hidden="true" /> {course.durationHours} giờ học</li> : null}

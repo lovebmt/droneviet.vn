@@ -5,7 +5,7 @@ export function Logo({ tone = "ink" }: { tone?: "ink" | "white" }) {
   const color = tone === "white" ? "text-white" : "text-ink";
   return (
     <Link href="/" className={`inline-flex items-center gap-2 font-bold tracking-tight ${color}`} aria-label="Drone Việt, trang chủ">
-      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" className="text-sky">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" className="text-sky-ink">
         <g fill="none" stroke="currentColor" strokeWidth="1.75">
           <circle cx="6" cy="6" r="4" /><circle cx="20" cy="6" r="4" /><circle cx="6" cy="20" r="4" /><circle cx="20" cy="20" r="4" />
           <path d="M9 9l8 8M17 9l-8 8" strokeLinecap="round" />

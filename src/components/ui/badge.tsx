@@ -6,7 +6,7 @@ type Tone = "teal" | "sun" | "sky" | "neutral";
 const TONES: Record<Tone, string> = {
   teal: "bg-teal text-ink",
   sun: "bg-sun text-ink",
-  sky: "bg-sky-50 text-sky",
+  sky: "bg-sky-50 text-sky-ink",
   neutral: "bg-white text-ink ring-1 ring-line",
 };
 

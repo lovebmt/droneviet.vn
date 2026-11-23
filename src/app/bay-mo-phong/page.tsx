@@ -35,7 +35,7 @@ export default function SimulatorPage() {
         <ul className="mt-8 grid gap-4 md:grid-cols-3">
           {CONTROLS.map(({ Icon, title, rows }) => (
             <li key={title} className="rounded-2xl bg-white p-6">
-              <Icon size={24} strokeWidth={1.75} className="text-sky" aria-hidden="true" />
+              <Icon size={24} strokeWidth={1.75} className="text-sky-ink" aria-hidden="true" />
               <h3 className="mt-3 font-semibold">{title}</h3>
               <ul className="mt-2 space-y-1 text-sm text-muted">{rows.map((r) => <li key={r}>{r}</li>)}</ul>
             </li>

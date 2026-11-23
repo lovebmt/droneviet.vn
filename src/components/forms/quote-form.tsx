@@ -58,7 +58,7 @@ export function QuoteForm({ productSlug, students }: { productSlug: string | nul
         <CheckCircle2 size={32} strokeWidth={1.75} className="text-teal-ink" aria-hidden="true" />
         <h2 className="mt-3 text-2xl font-semibold">Đã gửi yêu cầu báo giá</h2>
         <p className="mt-2 text-muted">Drone Việt sẽ liên hệ trong 1 ngày làm việc qua số điện thoại bạn để lại.</p>
-        <Link href="/cua-hang" className="mt-6 inline-block font-semibold text-sky underline underline-offset-4">Tiếp tục xem sản phẩm</Link>
+        <Link href="/cua-hang" className="mt-6 inline-block font-semibold text-sky-ink underline underline-offset-4">Tiếp tục xem sản phẩm</Link>
       </div>
     );
   }

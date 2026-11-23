@@ -14,7 +14,7 @@ export function ArticleCard({ article }: { article: ArticleSummary }) {
         {article.publishedAt ? `, ${formatDate(article.publishedAt)}` : ""}
         {article.readingMinutes ? `, ${article.readingMinutes} phút đọc` : ""}
       </p>
-      <h3 className="mt-1 text-xl font-semibold group-hover:text-sky">{article.title}</h3>
+      <h3 className="mt-1 text-xl font-semibold group-hover:text-sky-ink">{article.title}</h3>
       {article.summary ? <p className="mt-2 line-clamp-3 text-muted">{article.summary}</p> : null}
     </Link>
   );

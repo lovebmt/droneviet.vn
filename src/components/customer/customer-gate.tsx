@@ -90,7 +90,7 @@ export function CustomerGate({
                     onClick={() => rememberNextPath(destination)}
                     className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-line bg-white font-semibold hover:border-ink"
                   >
-                    {provider === "google" ? <GoogleMark /> : <MessageCircle size={18} strokeWidth={1.75} className="text-sky" aria-hidden="true" />}
+                    {provider === "google" ? <GoogleMark /> : <MessageCircle size={18} strokeWidth={1.75} className="text-sky-ink" aria-hidden="true" />}
                     Tiếp tục với {providerLabels[provider]}
                   </a>
                 ))}
@@ -121,7 +121,7 @@ export function CustomerGate({
 
           <p className="mt-6 text-sm text-muted">
             {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}{" "}
-            <Link href={otherHref} className="font-semibold text-sky hover:underline underline-offset-4">{isRegister ? "Đăng nhập" : "Tạo tài khoản"}</Link>
+            <Link href={otherHref} className="font-semibold text-sky-ink hover:underline underline-offset-4">{isRegister ? "Đăng nhập" : "Tạo tài khoản"}</Link>
           </p>
         </div>
       </section>

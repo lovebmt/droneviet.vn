@@ -66,7 +66,7 @@ export default async function ArticlePage({ params }: Props) {
                 <ul className="mt-3 space-y-2">
                   {article.attachments.map((a) => (
                     <li key={a.url}>
-                      <a href={a.url} className="inline-flex items-center gap-2 font-semibold text-sky hover:underline underline-offset-4">
+                      <a href={a.url} className="inline-flex items-center gap-2 font-semibold text-sky-ink hover:underline underline-offset-4">
                         <FileDown size={18} strokeWidth={1.75} aria-hidden="true" /> {a.label}
                       </a>
                     </li>

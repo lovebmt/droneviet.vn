@@ -33,7 +33,7 @@ export function ComboQuotePanel({ product, locale = "vi" }: { product: Pick<Prod
                 type="button"
                 aria-pressed={option.students === students}
                 onClick={() => setStudents(option.students)}
-                className={`rounded-full border px-4 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky ${option.students === students ? "border-sky bg-sky-50 font-semibold text-sky" : "border-line hover:border-ink"}`}
+                className={`rounded-full border px-4 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky ${option.students === students ? "border-sky bg-sky-50 font-semibold text-sky-ink" : "border-line hover:border-ink"}`}
               >
                 {option.label ?? t.students(option.students)}
               </button>

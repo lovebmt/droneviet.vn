@@ -22,7 +22,7 @@ function OrderDetail({ orderNumber }: { orderNumber: string }) {
     );
   }, [orderNumber]);
 
-  if (error) return <p role="alert">{error} <Link href="/tai-khoan/don-hang" className="font-semibold text-sky underline">Về danh sách đơn</Link></p>;
+  if (error) return <p role="alert">{error} <Link href="/tai-khoan/don-hang" className="font-semibold text-sky-ink underline">Về danh sách đơn</Link></p>;
   if (!order) return <p className="text-muted">Đang tải đơn hàng…</p>;
   return (
     <div>

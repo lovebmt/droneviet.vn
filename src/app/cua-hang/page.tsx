@@ -55,7 +55,7 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
                 {!selected ? <p className="mt-1 text-muted">{group.lead}</p> : null}
               </div>
               {!selected && group.products.length > 4 ? (
-                <Link href={`/cua-hang?loai=${group.loai}`} className="text-sm font-semibold text-sky hover:underline underline-offset-4">Xem tất cả</Link>
+                <Link href={`/cua-hang?loai=${group.loai}`} className="text-sm font-semibold text-sky-ink hover:underline underline-offset-4">Xem tất cả</Link>
               ) : null}
             </div>
             {group.products.length ? (
@@ -67,7 +67,7 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
             ) : (
               <div className="mt-6">
                 <EmptyState title="Chưa có sản phẩm trong nhóm này">
-                  Cần tư vấn ngay? <Link href="/bao-gia" className="font-semibold text-sky underline underline-offset-4">Gửi yêu cầu báo giá</Link>.
+                  Cần tư vấn ngay? <Link href="/bao-gia" className="font-semibold text-sky-ink underline underline-offset-4">Gửi yêu cầu báo giá</Link>.
                 </EmptyState>
               </div>
             )}

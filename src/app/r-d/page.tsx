@@ -45,7 +45,7 @@ export default async function RdPage({ searchParams }: { searchParams: Promise<{
           </ul>
         ) : (
           <EmptyState title={tag ? "Chưa có bài viết cho chủ đề này" : "Bài viết đang được chuẩn bị"}>
-            {tag ? <Link href="/r-d" className="font-semibold text-sky underline underline-offset-4">Xem tất cả bài viết</Link> : "Quay lại sau nhé."}
+            {tag ? <Link href="/r-d" className="font-semibold text-sky-ink underline underline-offset-4">Xem tất cả bài viết</Link> : "Quay lại sau nhé."}
           </EmptyState>
         )}
       </Container>

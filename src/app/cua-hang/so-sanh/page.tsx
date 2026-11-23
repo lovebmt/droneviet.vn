@@ -81,7 +81,7 @@ export default async function ComparePage() {
                   {combos.map((c) => (
                     <td key={c.slug} className="p-4">
                       <div className="flex flex-col gap-2">
-                        <Link href={`/cua-hang/combo/${c.slug}`} className="font-semibold text-sky hover:underline underline-offset-4">Xem chi tiết</Link>
+                        <Link href={`/cua-hang/combo/${c.slug}`} className="font-semibold text-sky-ink hover:underline underline-offset-4">Xem chi tiết</Link>
                         <Link href={`/bao-gia?san-pham=${c.slug}`} className="font-semibold hover:underline underline-offset-4">Nhận báo giá</Link>
                       </div>
                     </td>
@@ -92,7 +92,7 @@ export default async function ComparePage() {
           </div>
         ) : (
           <EmptyState title="Chưa có combo để so sánh">
-            <Link href="/bao-gia" className="font-semibold text-sky underline underline-offset-4">Gửi yêu cầu tư vấn</Link> để được đề xuất gói phù hợp.
+            <Link href="/bao-gia" className="font-semibold text-sky-ink underline underline-offset-4">Gửi yêu cầu tư vấn</Link> để được đề xuất gói phù hợp.
           </EmptyState>
         )}
       </Container>

@@ -45,7 +45,7 @@ export default async function EnComboPage({ params }: Props) {
               {product.comboItems.map((item) => (
                 <li key={item.product.slug} className="rounded-2xl border border-line p-4">
                   <span className="text-sm font-semibold text-teal-ink">{item.quantity} ×</span>{" "}
-                  <Link href={productHref(item.product)} className="font-semibold hover:text-sky">{item.product.nameEn ?? item.product.name}</Link>
+                  <Link href={productHref(item.product)} className="font-semibold hover:text-sky-ink">{item.product.nameEn ?? item.product.name}</Link>
                 </li>
               ))}
             </ul>

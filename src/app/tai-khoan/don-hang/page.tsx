@@ -29,7 +29,7 @@ export default function OrdersPage() {
         {status === "loading" ? <p className="mt-6 text-muted">Đang tải…</p> : null}
         {status === "signed-out" ? (
           <p className="mt-4 text-muted">
-            <Link href="/dang-nhap?tiep=%2Ftai-khoan%2Fdon-hang" className="font-semibold text-sky underline underline-offset-4">Đăng nhập</Link> để xem tất cả đơn hàng của bạn, hoặc tra cứu nhanh bên dưới.
+            <Link href="/dang-nhap?tiep=%2Ftai-khoan%2Fdon-hang" className="font-semibold text-sky-ink underline underline-offset-4">Đăng nhập</Link> để xem tất cả đơn hàng của bạn, hoặc tra cứu nhanh bên dưới.
           </p>
         ) : null}
         {status === "signed-in" ? (
@@ -42,7 +42,7 @@ export default function OrdersPage() {
               {orders.map((o) => (
                 <li key={o.orderNumber} className="flex flex-wrap items-center justify-between gap-3 py-4">
                   <div>
-                    <Link href={`/tai-khoan/don-hang/${encodeURIComponent(o.orderNumber)}`} className="font-semibold hover:text-sky">Đơn {o.orderNumber}</Link>
+                    <Link href={`/tai-khoan/don-hang/${encodeURIComponent(o.orderNumber)}`} className="font-semibold hover:text-sky-ink">Đơn {o.orderNumber}</Link>
                     <p className="text-sm text-muted">{formatDate(o.createdAt)}, {o.lines.reduce((n, l) => n + l.quantity, 0)} sản phẩm</p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -53,7 +53,7 @@ export default function OrdersPage() {
               ))}
             </ul>
           ) : (
-            <div className="mt-6"><EmptyState title="Bạn chưa có đơn hàng nào"><Link href="/cua-hang" className="font-semibold text-sky underline underline-offset-4">Xem cửa hàng</Link></EmptyState></div>
+            <div className="mt-6"><EmptyState title="Bạn chưa có đơn hàng nào"><Link href="/cua-hang" className="font-semibold text-sky-ink underline underline-offset-4">Xem cửa hàng</Link></EmptyState></div>
           )
         ) : null}
       </section>

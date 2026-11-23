@@ -22,7 +22,7 @@ export default function AccountPage() {
             ].map(({ href, label, Icon }) => (
               <li key={href}>
                 <Link href={href} className="flex items-center gap-3 rounded-2xl border border-line p-5 font-semibold hover:border-sky">
-                  <Icon size={22} strokeWidth={1.75} className="text-sky" aria-hidden="true" /> {label}
+                  <Icon size={22} strokeWidth={1.75} className="text-sky-ink" aria-hidden="true" /> {label}
                 </Link>
               </li>
             ))}

@@ -38,7 +38,7 @@ function ArticleRow({ article, onChanged }: { article: Row; onChanged(): void })
         </div>
         <div className="flex items-center gap-2">
           <Badge tone={published ? "teal" : "neutral"}>{published ? "Đang hiển thị" : "Bản nháp"}</Badge>
-          {published ? <a href={`/r-d/${article.slug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2 text-sm font-semibold text-sky">Xem <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" /></a> : null}
+          {published ? <a href={`/r-d/${article.slug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2 text-sm font-semibold text-sky-ink">Xem <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" /></a> : null}
           <Button type="button" variant={published ? "ghost" : "primary"} disabled={busy} onClick={() => void toggle()}>{published ? "Ẩn bài" : "Đăng bài"}</Button>
         </div>
         {error ? <p role="alert" className="w-full text-sm text-red-800">{error}</p> : null}

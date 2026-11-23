@@ -26,7 +26,7 @@ export function BuyBox({ product }: { product: ProductDetail }) {
           <legend className="text-sm font-semibold">Phiên bản</legend>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.variants.map((v) => (
-              <label key={v.id} className={`cursor-pointer rounded-full border px-4 py-2 text-sm has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-sky ${v.id === variantId ? "border-sky bg-sky-50 font-semibold text-sky" : "border-line"}`}>
+              <label key={v.id} className={`cursor-pointer rounded-full border px-4 py-2 text-sm has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-sky ${v.id === variantId ? "border-sky bg-sky-50 font-semibold text-sky-ink" : "border-line"}`}>
                 <input type="radio" name="variant" value={v.id} checked={v.id === variantId} onChange={() => setVariantId(v.id)} className="sr-only" />
                 {v.title}
               </label>

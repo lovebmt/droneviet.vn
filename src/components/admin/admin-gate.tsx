@@ -19,7 +19,7 @@ export function AdminGate({ children }: { children: (user: SessionUser) => React
             <ShieldOff size={40} strokeWidth={1.5} className="mx-auto text-muted" aria-hidden="true" />
             <h1 className="mt-4 text-2xl font-semibold">Không có quyền truy cập</h1>
             <p className="mt-2 text-muted">Tài khoản {user.email} không có quyền quản trị. Liên hệ quản trị viên nếu bạn cần quyền.</p>
-            <Link href="/" className="mt-6 inline-block font-semibold text-sky underline underline-offset-4">Về trang chủ</Link>
+            <Link href="/" className="mt-6 inline-block font-semibold text-sky-ink underline underline-offset-4">Về trang chủ</Link>
           </div>
         )
       }

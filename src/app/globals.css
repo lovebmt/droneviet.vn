@@ -3,6 +3,8 @@
 /* v2 design tokens (spec §7.1). Contrast checked: white on sky 4.81:1; ink on teal/sun only. */
 @theme {
   --color-sky: #0b6fe0;
+  /* Link and label text: passes 4.5:1 on white and on sky-50 tiles (sky itself is 4.33 on sky-50). */
+  --color-sky-ink: #0A62C8;
   --color-teal: #13b8a6;
   --color-teal-ink: #08857a;
   --color-sun: #ffc531;
@@ -52,7 +54,7 @@ body {
 .prose-dv ul { list-style: disc; padding-left: 1.5rem; }
 .prose-dv ol { list-style: decimal; padding-left: 1.5rem; }
 .prose-dv li + li { margin-top: 0.35rem; }
-.prose-dv a { color: var(--color-sky); text-decoration: underline; text-underline-offset: 3px; }
+.prose-dv a { color: var(--color-sky-ink); text-decoration: underline; text-underline-offset: 3px; }
 .prose-dv img { margin-top: 1.5rem; border-radius: 12px; }
 .prose-dv table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 .prose-dv th, .prose-dv td { border-bottom: 1px solid var(--color-line); padding: 0.6rem 0.5rem; text-align: left; }

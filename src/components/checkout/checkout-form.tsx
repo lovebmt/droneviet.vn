@@ -35,7 +35,7 @@ export function CheckoutForm() {
         <h2 className="mt-3 text-2xl font-semibold">Đã đặt hàng</h2>
         <p className="mt-2">Mã đơn hàng của bạn: <strong className="tabular-nums">{placed}</strong></p>
         <p className="mt-1 text-muted">Drone Việt sẽ gọi xác nhận đơn trong giờ hành chính. Hãy lưu lại mã đơn để tra cứu.</p>
-        <Link href={status === "signed-in" ? "/tai-khoan/don-hang" : "/cua-hang"} className="mt-6 inline-block font-semibold text-sky underline underline-offset-4">
+        <Link href={status === "signed-in" ? "/tai-khoan/don-hang" : "/cua-hang"} className="mt-6 inline-block font-semibold text-sky-ink underline underline-offset-4">
           {status === "signed-in" ? "Xem đơn hàng của tôi" : "Tiếp tục mua sắm"}
         </Link>
       </div>

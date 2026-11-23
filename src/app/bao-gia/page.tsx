@@ -42,7 +42,7 @@ export default async function QuotePage({ searchParams }: { searchParams: Promis
             <p className="font-semibold">Cần trao đổi ngay?</p>
             <p className="mt-1 text-sm text-muted">Nhắn Zalo để được tư vấn trong giờ hành chính.</p>
             {zalo ? (
-              <a href={`https://zalo.me/${zalo}`} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 font-semibold text-sky hover:underline underline-offset-4">
+              <a href={`https://zalo.me/${zalo}`} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 font-semibold text-sky-ink hover:underline underline-offset-4">
                 <MessageCircle size={18} strokeWidth={1.75} aria-hidden="true" /> Zalo {zalo}
               </a>
             ) : null}

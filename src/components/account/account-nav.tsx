@@ -16,7 +16,7 @@ export function AccountNav() {
       {ITEMS.map((item) => {
         const active = item.href === "/tai-khoan" ? pathname === item.href : pathname.startsWith(item.href);
         return (
-          <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm lg:rounded-xl ${active ? "bg-sky-50 font-semibold text-sky" : "hover:bg-sky-50"}`}>
+          <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm lg:rounded-xl ${active ? "bg-sky-50 font-semibold text-sky-ink" : "hover:bg-sky-50"}`}>
             {item.label}
           </Link>
         );
