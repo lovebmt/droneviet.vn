@@ -1,6 +1,3 @@
-export const COURSE_LEVEL: Record<string, string> = { "co-ban": "Cơ bản", "nang-cao": "Nâng cao", "chung-chi": "Luyện thi chứng chỉ", workshop: "Workshop trải nghiệm" };
-export const COURSE_FORMAT: Record<string, string> = { "truc-tiep": "Học trực tiếp", online: "Học online", "ket-hop": "Kết hợp" };
-
 /** Steps toward a licence under Nghị định 288/2025/NĐ-CP (Điều 27, 28); details in the legal article. */
 export const CERTIFICATE_STEPS: Array<{ title: string; text: string; status: string; href?: string }> = [
   { title: "Học kiến thức hàng không và an toàn bay", text: "Luật bay, khu vực bay, thời tiết và xử lý sự cố. Đủ để thi giấy phép Hạng A.", status: "Tại cơ sở đào tạo" },

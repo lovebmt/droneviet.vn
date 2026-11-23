@@ -10,12 +10,12 @@ import { INTERNATIONAL } from "@/content/education";
 export const metadata: Metadata = {
   title: "Drone programme for schools",
   description: "Equipment, bilingual curriculum, teacher training and year-round support for drone classes.",
-  alternates: { canonical: "/en/education", languages: { vi: "/giao-duc" } },
+  alternates: { canonical: "/en/education" },
 };
 
 export default function EnEducationPage() {
   return (
-    <EnShell viHref="/giao-duc">
+    <EnShell viHref="/">
       <section className="border-b border-line bg-gradient-to-b from-sky-50 to-white">
         <Container className="py-12 sm:py-16">
           <h1 className="max-w-3xl text-4xl font-light tracking-tight sm:text-5xl">A drone programme your teachers can run</h1>

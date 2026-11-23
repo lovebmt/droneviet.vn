@@ -13,7 +13,13 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
         {items.map((item, i) => (
           <li key={item.label} className="inline-flex items-center gap-1">
             {i > 0 ? <ChevronRight size={14} strokeWidth={1.75} aria-hidden="true" /> : null}
-            {item.href ? <Link href={item.href} className="hover:text-ink">{item.label}</Link> : <span aria-current="page" className="text-ink">{item.label}</span>}
+            {item.href ? (
+              <Link href={item.href} className="hover:text-ink">{item.label}</Link>
+            ) : i === items.length - 1 ? (
+              <span aria-current="page" className="text-ink">{item.label}</span>
+            ) : (
+              <span>{item.label}</span>
+            )}
           </li>
         ))}
       </ol>

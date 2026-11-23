@@ -2,15 +2,17 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { noHorizontalOverflow } from "./helpers";
 
-const PAGES = ["/", "/giao-duc", "/giao-duc/thcs", "/cua-hang", "/cua-hang/dv-code-fleet", "/cua-hang/combo/combo-lop-hoc-quoc-te", "/cua-hang/so-sanh", "/bao-gia", "/dao-tao", "/dao-tao/chung-chi", "/dao-tao/cap-phep", "/dao-tao/quy-dinh", "/dao-tao/ban-do", "/giao-duc/workshop", "/r-d", "/ho-tro", "/bay-an-toan", "/bay-mo-phong", "/dang-nhap", "/gio-hang", "/tim-kiem?q=drone", "/en", "/en/education"];
+const PAGES = ["/", "/giao-duc/thcs", "/cua-hang", "/cua-hang/dv-code-fleet", "/cua-hang/combo/combo-lop-hoc-quoc-te", "/cua-hang/so-sanh", "/bao-gia", "/dao-tao/chung-chi", "/dao-tao/cap-phep", "/dao-tao/quy-dinh", "/dao-tao/ban-do", "/giao-duc/workshop", "/r-d", "/ho-tro", "/bay-an-toan", "/bay-mo-phong", "/dang-nhap", "/gio-hang", "/tim-kiem?q=drone", "/en", "/en/education"];
 
 test.describe("legacy URLs redirect permanently", () => {
   const cases: Array<[string, string]> = [
     ["/san-pham/dv-code-fleet", "/cua-hang/dv-code-fleet"],
     ["/san-pham", "/cua-hang"],
-    ["/giai-phap", "/giao-duc"],
-    ["/dich-vu", "/giao-duc"],
-    ["/khoa-hoc", "/dao-tao"],
+    ["/giai-phap", "/giao-duc/tieu-hoc"],
+    ["/dich-vu", "/giao-duc/tieu-hoc"],
+    ["/khoa-hoc", "/dao-tao/chung-chi"],
+    ["/giao-duc", "/giao-duc/tieu-hoc"],
+    ["/dao-tao", "/dao-tao/chung-chi"],
     ["/tin-tuc", "/r-d"],
     ["/theo-doi-don", "/tai-khoan/don-hang"],
   ];

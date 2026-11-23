@@ -10,6 +10,7 @@ vi.mock("@/lib/navigate", () => navigate);
 
 const { default: AccountPage } = await import("./page");
 const { default: OrdersPage } = await import("./don-hang/page");
+const { default: MyCoursesPage } = await import("./khoa-hoc/page");
 const { default: LoginPage } = await import("../dang-nhap/page");
 
 const user = { id: "u1", email: "an@example.com", displayName: "Nguyễn An", roles: ["customer"] };
@@ -39,6 +40,22 @@ describe("account", () => {
     render(<AppProviders><OrdersPage /></AppProviders>);
     expect(await screen.findByRole("link", { name: /DV-1/ })).toHaveAttribute("href", "/tai-khoan/don-hang/DV-1");
     expect(screen.getByText("Đang giao")).toBeInTheDocument();
+  });
+
+  it("my courses lists registrations without links to removed course pages", async () => {
+    routes["/auth/me"] = () => json(user);
+    routes["/me/courses"] = () => json([{ id: "e1", status: "reserved", quantity: 1, session: { id: "s1", startsAt: "2026-11-28T02:00:00.000Z" }, course: { slug: "workshop-trai-nghiem-drone", title: "Workshop trải nghiệm drone" } }]);
+    render(<AppProviders><MyCoursesPage /></AppProviders>);
+    const title = await screen.findByText("Workshop trải nghiệm drone");
+    expect(title.closest("a")).toBeNull();
+    expect(screen.queryAllByRole("link").some((a) => a.getAttribute("href")?.startsWith("/dao-tao"))).toBe(false);
+  });
+
+  it("my courses with no registration points to the workshop", async () => {
+    routes["/auth/me"] = () => json(user);
+    routes["/me/courses"] = () => json([]);
+    render(<AppProviders><MyCoursesPage /></AppProviders>);
+    expect(await screen.findByRole("link", { name: "Xem lịch workshop" })).toHaveAttribute("href", "/giao-duc/workshop");
   });
 
   it("guest lookup shows an order found by number and phone", async () => {

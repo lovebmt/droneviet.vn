@@ -40,7 +40,7 @@ export default async function LevelPage({ params }: Props) {
       <PageHeader
         title={`Drone cho ${level.name}`}
         lead={level.lead}
-        crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Giáo dục", href: "/giao-duc" }, { label: level.name }]}
+        crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Giáo dục" }, { label: level.name }]}
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <LinkButton href={combos[0] ? `/bao-gia?san-pham=${combos[0].slug}` : "/bao-gia"} size="lg">Nhận tư vấn cho {level.name}</LinkButton>

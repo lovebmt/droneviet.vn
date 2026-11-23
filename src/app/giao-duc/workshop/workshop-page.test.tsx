@@ -60,6 +60,18 @@ describe("workshop page", () => {
     expect(within(sessions).getAllByText("9:00")).toHaveLength(2);
   });
 
+  it("a group larger than the seats left gets a clear message", async () => {
+    fetchMock.mockImplementation(async (url: string) =>
+      url.endsWith("/enroll") ? Response.json({ message: "Course session no longer has enough seats" }, { status: 409 }) : new Response("{}", { status: 401 }),
+    );
+    await page();
+    fireEvent.change(screen.getByLabelText(/Họ và tên/), { target: { value: "Cô Lan" } });
+    fireEvent.change(screen.getByLabelText(/Số điện thoại/), { target: { value: "0912345678" } });
+    fireEvent.change(screen.getByLabelText(/Số người tham gia/), { target: { value: "40" } });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Đăng ký" })));
+    expect(await screen.findByRole("alert")).toHaveTextContent("không còn đủ chỗ");
+  });
+
   it("shows the default intro without a workshop course", async () => {
     api.listCourses.mockResolvedValue([]);
     await page();

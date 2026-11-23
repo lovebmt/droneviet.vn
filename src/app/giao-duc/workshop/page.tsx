@@ -26,7 +26,7 @@ export default async function WorkshopPage() {
       <PageHeader
         title={WORKSHOP_INTRO.title}
         lead={WORKSHOP_INTRO.lead}
-        crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Giáo dục", href: "/giao-duc" }, { label: "Workshop" }]}
+        crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Giáo dục" }, { label: "Workshop" }]}
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <LinkButton href="#dang-ky" size="lg">Đăng ký workshop</LinkButton>

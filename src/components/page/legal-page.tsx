@@ -19,7 +19,7 @@ export async function LegalPageView({ page, before, after }: { page: LegalPage; 
   const others = LEGAL_PAGES.filter((p) => p.href !== page.href);
   return (
     <>
-      <PageHeader title={page.title} lead={page.lead} crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Đào tạo", href: "/dao-tao" }, { label: page.title }]} />
+      <PageHeader title={page.title} lead={page.lead} crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Đào tạo" }, { label: page.title }]} />
       {before}
       <Section>
         <h2 className="text-2xl font-semibold">Tóm tắt nhanh</h2>

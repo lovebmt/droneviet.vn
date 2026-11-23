@@ -50,10 +50,16 @@ describe("SEO", () => {
       "https://www.droneviet.vn/cua-hang/combo/combo-lop-hoc-quoc-te",
       "https://www.droneviet.vn/cua-hang/dv-ai-vision",
       "https://www.droneviet.vn/r-d/lap-rap-f450",
-      "https://www.droneviet.vn/dao-tao/drone-nhap-mon",
       "https://www.droneviet.vn/giao-duc/thcs",
       "https://www.droneviet.vn/giao-duc/workshop",
     ]));
+  });
+
+  it("sitemap has neither the removed overview pages nor course pages", async () => {
+    const urls = (await sitemap()).map((e) => e.url);
+    for (const removed of ["https://www.droneviet.vn/giao-duc", "https://www.droneviet.vn/dao-tao", "https://www.droneviet.vn/dao-tao/drone-nhap-mon"]) {
+      expect(urls).not.toContain(removed);
+    }
   });
 
   it("sitemap leaves workshop courses to the workshop page", async () => {
