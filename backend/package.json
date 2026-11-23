@@ -13,7 +13,8 @@
     "seed:admin": "node --env-file=.env -r ts-node/register src/database/seed-admin.ts",
     "test": "vitest run --config vitest.config.mts",
     "test:watch": "vitest --config vitest.config.mts",
-    "vercel-build": "nest build && DATABASE_URL=\"${DATABASE_URL_UNPOOLED:-$DATABASE_URL}\" npm run migration:run && if [ \"$RUN_SEED\" = \"1\" ]; then DATABASE_URL=\"${DATABASE_URL_UNPOOLED:-$DATABASE_URL}\" sh -c \"npx ts-node src/database/seed-catalog.ts && npx ts-node src/database/seed-admin.ts\"; fi"
+    "vercel-build": "nest build && DATABASE_URL=\"${DATABASE_URL_UNPOOLED:-$DATABASE_URL}\" npm run migration:run && if [ \"$RUN_SEED\" = \"1\" ]; then DATABASE_URL=\"${DATABASE_URL_UNPOOLED:-$DATABASE_URL}\" sh -c \"npx ts-node src/database/seed-v2.ts && npx ts-node src/database/seed-admin.ts\"; fi",
+    "seed:v2": "ts-node src/database/seed-v2.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1175.0",
