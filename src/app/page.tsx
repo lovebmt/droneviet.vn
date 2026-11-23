@@ -7,7 +7,8 @@ import { LinkTile } from "@/components/page/link-tile";
 import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { DEPLOYMENT_STEPS, LEVELS } from "@/content/levels";
+import { DeploymentSteps } from "@/components/education/deployment-steps";
+import { LevelGrid } from "@/components/education/level-grid";
 import { listArticles, listProducts } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
 
@@ -119,32 +120,12 @@ export default async function HomePage() {
 
       <Section tone="sky">
         <h2 className="text-center text-3xl font-light tracking-tight">Giải pháp theo cấp học</h2>
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {LEVELS.map((level) => (
-            <Link key={level.slug} href={`/giao-duc/${level.slug}`} className={`group flex min-h-[180px] flex-col justify-between rounded-2xl p-6 ${level.tone} ${level.tone === "bg-teal" ? "text-ink" : "text-white"}`}>
-              <span className="text-2xl font-semibold">{level.name}</span>
-              <span>
-                <span className="block opacity-90">{level.short}</span>
-                <span className="mt-3 inline-flex items-center gap-0.5 font-semibold group-hover:underline underline-offset-4">
-                  Tìm hiểu <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" />
-                </span>
-              </span>
-            </Link>
-          ))}
-        </div>
+        <div className="mt-8"><LevelGrid /></div>
       </Section>
 
       <Section>
         <h2 className="text-3xl font-light tracking-tight">Triển khai tại trường trong 4 bước</h2>
-        <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {DEPLOYMENT_STEPS.map((step, i) => (
-            <li key={step.title} className="border-t-2 border-ink pt-4">
-              <span className="text-sm font-semibold text-muted">Bước {i + 1}</span>
-              <h3 className="mt-1 text-lg font-semibold">{step.title}</h3>
-              <p className="mt-2 text-muted">{step.text}</p>
-            </li>
-          ))}
-        </ol>
+        <div className="mt-8"><DeploymentSteps /></div>
         <div className="mt-10">
           <LinkButton href="/bao-gia" size="lg">Nhận tư vấn cho trường bạn</LinkButton>
         </div>

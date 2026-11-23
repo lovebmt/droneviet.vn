@@ -18,7 +18,7 @@ const SIZES: Record<Size, string> = {
 
 export function buttonClasses(variant: Variant = "primary", size: Size = "md"): string {
   return [
-    "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors",
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-colors",
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky",
     "disabled:cursor-not-allowed disabled:opacity-50",
     VARIANTS[variant],

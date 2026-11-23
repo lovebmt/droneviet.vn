@@ -12,7 +12,7 @@ export function Logo({ tone = "ink" }: { tone?: "ink" | "white" }) {
         </g>
         <rect x="10.5" y="10.5" width="5" height="5" rx="1.5" fill="currentColor" />
       </svg>
-      <span className="text-[17px]">Drone Việt</span>
+      <span className="whitespace-nowrap text-[17px]">Drone Việt</span>
     </Link>
   );
 }

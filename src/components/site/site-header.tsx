@@ -73,7 +73,7 @@ export function SiteHeader() {
               </span>
             ) : null}
           </Link>
-          <LinkButton href="/bao-gia" className="ml-2 hidden sm:inline-flex">
+          <LinkButton href="/bao-gia" className="ml-2 max-sm:hidden">
             Nhận tư vấn
           </LinkButton>
           <button type="button" aria-label="Mở menu" onClick={() => setMenuOpen(true)} className="rounded-full p-2 hover:bg-sky-50 sm:p-2.5 lg:hidden">
