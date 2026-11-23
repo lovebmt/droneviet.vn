@@ -40,6 +40,10 @@ export class OauthService {
   }
 
   callbackUrl(provider: OauthProvider): string {
+    // Zalo only accepts callbacks on a verified domain (www.droneviet.vn), which relays to the API.
+    if (provider === "zalo" && this.env("ZALO_REDIRECT_URI")) {
+      return this.env("ZALO_REDIRECT_URI");
+    }
     const api = (this.env("PUBLIC_API_URL") || "http://localhost:4000").replace(/\/$/, "");
     return `${api}/auth/${provider}/callback`;
   }

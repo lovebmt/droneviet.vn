@@ -179,4 +179,12 @@ describe("OauthService", () => {
 
     await expect(service.exchange("stale")).rejects.toThrow(BadRequestException);
   });
+
+  it("uses ZALO_REDIRECT_URI so the callback can live on the Zalo-verified web domain", async () => {
+    const { service } = setup({ ...ENV, ZALO_REDIRECT_URI: "https://www.droneviet.vn/auth/zalo/callback" });
+
+    const url = new URL(await service.startZalo());
+
+    expect(url.searchParams.get("redirect_uri")).toBe("https://www.droneviet.vn/auth/zalo/callback");
+  });
 });
