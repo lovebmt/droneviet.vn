@@ -37,6 +37,22 @@ describe("SiteHeader", () => {
     expect(screen.getByRole("link", { name: "Nhận tư vấn" })).toHaveAttribute("href", "/bao-gia");
   });
 
+  it("menu items and sub-items give feedback when pressed", () => {
+    signedOut();
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    const nav = screen.getByRole("navigation", { name: "Điều hướng chính" });
+    const pressable = (el: HTMLElement) => /active:scale-/.test(el.className) && /active:bg-/.test(el.className);
+    expect(pressable(within(nav).getByRole("link", { name: "Giáo dục" }))).toBe(true);
+    expect(pressable(within(nav).getByRole("link", { name: "Bay mô phỏng" }))).toBe(true);
+    expect(pressable(within(nav).getByRole("link", { name: /Workshop trải nghiệm/ }))).toBe(true);
+    expect(pressable(screen.getByRole("link", { name: /Giỏ hàng/ }))).toBe(true);
+
+    act(() => screen.getByRole("button", { name: "Mở menu" }).click());
+    const dialog = screen.getByRole("dialog", { name: "Menu" });
+    expect(pressable(within(dialog).getByRole("link", { name: "Cửa hàng" }))).toBe(true);
+    expect(pressable(within(dialog).getByRole("link", { name: "Cấp phép bay" }))).toBe(true);
+  });
+
   it("cart icon shows the item count", async () => {
     signedOut();
     localStorage.setItem("dv-cart-v2", JSON.stringify([{ variantId: "v1", slug: "a", name: "A", priceVnd: 1, quantity: 3, imageUrl: null }]));
