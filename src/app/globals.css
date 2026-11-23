@@ -61,3 +61,14 @@ body {
 .prose-dv code { background: var(--color-sky-50); border-radius: 6px; padding: 0.1rem 0.35rem; font-size: 0.9em; }
 .prose-dv pre { margin-top: 1rem; overflow-x: auto; border-radius: 12px; background: var(--color-ink); color: #e6edf5; padding: 1rem; }
 .prose-dv pre code { background: transparent; padding: 0; }
+
+/* Flight zone map: sovereignty labels for Hoàng Sa and Trường Sa, readable over any tile. */
+.sovereignty-label span {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f2742;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff;
+}
