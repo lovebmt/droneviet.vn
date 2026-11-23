@@ -71,6 +71,22 @@ describe("SEO", () => {
   it("robots allows crawling and points to the www sitemap", () => {
     expect(robots()).toMatchObject({ sitemap: "https://www.droneviet.vn/sitemap.xml" });
   });
+
+  it("robots lets AI search and answer bots in but keeps AI training crawlers out", () => {
+    const rules = [robots().rules].flat();
+    const forAgent = (agent: string) => rules.find((r) => [r.userAgent].flat().includes(agent));
+    for (const bot of ["OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User"]) {
+      const rule = forAgent(bot);
+      expect(rule, bot).toBeDefined();
+      expect([rule!.allow].flat()).toContain("/");
+      expect([rule!.disallow].flat()).toContain("/admin");
+    }
+    for (const bot of ["GPTBot", "ClaudeBot", "CCBot", "Google-Extended", "Applebot-Extended", "Meta-ExternalAgent", "Bytespider"]) {
+      expect([forAgent(bot)?.disallow].flat(), bot).toContain("/");
+    }
+    const everyone = forAgent("*")!;
+    expect([everyone.disallow].flat()).toEqual(expect.arrayContaining(["/admin", "/tai-khoan", "/gio-hang", "/thanh-toan", "/api/"]));
+  });
 });
 
 describe("English", () => {
