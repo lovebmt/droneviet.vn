@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { DroneHeroCarousel } from "@/components/drone-hero-carousel";
 import { getSiteContent, type Locale } from "@/lib/content";
+
+// The homepage is also served (not redirected) on apex droneviet.vn for Zalo verification;
+// the canonical keeps www as the indexed copy.
+export const metadata: Metadata = {
+  alternates: { canonical: "https://www.droneviet.vn/" },
+};
 
 export function HomePageContent({ locale = "vi" }: { locale?: Locale }) {
   const site = getSiteContent(locale);
