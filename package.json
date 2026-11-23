@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "rd:publish": "node scripts/rd/publish.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
