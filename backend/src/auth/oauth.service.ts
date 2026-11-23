@@ -175,21 +175,12 @@ export class OauthService {
     }
 
     type ZaloProfile = { error?: number; id?: string | number; name?: string };
-    const zaloHeaders = { access_token: token.access_token };
-    let profile = await this.getJson<ZaloProfile>(
-      "zalo profile",
-      "https://graph.zalo.me/v2.0/me?fields=id,name",
-      zaloHeaders,
-    );
+    let profile = await this.zaloProfile<ZaloProfile>("id,name", token.access_token);
     if (!profile.id && profile.error === -501) {
       // Zalo limits personal info when the caller's IP is outside Vietnam (e.g. Vercel in the US);
       // the bare account id may still be available.
       this.logger.warn("zalo profile limited for a non-Vietnam IP (-501): retrying with fields=id");
-      profile = await this.getJson<ZaloProfile>(
-        "zalo profile (id only)",
-        "https://graph.zalo.me/v2.0/me?fields=id",
-        zaloHeaders,
-      );
+      profile = await this.zaloProfile<ZaloProfile>("id", token.access_token);
     }
     if (!profile.id) {
       throw new OauthFailure("profile", "Zalo profile is missing an id", summariseProviderBody(profile));
@@ -204,6 +195,25 @@ export class OauthService {
     });
     this.logger.log(`zalo signed in user=${user.id}`);
     return this.issueExchange("zalo", user.id);
+  }
+
+  /**
+   * Zalo returns personal info only to Vietnam IPs. When ZALO_PROFILE_RELAY_URL is set the profile
+   * is fetched through the relay running on a Vietnam host (infra/zalo-relay); otherwise directly.
+   */
+  private zaloProfile<T>(fields: string, accessToken: string): Promise<T> {
+    const relay = this.env("ZALO_PROFILE_RELAY_URL").replace(/\/$/, "");
+    if (relay) {
+      return this.getJson<T>(`zalo profile via relay${fields === "id" ? " (id only)" : ""}`, `${relay}/zalo/me?fields=${fields}`, {
+        "x-relay-secret": this.env("ZALO_PROFILE_RELAY_SECRET"),
+        "x-zalo-access-token": accessToken,
+      });
+    }
+    return this.getJson<T>(
+      fields === "id" ? "zalo profile (id only)" : "zalo profile",
+      `https://graph.zalo.me/v2.0/me?fields=${fields}`,
+      { access_token: accessToken },
+    );
   }
 
   /** Trade a one-time exchange code (from the callback redirect) for a session. */

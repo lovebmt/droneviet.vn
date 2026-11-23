@@ -377,4 +377,31 @@ describe("OauthService", () => {
     expect(failure).toMatchObject({ reason: "profile" });
     expect((failure as { detail: string }).detail).toContain("-501");
   });
+
+  it("fetches the Zalo profile through the Vietnam relay when one is configured, never directly", async () => {
+    const logs = capturedLogs();
+    const { service, users } = setup({
+      ...ENV,
+      ZALO_PROFILE_RELAY_SECRET: "relay-secret-0123456789",
+      ZALO_PROFILE_RELAY_URL: "https://zalo-relay.droneviet.vn/",
+    });
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    const fetchMock = stubFetch({
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access-token" },
+      "https://zalo-relay.droneviet.vn/zalo/me": { id: "z-vn", name: "Bình" },
+    });
+
+    await service.exchange(await service.finishZalo("auth-code", state));
+
+    const profileCall = fetchMock.mock.calls.find(([url]) => String(url).includes("/zalo/me"))!;
+    expect(String(profileCall[0])).toBe("https://zalo-relay.droneviet.vn/zalo/me?fields=id,name");
+    expect((profileCall[1] as RequestInit).headers).toEqual({
+      "x-relay-secret": "relay-secret-0123456789",
+      "x-zalo-access-token": "z-access-token",
+    });
+    expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith("https://graph.zalo.me"))).toBe(false);
+    expect([...users.rows.values()][0]).toMatchObject({ displayName: "Bình", zaloId: "z-vn" });
+    expect(logs.join("\n")).not.toContain("relay-secret-0123456789");
+    expect(logs.join("\n")).not.toContain("z-access-token");
+  });
 });

@@ -1,0 +1,22 @@
+# Runs on a Vietnam host (justin). No port is published: the only way in is the Cloudflare Tunnel.
+# Needs a .env next to this file (chmod 600) with RELAY_SECRET and TUNNEL_TOKEN.
+name: droneviet-zalo-relay
+
+services:
+  relay:
+    build: .
+    restart: unless-stopped
+    environment:
+      RELAY_SECRET: ${RELAY_SECRET:?set RELAY_SECRET in .env}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    expose: ["8080"]
+
+  cloudflared:
+    image: cloudflare/cloudflared:${CLOUDFLARED_VERSION:-latest}
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?set TUNNEL_TOKEN in .env}
+    depends_on: [relay]
