@@ -32,7 +32,11 @@ export class AuthService {
     const email = input.email.trim().toLowerCase();
     const user = await this.userRepository.findOneBy({ email });
 
-    if (!user || !(await bcrypt.compare(input.password, user.passwordHash))) {
+    if (
+      !user ||
+      !user.passwordHash ||
+      !(await bcrypt.compare(input.password, user.passwordHash))
+    ) {
       throw new UnauthorizedException("Invalid email or password");
     }
 
@@ -59,7 +63,7 @@ export class AuthService {
     return this.issueSession(user);
   }
 
-  private async issueSession(user: User) {
+  async issueSession(user: User) {
     const payload = {
       sub: user.id,
       email: user.email,

@@ -4,14 +4,17 @@ import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { OauthTicket } from "./entities/oauth-ticket.entity";
 import { User } from "./entities/user.entity";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { resolveJwtSecret } from "./jwt-config";
+import { OauthController } from "./oauth.controller";
+import { OauthService } from "./oauth.service";
 import { RolesGuard } from "./roles.guard";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, OauthTicket]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -23,8 +26,8 @@ import { RolesGuard } from "./roles.guard";
       }),
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, RolesGuard],
+  controllers: [AuthController, OauthController],
+  providers: [AuthService, OauthService, JwtAuthGuard, RolesGuard],
   exports: [AuthService, JwtAuthGuard, JwtModule, RolesGuard],
 })
 export class AuthModule {}

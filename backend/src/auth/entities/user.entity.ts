@@ -24,8 +24,15 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
-  passwordHash!: string;
+  /** Null for accounts created through Google/Zalo sign-in. */
+  @Column({ type: "varchar", nullable: true })
+  passwordHash!: string | null;
+
+  @Column({ type: "varchar", nullable: true, unique: true })
+  googleId!: string | null;
+
+  @Column({ type: "varchar", nullable: true, unique: true })
+  zaloId!: string | null;
 
   @Column({ type: "json" })
   roles!: UserRole[];

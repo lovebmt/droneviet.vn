@@ -1,10 +1,12 @@
 import "reflect-metadata";
 import { DataSource, DataSourceOptions } from "typeorm";
 import { PostgresInitial1795401062894 } from "./migrations/1795401062894-PostgresInitial";
+import { OauthSignIn1795405151810 } from "./migrations/1795405151810-OauthSignIn";
 import { ProductVariant } from "../catalog/entities/product-variant.entity";
 import { Product } from "../catalog/entities/product.entity";
 import { Article } from "../content/entities/article.entity";
 import { ContentRevision } from "../content/entities/content-revision.entity";
+import { OauthTicket } from "../auth/entities/oauth-ticket.entity";
 import { User } from "../auth/entities/user.entity";
 import { OrderLine } from "../orders/entities/order-line.entity";
 import { Order } from "../orders/entities/order.entity";
@@ -57,8 +59,9 @@ export function createDatabaseOptions(
       CourseEnrollment,
       AuditEvent,
       PromoCode,
+      OauthTicket,
     ],
-    migrations: [PostgresInitial1795401062894],
+    migrations: [PostgresInitial1795401062894, OauthSignIn1795405151810],
     synchronize: false,
   };
 }
