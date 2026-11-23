@@ -16,7 +16,7 @@ describe.skipIf(!databaseUrl)("commerce API on postgres", () => {
     process.env.DATABASE_URL = databaseUrl;
     process.env.JWT_ACCESS_SECRET = "integration-access";
     process.env.JWT_REFRESH_SECRET = "integration-refresh";
-    const { AppModule } = await import("./app.module");
+    const { AppModule } = await import("./app.module.js");
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
@@ -67,7 +67,7 @@ describe.skipIf(!databaseUrl)("commerce API on postgres", () => {
     await dataSource.query(
       `UPDATE orders SET "reservationExpiresAt" = now() - interval '1 hour' WHERE status = 'pending_payment'`,
     );
-    const { OrdersService } = await import("./orders/orders.service");
+    const { OrdersService } = await import("./orders/orders.service.js");
 
     const released = await app.get(OrdersService).releaseExpiredReservations();
 

@@ -1,12 +1,41 @@
 import { Injectable } from "@nestjs/common";
-import { toString } from "mdast-util-to-string";
-import rehypeSanitize from "rehype-sanitize";
-import rehypeSlug from "rehype-slug";
-import rehypeStringify from "rehype-stringify";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import { unified } from "unified";
-import { visit } from "unist-util-visit";
+
+// The unified/remark/rehype ecosystem is ESM-only and Vercel's runtime cannot require() ESM.
+// With `module: node16` TypeScript keeps these import() calls native in the CommonJS build.
+function loadMarkdownToolchain() {
+  return Promise.all([
+    import("mdast-util-to-string"),
+    import("rehype-sanitize"),
+    import("rehype-slug"),
+    import("rehype-stringify"),
+    import("remark-parse"),
+    import("remark-rehype"),
+    import("unified"),
+    import("unist-util-visit"),
+  ]).then(
+    ([
+      { toString },
+      { default: rehypeSanitize },
+      { default: rehypeSlug },
+      { default: rehypeStringify },
+      { default: remarkParse },
+      { default: remarkRehype },
+      { unified },
+      { visit },
+    ]) => ({
+      rehypeSanitize,
+      rehypeSlug,
+      rehypeStringify,
+      remarkParse,
+      remarkRehype,
+      toString,
+      unified,
+      visit,
+    }),
+  );
+}
+
+let markdownToolchain: ReturnType<typeof loadMarkdownToolchain> | undefined;
 
 export interface MarkdownHeading {
   depth: number;
@@ -31,6 +60,17 @@ function slugifyHeading(text: string): string {
 @Injectable()
 export class MarkdownRendererService {
   async render(markdown: string): Promise<RenderedMarkdown> {
+    markdownToolchain ??= loadMarkdownToolchain();
+    const {
+      rehypeSanitize,
+      rehypeSlug,
+      rehypeStringify,
+      remarkParse,
+      remarkRehype,
+      toString,
+      unified,
+      visit,
+    } = await markdownToolchain;
     const markdownTree = unified().use(remarkParse).parse(markdown);
     const tableOfContents: MarkdownHeading[] = [];
 
