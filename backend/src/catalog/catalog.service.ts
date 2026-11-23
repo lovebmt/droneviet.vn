@@ -58,6 +58,23 @@ export class CatalogService {
     });
   }
 
+  /** One product for the admin editor, drafts included, with combo items and size tiers. */
+  async detailForAdmin(id: string) {
+    const product = await this.dataSource.getRepository(Product).findOne({ where: { id }, relations: { variants: { inventory: true } } });
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
+    const [items, tiers] = await Promise.all([
+      this.dataSource.getRepository(ComboItem).find({ where: { comboId: id }, relations: { product: true }, order: { sortOrder: "ASC" } }),
+      this.dataSource.getRepository(ComboSizeTier).find({ where: { comboId: id }, order: { students: "ASC" } }),
+    ]);
+    return {
+      ...product,
+      comboItems: items.map((i) => ({ productSlug: i.product.slug, productName: i.product.name, quantity: i.quantity, note: i.note })),
+      sizeTiers: tiers.map((t) => ({ students: t.students, priceVnd: t.priceVnd, label: t.label })),
+    };
+  }
+
   async updateProduct(id: string, input: UpdateProductDto): Promise<Product> {
     const repository = this.dataSource.getRepository(Product);
     const product = await repository.findOneBy({ id });

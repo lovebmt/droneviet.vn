@@ -94,4 +94,20 @@ describe.skipIf(!integrationDatabaseUrl)("admin v2 endpoints", () => {
     expect(list[0]).toMatchObject({ id });
     expect(list[0].url).toContain(`/media/${id}/`);
   });
+
+  it("admin product detail includes combo items and size tiers for a draft combo", async () => {
+    const ds = ctx.dataSource;
+    const [part] = await ds.query(`INSERT INTO products (slug,name,summary,kind,status) VALUES ($1,'Part','s','drone','published') RETURNING id`, [`part-${s}`]);
+    const [combo] = await ds.query(`INSERT INTO products (slug,name,summary,kind,status) VALUES ($1,'Combo nháp','s','combo','draft') RETURNING id`, [`combo-${s}`]);
+    await ds.query(`INSERT INTO combo_items ("comboId","productId",quantity,"sortOrder") VALUES ($1,$2,3,0)`, [combo.id, part.id]);
+    await ds.query(`INSERT INTO combo_size_tiers ("comboId",students,"priceVnd") VALUES ($1,20,150000000)`, [combo.id]);
+    const res = await call("GET", `/admin/catalog/products/${combo.id}`, admin);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({
+      slug: `combo-${s}`,
+      comboItems: [{ productSlug: `part-${s}`, productName: "Part", quantity: 3 }],
+      sizeTiers: [{ students: 20, priceVnd: 150000000 }],
+    });
+    expect((await call("GET", `/admin/catalog/products/${combo.id}`, customer)).status).toBe(403);
+  });
 });

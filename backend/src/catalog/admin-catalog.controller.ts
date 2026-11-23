@@ -55,6 +55,11 @@ export class AdminCatalogController {
     return this.catalogService.listForAdmin();
   }
 
+  @Get("products/:id")
+  productDetail(@Param("id", ParseUUIDPipe) id: string) {
+    return this.catalogService.detailForAdmin(id);
+  }
+
   @Patch("products/:id")
   updateProduct(@Param("id", ParseUUIDPipe) id: string, @Body() input: UpdateProductDto) {
     return this.catalogService.updateProduct(id, input);
