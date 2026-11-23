@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { PurchaseMode } from "../catalog/entities/product-variant.entity";
 import { OrderPaymentMethod } from "./entities/order.entity";
 import { OrderStatus } from "./order-workflow";
-import { OrdersService } from "./orders.service";
+import { OrdersService, reservationExpiry } from "./orders.service";
 
 describe("OrdersService", () => {
   it("recalculates direct-purchase SKU prices and snapshots order lines", async () => {
@@ -595,6 +595,7 @@ describe("OrdersService", () => {
     const order = {
       id: "order-1",
       lines: [],
+      paymentMethod: OrderPaymentMethod.PAYOS,
       status: OrderStatus.PENDING_PAYMENT,
     };
     const orderRepository = {
@@ -628,5 +629,50 @@ describe("OrdersService", () => {
     ).rejects.toThrow("Payment status changes must use the payment workflow");
 
     expect(orderRepository.save).not.toHaveBeenCalled();
+  });
+
+  function transitionHarness(order: Record<string, unknown>) {
+    const orderRepository = {
+      createQueryBuilder: vi.fn(() => ({
+        getOne: vi.fn().mockResolvedValue(order),
+        leftJoinAndSelect: vi.fn().mockReturnThis(),
+        setLock: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+      })),
+      save: vi.fn(async (value) => value),
+    };
+    const manager = { getRepository: vi.fn(() => orderRepository) };
+    const reservations = { commitForOrder: vi.fn() };
+    const service = new OrdersService(
+      { transaction: vi.fn((callback) => callback(manager)) } as never,
+      reservations as never,
+      {} as never,
+      { recordWithManager: vi.fn() } as never,
+      {} as never,
+    );
+    return { service, reservations, orderRepository };
+  }
+
+  it.each([OrderPaymentMethod.COD, OrderPaymentMethod.BANK_TRANSFER])(
+    "operations confirms a %s order as paid and commits its stock",
+    async (paymentMethod) => {
+      const order = { id: "o", lines: [], paymentMethod, status: OrderStatus.PENDING_PAYMENT, reservationExpiresAt: new Date() };
+      const { service, reservations } = transitionHarness(order);
+      await expect(service.transitionOrder({ nextStatus: OrderStatus.PAID, orderId: "o" })).resolves.toMatchObject({ status: OrderStatus.PAID, reservationExpiresAt: null });
+      expect(reservations.commitForOrder).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("still rejects marking a PayOS order paid by hand", async () => {
+    const { service, reservations } = transitionHarness({ id: "o", lines: [], paymentMethod: OrderPaymentMethod.PAYOS, status: OrderStatus.PENDING_PAYMENT });
+    await expect(service.transitionOrder({ nextStatus: OrderStatus.PAID, orderId: "o" })).rejects.toThrow("Payment status changes must use the payment workflow");
+    expect(reservations.commitForOrder).not.toHaveBeenCalled();
+  });
+
+  it("holds stock 30 minutes for PayOS, 48 hours for bank transfer and indefinitely for COD", () => {
+    const now = Date.UTC(2026, 10, 23);
+    expect(reservationExpiry(OrderPaymentMethod.PAYOS, now)?.getTime()).toBe(now + 30 * 60_000);
+    expect(reservationExpiry(OrderPaymentMethod.BANK_TRANSFER, now)?.getTime()).toBe(now + 48 * 3_600_000);
+    expect(reservationExpiry(OrderPaymentMethod.COD, now)).toBeNull();
   });
 });

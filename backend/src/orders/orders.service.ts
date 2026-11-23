@@ -49,6 +49,16 @@ const paymentManagedStatuses = new Set<OrderStatus>([
   OrderStatus.PENDING_PAYMENT,
 ]);
 
+/**
+ * How long unpaid stock is held: PayOS links expire quickly; bank transfers get two days to arrive;
+ * COD is confirmed by staff by phone, so it is never released automatically.
+ */
+export function reservationExpiry(method: OrderPaymentMethod, now = Date.now()): Date | null {
+  if (method === OrderPaymentMethod.COD) return null;
+  if (method === OrderPaymentMethod.BANK_TRANSFER) return new Date(now + 48 * 60 * 60 * 1000);
+  return new Date(now + 30 * 60 * 1000);
+}
+
 @Injectable()
 export class OrdersService {
   constructor(
@@ -150,7 +160,7 @@ export class OrdersService {
           userId: input.userId ?? null,
           orderNumber: `DV-${randomUUID().slice(0, 8).toUpperCase()}`,
           paymentMethod: input.paymentMethod,
-          reservationExpiresAt: new Date(Date.now() + 30 * 60 * 1000),
+          reservationExpiresAt: reservationExpiry(input.paymentMethod),
           shippingAddress: input.shippingAddress ?? null,
           status: OrderStatus.PENDING_PAYMENT,
           subtotalVnd,
@@ -264,7 +274,13 @@ export class OrdersService {
         throw new NotFoundException("Order was not found");
       }
 
-      if (paymentManagedStatuses.has(input.nextStatus)) {
+      // COD and bank-transfer payments are confirmed by staff (money received or order confirmed by phone);
+      // PayOS payments are settled only by the payment webhook.
+      const manualConfirmation =
+        input.nextStatus === OrderStatus.PAID &&
+        order.status === OrderStatus.PENDING_PAYMENT &&
+        (order.paymentMethod === OrderPaymentMethod.COD || order.paymentMethod === OrderPaymentMethod.BANK_TRANSFER);
+      if (paymentManagedStatuses.has(input.nextStatus) && !manualConfirmation) {
         throw new BadRequestException(
           "Payment status changes must use the payment workflow",
         );
@@ -296,6 +312,11 @@ export class OrdersService {
           await this.reservations.restockForOrder(manager, order);
         }
         await this.courses.releaseEnrollmentsForOrder(manager, order.id);
+      }
+
+      if (manualConfirmation) {
+        await this.reservations.commitForOrder(manager, order);
+        order.reservationExpiresAt = null;
       }
 
       if (input.nextStatus === OrderStatus.REFUNDED) {
