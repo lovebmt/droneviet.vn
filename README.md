@@ -1,80 +1,36 @@
 # DroneViet.vn
 
-Website thương hiệu cho bộ giải pháp drone nghiên cứu và giáo dục từ cấp 1 đến đại học của Drone Việt.
+Website của Drone Việt: giải pháp drone trọn bộ cho giáo dục (combo lớp học), cửa hàng drone và linh kiện,
+đào tạo & chứng chỉ, bài viết R&D và bay mô phỏng trên trình duyệt.
 
-## Tech Stack
+v2 đang được viết lại trên branch `rewrite/v2` — xem
+`docs/superpowers/specs/2026-11-23-droneviet-v2-rewrite-design.md` và
+`docs/superpowers/plans/2026-11-23-v2-roadmap.md`.
 
-- Next.js App Router
-- React
-- TypeScript
-- Tailwind CSS
-- Zod
-- gray-matter
-- Vitest + Testing Library
+## Cấu trúc
 
-## Development
+- `src/` — web Next.js (App Router). Đọc `node_modules/next/dist/docs/` trước khi sửa (xem AGENTS.md).
+- `backend/` — API NestJS + Postgres (Neon trên production), chạy ở `api.droneviet.vn`.
+- `infra/zalo-relay/` — relay lấy hồ sơ Zalo từ IP Việt Nam (chạy trên server103).
 
-```bash
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-## Content Editing
-
-Main source content lives in:
-
-- `src/content/data/site.ts`: brand copy, navigation, drone catalog, curriculum, services, partners.
-- `src/content/articles/*.md`: article frontmatter and Markdown body.
-
-The UI reads content through `src/lib/content/index.ts`. Keep pages and components using the loader functions so the source can later move to an admin/database layer.
-
-## Verification
+## Chạy trên máy
 
 ```bash
-npm run lint
-npm run test
-npm run build
+docker compose up -d postgres            # Postgres local ở cổng 5433
+cd backend && npm install
+DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet npm run migration:run
+DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet npm run seed:v2
+npm run start:dev                         # API ở http://localhost:4000
+
+cd .. && npm install
+NEXT_PUBLIC_COMMERCE_API_URL=http://localhost:4000 npm run dev   # web ở http://localhost:3000
 ```
 
-## Commerce API
-
-The commerce API lives in `backend/` and uses MySQL migrations plus Redis-ready
-reservation workflows.
-
-Copy `.env.example` to `.env.local` so checkout, quote, guest tracking, and
-admin can reach the API:
+## Kiểm tra
 
 ```bash
-cp .env.example .env.local
+npm run lint && npm run test && npm run build        # web
+cd backend && TEST_DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet_test npm test && npm run build
 ```
 
-```bash
-cd backend
-npm install
-npm run migration:run
-npm run seed:catalog
-npm run seed:admin
-npm run start:dev
-```
-
-Run its verification separately:
-
-```bash
-cd backend
-npm test
-npm run build
-```
-
-`1766919400000-commerce-hardening` is intentionally forward-only. It reconciles
-both historical and intermediate development schemas; restore a database backup
-instead of attempting to revert it.
-
-## Vercel Deploy
-
-Use the default Vercel Next.js preset.
-
-- Build command: `npm run build`
-- Install command: `npm install`
-- Output directory: managed by Next.js/Vercel
+Test tích hợp dùng database riêng `droneviet_test` (tạo một lần: `CREATE DATABASE droneviet_test`).

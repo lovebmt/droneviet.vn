@@ -4,7 +4,6 @@ import { DataSource } from "typeorm";
 import { MarkdownRendererService } from "./markdown-renderer.service";
 import { Article, ContentStatus } from "./entities/article.entity";
 import { ContentRevision } from "./entities/content-revision.entity";
-import { ProductContent } from "./entities/product-content.entity";
 import { CatalogService, type PublicProductCard } from "../catalog/catalog.service";
 import { WebRevalidator } from "../common/web-revalidator";
 import type { UpsertArticleDto } from "./dto/upsert-article.dto";
@@ -33,25 +32,6 @@ export interface PublicArticle extends PublicArticleSummary {
 function readingMinutes(markdown: string): number {
   const words = markdown.replace(/[#>*_`\[\]()!:{}-]/g, " ").split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
-}
-
-export interface PublishArticleInput {
-  bodyMarkdown: string;
-  seoDescription?: string;
-  seoTitle?: string;
-  summary?: string;
-  title: string;
-}
-
-export interface CreateArticleInput extends PublishArticleInput {
-  coverImageUrl?: string;
-  locale?: string;
-  slug: string;
-}
-
-export interface PublishProductContentInput {
-  bodyMarkdown: string;
-  locale?: string;
 }
 
 @Injectable()
@@ -176,96 +156,5 @@ export class ContentService {
         tableOfContents: rendered.tableOfContents,
       }),
     );
-  }
-
-  async createArticle(input: CreateArticleInput): Promise<Article> {
-    return this.dataSource.transaction(async (manager) => {
-      const articleRepository = manager.getRepository(Article);
-
-      return articleRepository.save(
-        articleRepository.create({
-        bodyMarkdown: input.bodyMarkdown,
-        coverImageUrl: input.coverImageUrl ?? null,
-        locale: input.locale ?? "vi",
-        renderedHtml: null,
-        revisionNumber: 0,
-        seoDescription: input.seoDescription ?? null,
-        seoTitle: input.seoTitle ?? null,
-        slug: input.slug,
-        status: ContentStatus.DRAFT,
-        summary: input.summary ?? null,
-        tableOfContents: null,
-        title: input.title,
-        }),
-      );
-    });
-  }
-
-  async publishArticle(
-    articleId: string,
-    input: PublishArticleInput,
-  ): Promise<Article> {
-    const rendered = await this.markdownRenderer.render(input.bodyMarkdown);
-    return this.dataSource.transaction(async (manager) => {
-      const articleRepository = manager.getRepository(Article);
-      const revisionRepository = manager.getRepository(ContentRevision);
-      const article = await articleRepository.findOneByOrFail({ id: articleId });
-      const revisionNumber = article.revisionNumber + 1;
-      const metadata = {
-        seoDescription: input.seoDescription ?? null,
-        seoTitle: input.seoTitle ?? null,
-        summary: input.summary ?? null,
-        title: input.title,
-      };
-      const published = await articleRepository.save(
-        Object.assign(article, {
-        bodyMarkdown: input.bodyMarkdown,
-        publishedAt: new Date(),
-        renderedHtml: rendered.html,
-        revisionNumber,
-        seoDescription: metadata.seoDescription,
-        seoTitle: metadata.seoTitle,
-        status: ContentStatus.PUBLISHED,
-        summary: metadata.summary,
-        tableOfContents: rendered.tableOfContents,
-        title: metadata.title,
-        }),
-      );
-
-      await revisionRepository.save(
-        revisionRepository.create({
-        articleId: article.id,
-        bodyMarkdown: input.bodyMarkdown,
-        metadata,
-        renderedHtml: rendered.html,
-        revisionNumber,
-        tableOfContents: rendered.tableOfContents,
-        }),
-      );
-
-      return published;
-    });
-  }
-
-  async publishProductContent(
-    productId: string,
-    input: PublishProductContentInput,
-  ): Promise<ProductContent> {
-    const rendered = await this.markdownRenderer.render(input.bodyMarkdown);
-
-    return this.dataSource.transaction(async (manager) => {
-      const repository = manager.getRepository(ProductContent);
-      const locale = input.locale ?? "vi";
-      const existing = await repository.findOneBy({ productId, locale });
-      const content = existing ?? repository.create({ productId, locale });
-
-      return repository.save(
-        Object.assign(content, {
-          bodyMarkdown: input.bodyMarkdown,
-          renderedHtml: rendered.html,
-          tableOfContents: rendered.tableOfContents,
-        }),
-      );
-    });
   }
 }

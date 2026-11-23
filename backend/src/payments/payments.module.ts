@@ -8,7 +8,6 @@ import { PaymentAttempt } from "./entities/payment-attempt.entity";
 import { PayosService } from "./payos.service";
 import { PaymentsController } from "./payments.controller";
 import { PaymentsService } from "./payments.service";
-import { VnpayService } from "./vnpay.service";
 
 @Module({
   imports: [
@@ -18,7 +17,7 @@ import { VnpayService } from "./vnpay.service";
     TypeOrmModule.forFeature([Order, PaymentAttempt]),
   ],
   controllers: [PaymentsController],
-  providers: [PayosService, PaymentsService, VnpayService],
+  providers: [PayosService, PaymentsService],
   exports: [PaymentsService],
 })
 export class PaymentsModule {}

@@ -23,7 +23,6 @@ import { Order } from "../orders/entities/order.entity";
 import { QuoteRequest } from "../quotes/entities/quote-request.entity";
 import { InventoryItem } from "../inventory/entities/inventory-item.entity";
 import { PaymentAttempt } from "../payments/entities/payment-attempt.entity";
-import { ProductContent } from "../content/entities/product-content.entity";
 import { Course } from "../courses/entities/course.entity";
 import { CourseSession } from "../courses/entities/course-session.entity";
 import { CourseEnrollment } from "../courses/entities/course-enrollment.entity";
@@ -63,7 +62,6 @@ export function createDatabaseOptions(
       QuoteRequest,
       InventoryItem,
       PaymentAttempt,
-      ProductContent,
       Course,
       CourseSession,
       CourseEnrollment,

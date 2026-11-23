@@ -1,27 +1,16 @@
 import type { Metadata } from "next";
-import { DroneHeroCarousel } from "@/components/drone-hero-carousel";
-import { getSiteContent, type Locale } from "@/lib/content";
 
 // The homepage is also served (not redirected) on apex droneviet.vn for Zalo verification;
-// the canonical keeps www as the indexed copy.
+// the canonical keeps www as the indexed copy. The v2 homepage replaces this in Plan 3.
 export const metadata: Metadata = {
   alternates: { canonical: "https://www.droneviet.vn/" },
 };
 
-export function HomePageContent({ locale = "vi" }: { locale?: Locale }) {
-  const site = getSiteContent(locale);
-
+export default function HomePage() {
   return (
-    <DroneHeroCarousel
-      eyebrow={site.hero.eyebrow}
-      title={site.hero.title}
-      description={site.hero.description}
-      primaryCta={site.hero.primaryCta}
-      secondaryCta={site.hero.secondaryCta}
-    />
+    <main className="mx-auto max-w-3xl px-5 py-24">
+      <h1 className="text-3xl font-semibold">Drone Việt</h1>
+      <p className="mt-4 text-slate-600">Giao diện mới đang được xây dựng.</p>
+    </main>
   );
-}
-
-export default function Home() {
-  return <HomePageContent locale="vi" />;
 }
