@@ -13,32 +13,38 @@ import { getArticle, getSettings } from "@/lib/api/server";
  * links to the other legal pages and a contact box. Call it as a function from the page so the
  * data is fetched before render: `return LegalPageView({ page })`.
  */
-export async function LegalPageView({ page, before, after }: { page: LegalPage; before?: ReactNode; after?: ReactNode }) {
-  const [settings, article] = await Promise.all([getSettings(), getArticle(page.articleSlug)]);
+export async function LegalPageView({ page, before, after, showContent = true }: { page: LegalPage; before?: ReactNode; after?: ReactNode; showContent?: boolean }) {
+  const [settings, article] = await Promise.all([getSettings(), showContent ? getArticle(page.articleSlug) : null]);
   const zalo = settings.contact.zalo ? `https://zalo.me/${settings.contact.zalo}` : null;
   const others = LEGAL_PAGES.filter((p) => p.href !== page.href);
   return (
     <>
       <PageHeader title={page.title} lead={page.lead} crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Đào tạo" }, { label: page.title }]} />
       {before}
-      <Section>
-        <h2 className="text-2xl font-semibold">Tóm tắt nhanh</h2>
-        <ul className="mt-5 max-w-3xl space-y-3">
-          {page.keyPoints.map((point) => (
-            <li key={point} className="flex gap-3">
-              <Info size={20} strokeWidth={1.75} className="mt-0.5 shrink-0 text-sky-ink" aria-hidden="true" />
-              {point}
-            </li>
-          ))}
-        </ul>
-        <div className="mt-12">
-          {article ? (
-            <div className="max-w-3xl"><Markdown source={article.bodyMarkdown} /></div>
-          ) : (
-            <p className="max-w-3xl rounded-2xl bg-sky-50 p-6 text-muted">Nội dung chi tiết đang cập nhật. Drone Việt đang đối chiếu văn bản pháp luật trước khi đăng.</p>
-          )}
-        </div>
-      </Section>
+      {showContent ? (
+        <Section>
+          {page.keyPoints.length ? (
+            <>
+              <h2 className="text-2xl font-semibold">Tóm tắt nhanh</h2>
+              <ul className="mt-5 max-w-3xl space-y-3">
+                {page.keyPoints.map((point) => (
+                  <li key={point} className="flex gap-3">
+                    <Info size={20} strokeWidth={1.75} className="mt-0.5 shrink-0 text-sky-ink" aria-hidden="true" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+          <div className={page.keyPoints.length ? "mt-12" : undefined}>
+            {article ? (
+              <div className="max-w-3xl"><Markdown source={article.bodyMarkdown} /></div>
+            ) : (
+              <p className="max-w-3xl rounded-2xl bg-sky-50 p-6 text-muted">Nội dung chi tiết đang cập nhật. Drone Việt đang đối chiếu văn bản pháp luật trước khi đăng.</p>
+            )}
+          </div>
+        </Section>
+      ) : null}
       {after}
       <Section tone="sky">
         <h2 className="text-2xl font-semibold">Xem thêm</h2>

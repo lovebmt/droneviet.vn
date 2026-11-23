@@ -31,24 +31,9 @@ test("legal pages show their summary and link each other", async ({ page }) => {
   }
 });
 
-test("flight map loads leaflet only on the map page and shows the sovereignty labels", async ({ page }) => {
-  const leafletIn = async (path: string) => {
-    const bodies: Promise<string>[] = [];
-    const listener = (r: import("@playwright/test").Response) => {
-      if (r.request().resourceType() === "script") bodies.push(r.text().catch(() => ""));
-    };
-    page.on("response", listener);
-    await page.goto(path);
-    await page.waitForLoadState("networkidle");
-    page.off("response", listener);
-    return (await Promise.all(bodies)).some((b) => b.includes("leafletjs.com"));
-  };
-  expect(await leafletIn("/dao-tao/quy-dinh")).toBe(false);
-  expect(await leafletIn("/dao-tao/ban-do")).toBe(true);
-  await expect(page.locator(".leaflet-container")).toBeVisible();
-  await expect(page.getByText("Quần đảo Hoàng Sa (Việt Nam)")).toBeVisible();
-  await expect(page.getByText("Quần đảo Trường Sa (Việt Nam)")).toBeVisible();
-  await expect(page.locator(".leaflet-overlay-pane path").first()).toBeAttached();
-  await page.locator(".leaflet-container").click({ position: { x: 200, y: 150 } });
-  await expect(page.getByRole("status")).toBeVisible();
+test("flight zone page sends people to the official map", async ({ page }) => {
+  await page.goto("/dao-tao/ban-do");
+  await expect(page.getByRole("heading", { level: 1, name: "Bản đồ khu vực bay" })).toBeVisible();
+  await expect(page.locator('a[href="https://cambay.mod.gov.vn"]').first()).toBeVisible();
+  await expect(page.locator(".leaflet-container")).toHaveCount(0);
 });

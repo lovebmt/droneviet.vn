@@ -48,13 +48,9 @@ export const LEGAL_PAGES: LegalPage[] = [
   {
     href: "/dao-tao/ban-do",
     title: "Bản đồ khu vực bay",
-    lead: "Khu vực cấm bay, hạn chế bay quanh sân bay và dọc biên giới, vẽ theo Quyết định 18/2020/QĐ-TTg để tham khảo.",
+    lead: "Tra cứu trực tiếp khu vực cấm bay và hạn chế bay trên bản đồ chính thức của Bộ Quốc phòng.",
     articleSlug: "khu-vuc-cam-bay-drone",
-    keyPoints: [
-      "Quanh sân bay: cấm bay 15 km ra mỗi đầu đường cất hạ cánh, 5 km mỗi bên (Quyết định 18/2020/QĐ-TTg, Điều 3 khoản 4).",
-      "Hạn chế bay trên 120 m, nơi đông người, 25 km dọc biên giới Trung Quốc, 10 km dọc Lào, Campuchia (Điều 4).",
-      "Luôn kiểm tra trên bản đồ chính thức của Bộ Quốc phòng tại cambay.mod.gov.vn.",
-    ],
+    keyPoints: [],
   },
 ];
 
