@@ -5,6 +5,7 @@ import { JwtService } from "@nestjs/jwt";
 import { timingSafeEqual } from "node:crypto";
 import { UserRole } from "./entities/user.entity";
 import { ROLES_KEY } from "./roles.decorator";
+import { readSessionToken } from "./session-cookie";
 
 /**
  * Lets the R&D publishing skill in with CONTENT_PUBLISH_TOKEN (spec §9.4), or a signed-in admin
@@ -19,10 +20,9 @@ export class ContentTokenGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<{ headers: { authorization?: string }; user?: unknown }>();
-    const bearer = request.headers.authorization?.startsWith("Bearer ")
-      ? request.headers.authorization.slice("Bearer ".length)
-      : "";
+    const request = context.switchToHttp().getRequest<{ headers: { authorization?: string }; cookies?: Record<string, string>; user?: unknown }>();
+    // Bearer (skill or admin tools) first, then the admin's dv_session cookie from the browser.
+    const bearer = readSessionToken(request) ?? "";
 
     const token = this.config.get<string>("CONTENT_PUBLISH_TOKEN") ?? "";
     if (token && bearer && sameSecret(bearer, token)) {

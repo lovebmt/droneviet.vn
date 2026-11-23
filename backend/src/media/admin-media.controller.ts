@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ContentTokenGuard } from "../auth/content-token.guard";
 import { Roles } from "../auth/roles.decorator";
@@ -11,6 +11,11 @@ import { MAX_MEDIA_BYTES, MediaService } from "./media.service";
 @Roles(UserRole.SUPER_ADMIN, UserRole.CATALOG_MANAGER)
 export class AdminMediaController {
   constructor(private readonly media: MediaService) {}
+
+  @Get()
+  list() {
+    return this.media.list();
+  }
 
   /** Multer maps files over the limit to 413 Payload Too Large. */
   @Post()

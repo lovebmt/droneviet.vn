@@ -3,7 +3,7 @@ import { Test } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { DataSource } from "typeorm";
 
-// Runs only against a real Postgres: TEST_DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet
+// Runs only against a real Postgres: TEST_DATABASE_URL=postgres://droneviet:droneviet@localhost:5433/droneviet_test
 const databaseUrl = process.env.TEST_DATABASE_URL;
 const VARIANT_ID = "11111111-1111-4111-8111-111111111111";
 

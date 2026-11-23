@@ -70,6 +70,12 @@ export class MediaService {
     return { body: object.body, contentType: media.mime };
   }
 
+  /** Newest first, for the admin media library. */
+  async list(limit = 200) {
+    const rows = await this.media.find({ order: { createdAt: "DESC" }, take: limit });
+    return rows.map((m) => ({ id: m.id, url: this.publicUrl(m.id, m.filename), filename: m.filename, mime: m.mime, bytes: m.bytes, alt: m.alt, source: m.source, createdAt: m.createdAt }));
+  }
+
   private publicUrl(id: string, filename: string): string {
     const base = (this.config.get<string>("PUBLIC_API_URL") ?? "http://localhost:4000").replace(/\/$/, "");
     return `${base}/media/${id}/${filename}`;
