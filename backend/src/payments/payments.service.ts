@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource, EntityManager } from "typeorm";
 import { InventoryReservationService } from "../inventory/inventory-reservation.service";
@@ -26,6 +22,8 @@ interface PayosWebhookData {
 
 @Injectable()
 export class PaymentsService {
+  private readonly logger = new Logger(PaymentsService.name);
+
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -112,7 +110,9 @@ export class PaymentsService {
       });
 
       if (!payment) {
-        throw new ServiceUnavailableException("Payment attempt was not found");
+        // PayOS's confirm-webhook probe (and stray codes) must get a 2xx, or registration fails.
+        this.logger.warn(`PayOS webhook for unknown orderCode ${data.orderCode}`);
+        return false;
       }
 
       return this.settlePayosPayment(manager, payment.id, data);

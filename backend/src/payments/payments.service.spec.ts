@@ -261,6 +261,39 @@ describe("PaymentsService", () => {
     expect(dataSource.transaction).not.toHaveBeenCalled();
   });
 
+  it("acknowledges a validly signed webhook for an unknown order code (PayOS confirm-webhook test)", async () => {
+    const getOne = vi.fn().mockResolvedValue(null);
+    const builder = {
+      andWhere: vi.fn().mockReturnThis(),
+      getOne,
+      leftJoinAndSelect: vi.fn().mockReturnThis(),
+      setLock: vi.fn().mockReturnThis(),
+      where: vi.fn().mockReturnThis(),
+    };
+    const manager = {
+      getRepository: vi.fn().mockReturnValue({ createQueryBuilder: () => builder }),
+    };
+    const dataSource = {
+      transaction: vi.fn((work: (m: unknown) => unknown) => work(manager)),
+    };
+    const payos = { verifyWebhookSignature: vi.fn().mockReturnValue(true) };
+    const service = new PaymentsService(
+      dataSource as never,
+      payos as never,
+      {} as never,
+      {} as never,
+      { recordWithManager: vi.fn() } as never,
+    );
+
+    await expect(
+      service.handlePayosWebhook(
+        { amount: 3000, orderCode: 123, status: "PAID" },
+        "valid-signature",
+      ),
+    ).resolves.toBe(false);
+    expect(getOne).toHaveBeenCalled();
+  });
+
   it("releases stock when PayOS cancels an unpaid payment attempt", async () => {
     const order = {
       id: "order-1",
