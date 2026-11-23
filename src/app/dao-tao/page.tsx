@@ -14,7 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default async function TrainingPage() {
-  const courses = await listCourses();
+  // Workshops belong to Giáo dục (/giao-duc/workshop).
+  const courses = (await listCourses()).filter((c) => c.level !== "workshop");
   return (
     <>
       <PageHeader

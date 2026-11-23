@@ -17,6 +17,7 @@ const { default: EducationPage } = await import("./giao-duc/page");
 const { default: LevelPage } = await import("./giao-duc/[cap]/page");
 const { default: CoursePage } = await import("./dao-tao/[slug]/page");
 const { default: SupportPage } = await import("./ho-tro/page");
+const { default: TrainingPage } = await import("./dao-tao/page");
 
 const course: CourseDetail = {
   slug: "drone-nhap-mon-cap-1", title: "Drone nhập môn cho cấp 1", summary: "An toàn bay", level: "co-ban", format: "truc-tiep",
@@ -44,6 +45,21 @@ describe("education", () => {
       expect(screen.getAllByRole("link").some((a) => a.getAttribute("href") === `/giao-duc/${slug}`)).toBe(true);
     }
     expect(screen.getAllByRole("link").some((a) => a.getAttribute("href")?.startsWith("/bao-gia"))).toBe(true);
+  });
+
+  it("education hub links the workshop page", async () => {
+    render(<AppProviders>{await EducationPage()}</AppProviders>);
+    expect(screen.getAllByRole("link").some((a) => a.getAttribute("href") === "/giao-duc/workshop")).toBe(true);
+  });
+
+  it("training list leaves workshops to the education section", async () => {
+    api.listCourses.mockResolvedValue([
+      { ...course, sessions: undefined },
+      { ...course, slug: "workshop-trai-nghiem-drone", title: "Workshop trải nghiệm drone", level: "workshop", sessions: undefined },
+    ]);
+    render(<AppProviders>{await TrainingPage()}</AppProviders>);
+    expect(screen.getByRole("link", { name: /Drone nhập môn cho cấp 1/ })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Workshop trải nghiệm drone/ })).not.toBeInTheDocument();
   });
 
   it("unknown level is 404", async () => {

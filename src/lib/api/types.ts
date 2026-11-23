@@ -62,6 +62,8 @@ export interface CourseCard {
   durationHours: number | null;
   tuitionVnd: number | null;
   certificateTrack: string | null;
+  /** Zalo group for the course or workshop. */
+  zaloGroupUrl?: string | null;
   nextSessionAt?: string | null;
 }
 

@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/page/page-header";
 import { LinkButton } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { INTERNATIONAL, SCHOOL_FAQ } from "@/content/education";
+import { WORKSHOP_INTRO } from "@/content/workshop";
 import { listProducts } from "@/lib/api/server";
 
 export const metadata: Metadata = {
@@ -42,6 +43,18 @@ export default async function EducationPage() {
         <h2 className="text-3xl font-light tracking-tight">Chọn theo cấp học</h2>
         <p className="mt-2 max-w-2xl text-muted">Mỗi cấp học có mục tiêu, thiết bị và giáo trình riêng.</p>
         <div className="mt-8"><LevelGrid /></div>
+      </Section>
+
+      <Section>
+        <div className="grid items-center gap-8 rounded-2xl bg-sun/20 p-8 sm:p-10 lg:grid-cols-[2fr_1fr]">
+          <div>
+            <h2 className="text-3xl font-light tracking-tight">{WORKSHOP_INTRO.title}</h2>
+            <p className="mt-3 text-lg text-muted">{WORKSHOP_INTRO.lead}</p>
+          </div>
+          <div className="flex flex-wrap gap-3 lg:justify-end">
+            <LinkButton href="/giao-duc/workshop" size="lg" variant="sun">Xem lịch workshop</LinkButton>
+          </div>
+        </div>
       </Section>
 
       <Section>

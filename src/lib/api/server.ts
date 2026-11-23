@@ -70,8 +70,10 @@ export function getArticle(slug: string): Promise<Article | null> {
   return apiGetOrNull<Article>(`/content/articles/${encodeURIComponent(slug)}`, { tags: ["articles", `article:${slug}`] });
 }
 
-export function listCourses(): Promise<CourseCard[]> {
-  return apiGet<CourseCard[]>("/courses", { tags: ["courses"], fallback: [], revalidate: 120 });
+/** `level: "workshop"` lists only workshops (shown under Giáo dục, not Đào tạo). */
+export function listCourses(opts: { level?: string } = {}): Promise<CourseCard[]> {
+  const suffix = opts.level ? `?level=${encodeURIComponent(opts.level)}` : "";
+  return apiGet<CourseCard[]>(`/courses${suffix}`, { tags: ["courses"], fallback: [], revalidate: 120 });
 }
 
 export function getCourse(slug: string): Promise<CourseDetail | null> {

@@ -1,7 +1,7 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
-import { Field, Input } from "@/components/forms/field";
+import { Field, Input, Textarea } from "@/components/forms/field";
 import { Panel, SaveStatus } from "@/components/admin/admin-ui";
 import { useSave } from "@/components/admin/save-state";
 import { adminError, useAdminData } from "@/components/admin/use-admin-data";
@@ -11,7 +11,7 @@ import { apiFetch } from "@/lib/api/client";
 import { formatDate } from "@/lib/format";
 
 type Session = { id: string; startsAt: string; capacity: number; reservedSeats: number; status: "open" | "closed"; enrollments: number };
-type Course = { id: string; slug: string; title: string; sessions: Session[] };
+type Course = { id: string; slug: string; title: string; level: string; summary: string; descriptionMarkdown: string | null; zaloGroupUrl: string | null; sessions: Session[] };
 type Enrollment = { id: string; contactName: string; contactPhone: string; contactEmail: string | null; status: string; quantity: number };
 
 const ENROLL: Record<string, string> = { reserved: "Giữ chỗ", confirmed: "Đã xác nhận", cancelled: "Đã hủy" };
@@ -76,6 +76,35 @@ function SessionRow({ session, onChanged }: { session: Session; onChanged(): voi
   );
 }
 
+/** Summary, description and Zalo group (workshops show the group on their page and after enrolling). */
+function CourseInfo({ course, onChanged }: { course: Course; onChanged(): void }) {
+  const save = useSave();
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const f = new FormData(event.currentTarget);
+    const zalo = String(f.get("zaloGroupUrl") ?? "").trim();
+    const ok = await save.run(`/admin/courses/${course.slug}`, "PATCH", {
+      summary: String(f.get("summary") ?? "").trim(),
+      descriptionMarkdown: String(f.get("descriptionMarkdown") ?? ""),
+      zaloGroupUrl: zalo || null,
+    });
+    if (ok) onChanged();
+  }
+  return (
+    <form onSubmit={submit} className="mb-5 grid gap-3">
+      <Field label="Tóm tắt"><Input name="summary" required minLength={2} maxLength={300} defaultValue={course.summary} /></Field>
+      <Field label="Mô tả (Markdown)"><Textarea name="descriptionMarkdown" rows={4} defaultValue={course.descriptionMarkdown ?? ""} /></Field>
+      <Field label="Link nhóm Zalo" hint="Dạng https://zalo.me/g/…, để trống nếu không có">
+        <Input name="zaloGroupUrl" type="url" pattern="https://zalo\.me/.+" defaultValue={course.zaloGroupUrl ?? ""} />
+      </Field>
+      <div className="flex items-center gap-3">
+        <Button type="submit" variant="secondary" disabled={save.state === "saving"}>Lưu thông tin khóa</Button>
+        <SaveStatus state={save.state} error={save.error} />
+      </div>
+    </form>
+  );
+}
+
 function CoursePanel({ course, onChanged }: { course: Course; onChanged(): void }) {
   const save = useSave();
   async function add(event: FormEvent<HTMLFormElement>) {
@@ -95,6 +124,8 @@ function CoursePanel({ course, onChanged }: { course: Course; onChanged(): void 
   }
   return (
     <Panel title={course.title}>
+      {course.level === "workshop" ? <p className="mb-3"><Badge tone="teal">Workshop, hiện ở trang Giáo dục</Badge></p> : null}
+      <CourseInfo course={course} onChanged={onChanged} />
       {course.sessions.length ? <ul className="space-y-2">{course.sessions.map((s) => <SessionRow key={s.id} session={s} onChanged={onChanged} />)}</ul> : <p className="text-sm text-muted">Chưa có lịch học.</p>}
       <form onSubmit={add} className="mt-5 grid gap-3 sm:grid-cols-[1fr_8rem_auto] sm:items-end">
         <Field label="Ngày giờ khai giảng"><Input name="startsAt" type="datetime-local" required /></Field>

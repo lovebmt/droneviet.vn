@@ -20,7 +20,7 @@ beforeEach(() => {
     const method = init?.method ?? "GET";
     const body = init?.body && typeof init.body === "string" ? JSON.parse(init.body) : undefined;
     calls.push({ method, path, body });
-    if (path === "/admin/courses") return json([{ id: "c1", slug: "bay-co-ban", title: "Bay cơ bản", sessions: [{ id: "s1", startsAt: "2026-12-05T01:00:00.000Z", capacity: 10, reservedSeats: 2, status: "open", enrollments: 2 }] }]);
+    if (path === "/admin/courses" && method === "GET") return json([{ id: "c1", slug: "bay-co-ban", title: "Bay cơ bản", level: "workshop", summary: "Bay thử", descriptionMarkdown: null, zaloGroupUrl: null, sessions: [{ id: "s1", startsAt: "2026-12-05T01:00:00.000Z", capacity: 10, reservedSeats: 2, status: "open", enrollments: 2 }] }]);
     if (path === "/admin/course-sessions/s1/enrollments") return json([{ id: "e1", contactName: "Học viên A", contactPhone: "0900000001", contactEmail: null, status: "reserved", quantity: 1 }]);
     if (path === "/admin/content/articles") return json([{ slug: "lap-rap-f450", title: "Lắp ráp F450", status: "published", publishedAt: "2026-11-20T00:00:00.000Z", updatedAt: "2026-11-20T00:00:00.000Z", tags: [] }]);
     if (path === "/settings/public") return json({ contact: { zalo: "0384070636", phone: null, email: null, address: null, companyName: null }, announcement: null });
@@ -32,6 +32,15 @@ beforeEach(() => {
 const wrap = (ui: React.ReactNode) => render(<AppProviders><AdminUserContext.Provider value={staff}>{ui}</AdminUserContext.Provider></AppProviders>);
 
 describe("admin courses", () => {
+  it("staff set the Zalo group link of a course", async () => {
+    wrap(<CoursesPage />);
+    const course = await screen.findByRole("region", { name: "Bay cơ bản" });
+    fireEvent.change(within(course).getByLabelText(/Link nhóm Zalo/), { target: { value: "https://zalo.me/g/workshop" } });
+    await act(async () => fireEvent.click(within(course).getByRole("button", { name: "Lưu thông tin khóa" })));
+    const patch = calls.find((c) => c.method === "PATCH" && c.path === "/admin/courses/bay-co-ban")!;
+    expect(patch.body).toMatchObject({ zaloGroupUrl: "https://zalo.me/g/workshop", summary: "Bay thử" });
+  });
+
   it("add session posts startsAt and capacity", async () => {
     wrap(<CoursesPage />);
     const course = await screen.findByRole("region", { name: "Bay cơ bản" });

@@ -21,6 +21,7 @@ export const mainNav: NavItem[] = [
       { label: "THCS", href: "/giao-duc/thcs", description: "Lắp ráp, lập trình, cảm biến" },
       { label: "THPT & quốc tế", href: "/giao-duc/thpt", description: "Dự án STEM, chương trình song ngữ" },
       { label: "Đại học & R&D", href: "/giao-duc/dai-hoc", description: "Nền tảng nghiên cứu, dữ liệu bay" },
+      { label: "Workshop trải nghiệm", href: "/giao-duc/workshop", description: "Một buổi bay thử cho học sinh" },
     ],
   },
   {

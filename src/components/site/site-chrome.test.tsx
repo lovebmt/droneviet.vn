@@ -67,6 +67,7 @@ describe("SiteHeader", () => {
     // Rendered into <body>: inside the blurred sticky header, position:fixed would be trapped in the header box.
     expect(dialog.parentElement).toBe(document.body);
     expect(within(dialog).getByRole("link", { name: "Combo lớp học" })).toHaveAttribute("href", "/cua-hang?loai=combo");
+    expect(within(dialog).getByRole("link", { name: "Workshop trải nghiệm" })).toHaveAttribute("href", "/giao-duc/workshop");
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument();
   });

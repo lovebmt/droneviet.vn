@@ -1,4 +1,4 @@
-export const COURSE_LEVEL: Record<string, string> = { "co-ban": "Cơ bản", "nang-cao": "Nâng cao", "chung-chi": "Luyện thi chứng chỉ" };
+export const COURSE_LEVEL: Record<string, string> = { "co-ban": "Cơ bản", "nang-cao": "Nâng cao", "chung-chi": "Luyện thi chứng chỉ", workshop: "Workshop trải nghiệm" };
 export const COURSE_FORMAT: Record<string, string> = { "truc-tiep": "Học trực tiếp", online: "Học online", "ket-hop": "Kết hợp" };
 
 /** A real sequence (spec §8.4); legal facts are not invented, so each step is "Đang cập nhật" where unverified. */
