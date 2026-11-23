@@ -1,58 +1,54 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { CheckCircle2, CircleAlert, Clock } from "lucide-react";
+import { ClearCart } from "@/components/checkout/clear-cart";
+import { LinkButton } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = { title: "Kết quả thanh toán", robots: { index: false } };
 
 // PayOS appends ?code=&id=&cancel=&status=&orderCode= to the return and cancel URLs.
-interface PaymentResultPageProps {
-  searchParams?: Promise<{
-    cancel?: string;
-    orderCode?: string;
-    status?: string;
-  }>;
-}
+type Search = { cancel?: string; orderCode?: string; status?: string };
 
-const outcomes = {
+const OUTCOMES = {
   paid: {
+    Icon: CheckCircle2,
+    tone: "text-teal-ink",
     title: "Thanh toán thành công",
-    body: "Drone Việt đã nhận thanh toán. Chúng tôi sẽ xác nhận và chuẩn bị đơn hàng của bạn.",
-    action: { href: "/theo-doi-don", label: "Theo dõi đơn hàng" },
+    body: "Drone Việt đã nhận thanh toán và sẽ chuẩn bị đơn hàng của bạn.",
+    action: { href: "/tai-khoan/don-hang", label: "Xem đơn hàng của tôi" },
   },
   cancelled: {
+    Icon: CircleAlert,
+    tone: "text-muted",
     title: "Đã hủy thanh toán",
-    body: "Giao dịch chưa được thực hiện. Sản phẩm vẫn được giữ trong thời gian ngắn, bạn có thể thanh toán lại.",
+    body: "Giao dịch chưa được thực hiện. Sản phẩm vẫn trong giỏ hàng, bạn có thể đặt lại.",
     action: { href: "/gio-hang", label: "Quay lại giỏ hàng" },
   },
   pending: {
+    Icon: Clock,
+    tone: "text-sky",
     title: "Đang chờ xác nhận thanh toán",
-    body: "PayOS chưa báo kết quả cuối cùng. Vui lòng kiểm tra lại trạng thái đơn sau ít phút.",
-    action: { href: "/theo-doi-don", label: "Theo dõi đơn hàng" },
+    body: "PayOS chưa báo kết quả cuối cùng. Kiểm tra lại trạng thái đơn sau ít phút.",
+    action: { href: "/tai-khoan/don-hang", label: "Xem đơn hàng của tôi" },
   },
 } as const;
 
-export default async function PaymentResultPage({ searchParams }: PaymentResultPageProps) {
+export default async function PaymentResultPage({ searchParams }: { searchParams?: Promise<Search> }) {
   const params = (await searchParams) ?? {};
   const status = params.status?.toUpperCase();
-  const outcome =
-    status === "PAID"
-      ? outcomes.paid
-      : params.cancel === "true" || status === "CANCELLED"
-        ? outcomes.cancelled
-        : outcomes.pending;
+  const key = status === "PAID" ? "paid" : params.cancel === "true" || status === "CANCELLED" ? "cancelled" : "pending";
+  const outcome = OUTCOMES[key];
 
   return (
-    <main className="min-h-screen bg-white px-5 py-16 text-[#10232A] sm:px-8">
-      <section className="mx-auto max-w-xl">
-        <p className="text-xs font-medium text-[#006D66]">Drone Viet Store</p>
-        <h1 className="mt-3 text-4xl font-semibold">{outcome.title}</h1>
-        <p className="mt-5 leading-7 text-slate-600">{outcome.body}</p>
-        {params.orderCode ? (
-          <p className="mt-4 text-sm text-slate-500">Mã giao dịch PayOS: {params.orderCode}</p>
-        ) : null}
-        <Link
-          className="mt-8 inline-flex min-h-11 items-center bg-[#10232A] px-5 text-sm font-medium text-white"
-          href={outcome.action.href}
-        >
-          {outcome.action.label}
-        </Link>
+    <Container className="py-16 sm:py-24">
+      {key === "paid" ? <ClearCart /> : null}
+      <section className="mx-auto max-w-xl text-center">
+        <outcome.Icon size={44} strokeWidth={1.5} className={`mx-auto ${outcome.tone}`} aria-hidden="true" />
+        <h1 className="mt-4 text-4xl font-light tracking-tight">{outcome.title}</h1>
+        <p className="mt-4 text-lg text-muted">{outcome.body}</p>
+        {params.orderCode ? <p className="mt-3 text-sm text-muted">Mã giao dịch PayOS: {params.orderCode}</p> : null}
+        <LinkButton href={outcome.action.href} size="lg" className="mt-8">{outcome.action.label}</LinkButton>
       </section>
-    </main>
+    </Container>
   );
 }

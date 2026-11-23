@@ -15,6 +15,8 @@ interface CartValue {
   lines: CartLine[];
   count: number;
   totalVnd: number;
+  /** False until the saved cart has been read, so pages don't flash "empty". */
+  ready: boolean;
   add(line: CartLine): void;
   setQuantity(variantId: string, quantity: number): void;
   remove(variantId: string): void;
@@ -83,12 +85,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       lines,
       count: lines.reduce((sum, l) => sum + l.quantity, 0),
       totalVnd: lines.reduce((sum, l) => sum + l.quantity * l.priceVnd, 0),
+      ready: loaded,
       add,
       setQuantity,
       remove,
       clear,
     }),
-    [lines, add, setQuantity, remove, clear],
+    [lines, loaded, add, setQuantity, remove, clear],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
