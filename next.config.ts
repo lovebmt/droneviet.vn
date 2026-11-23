@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  images: {
+    // Media uploaded through the API (R2), production and local development.
+    remotePatterns: [
+      { protocol: "https", hostname: "api.droneviet.vn", pathname: "/media/**" },
+      { protocol: "http", hostname: "localhost", port: "4000", pathname: "/media/**" },
+    ],
+  },
   async redirects() {
     return [
       // Apex droneviet.vn: everything but the homepage goes to www. The homepage stays so
