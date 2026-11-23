@@ -242,7 +242,19 @@ Cấu trúc component chi tiết, thư viện form/validation (giữ Zod), thu�
 - Danh sách code bỏ đi ở mục 12.
 - Không hiển thị số liệu hay logo trường đối tác nào khi chưa có dữ liệu thật (mục 8.1 phần 6 ẩn đi).
 
-## 16. Câu hỏi mở cho chủ dự án (từ lượt rà soát của người xây dựng)
+## 16. Trả lời của chủ dự án (2026-11-23)
+Thiết kế được duyệt. Q1–Q6 dùng **nội dung mẫu**, không có hạn chót (Q7). Quy tắc nội dung mẫu:
+- Mọi nội dung mẫu nằm trong database/admin (sửa được không cần deploy), không viết cứng trong code.
+- Sản phẩm lẻ: dùng dữ liệu đang hiển thị công khai trên web hiện tại (tên, giá, mô tả, ảnh Wikimedia có ghi nguồn).
+- Combo: thành phần lấy từ sản phẩm hiện có; giá hiển thị **"Liên hệ báo giá"** cho đến khi admin nhập bậc giá theo quy mô — không bịa giá.
+- Ảnh: ảnh hiện có + ô minh họa trung tính; ảnh render 3D làm sau nếu cần.
+- Chứng chỉ, khóa học: khung đầy đủ, nội dung đánh dấu "Đang cập nhật".
+- Tiếng Anh (Q4): theo đề xuất — trang chủ, Giáo dục, combo; các trang khác chỉ tiếng Việt.
+- Khóa học (Q5): đăng ký giữ chỗ rồi liên hệ (không thanh toán online trong v2).
+- Liên hệ (Q6): Zalo 0384070636 + "Đang cập nhật" cho email/hotline/địa chỉ, sửa được trong admin (bảng cài đặt chung).
+- Phần "trường đối tác" ẩn cho đến khi có dữ liệu.
+
+## 17. Câu hỏi mở cho chủ dự án (từ lượt rà soát của người xây dựng)
 - **Q1. Ảnh:** đã có ảnh chụp sản phẩm và lớp học thật chưa? Nếu chưa: dùng ảnh render 3D drone (dựng bằng engine của trình mô phỏng) cho đến khi có ảnh thật.
 - **Q2. Nội dung thật:** danh sách sản phẩm bán online (tên, giá, tồn kho, thông số), các combo (thành phần, số lượng, giá theo 10/20/30 học sinh, brochure), khóa học (học phí, lịch). Ai cung cấp, khi nào? Không deploy giá hay thông số giả.
 - **Q3. Chứng chỉ:** chứng chỉ gì, do đơn vị nào cấp, các bước, chi phí, thời gian? (Không tự viết quy trình pháp lý.)
