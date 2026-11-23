@@ -41,7 +41,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       <div className="mx-auto grid min-h-[560px] max-w-7xl items-center gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
         <div aria-live="polite">
           <p className="text-[15px] font-semibold text-teal-ink">{slide.context}</p>
-          <h1 className="mt-3 text-4xl font-light leading-[1.08] tracking-tight sm:text-6xl">{slide.title}</h1>
+          <h1 className="mt-3 text-balance text-4xl font-light leading-[1.08] tracking-tight sm:text-6xl">{slide.title}</h1>
           <p className="mt-5 max-w-xl text-lg font-semibold">{slide.subtitle}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             {slide.actions.map((action) => (
