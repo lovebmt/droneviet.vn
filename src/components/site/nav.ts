@@ -34,7 +34,17 @@ export const mainNav: NavItem[] = [
       { label: "So sánh combo", href: "/cua-hang/so-sanh", description: "Chọn combo hợp với trường bạn" },
     ],
   },
-  { label: "Đào tạo & chứng chỉ", href: "/dao-tao" },
+  {
+    label: "Đào tạo & chứng chỉ",
+    href: "/dao-tao",
+    children: [
+      { label: "Khóa học", href: "/dao-tao", description: "Lịch học, học phí, giữ chỗ" },
+      { label: "Chứng chỉ, giấy phép bay", href: "/dao-tao/chung-chi", description: "Hạng A, Hạng B, học ở đâu" },
+      { label: "Cấp phép bay", href: "/dao-tao/cap-phep", description: "Hồ sơ, thời hạn, khi nào được miễn" },
+      { label: "Quy định pháp lý", href: "/dao-tao/quy-dinh", description: "Văn bản đang áp dụng" },
+      { label: "Bản đồ khu vực bay", href: "/dao-tao/ban-do", description: "Vùng cấm, hạn chế bay" },
+    ],
+  },
   { label: "R&D", href: "/r-d" },
   { label: "Bay mô phỏng", href: "/bay-mo-phong", highlight: true },
   { label: "Hỗ trợ", href: "/ho-tro" },

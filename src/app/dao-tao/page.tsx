@@ -5,6 +5,7 @@ import { CourseCard } from "@/components/education/course-card";
 import { EmptyState } from "@/components/page/empty-state";
 import { PageHeader } from "@/components/page/page-header";
 import { Section } from "@/components/ui/section";
+import { LEGAL_PAGES } from "@/content/legal";
 import { listCourses } from "@/lib/api/server";
 
 export const metadata: Metadata = {
@@ -35,12 +36,13 @@ export default async function TrainingPage() {
       </Section>
       <Section tone="sky">
         <div className="grid gap-6 md:grid-cols-2">
-          <Link href="/dao-tao/chung-chi" className="group rounded-2xl bg-white p-8">
-            <p className="text-sm text-muted">Lộ trình</p>
-            <p className="mt-1 text-2xl font-semibold">Hướng dẫn lấy chứng chỉ</p>
-            <p className="mt-2 text-muted">Các bước từ lý thuyết an toàn đến thi thực hành.</p>
-            <span className="mt-4 inline-flex items-center gap-0.5 font-semibold text-sky-ink group-hover:underline underline-offset-4">Xem lộ trình <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></span>
-          </Link>
+          {LEGAL_PAGES.map((p) => (
+            <Link key={p.href} href={p.href} className="group rounded-2xl bg-white p-8">
+              <p className="text-2xl font-semibold">{p.title}</p>
+              <p className="mt-2 text-muted">{p.lead}</p>
+              <span className="mt-4 inline-flex items-center gap-0.5 font-semibold text-sky-ink group-hover:underline underline-offset-4">Xem <ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></span>
+            </Link>
+          ))}
           <Link href="/bay-mo-phong" className="group rounded-2xl bg-sun p-8 text-ink">
             <p className="text-sm">Luyện tập miễn phí</p>
             <p className="mt-1 text-2xl font-semibold">Bay mô phỏng trên trình duyệt</p>

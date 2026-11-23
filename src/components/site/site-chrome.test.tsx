@@ -68,6 +68,9 @@ describe("SiteHeader", () => {
     expect(dialog.parentElement).toBe(document.body);
     expect(within(dialog).getByRole("link", { name: "Combo lớp học" })).toHaveAttribute("href", "/cua-hang?loai=combo");
     expect(within(dialog).getByRole("link", { name: "Workshop trải nghiệm" })).toHaveAttribute("href", "/giao-duc/workshop");
+    for (const [name, href] of [["Khóa học", "/dao-tao"], ["Chứng chỉ, giấy phép bay", "/dao-tao/chung-chi"], ["Cấp phép bay", "/dao-tao/cap-phep"], ["Quy định pháp lý", "/dao-tao/quy-dinh"], ["Bản đồ khu vực bay", "/dao-tao/ban-do"]]) {
+      expect(within(dialog).getByRole("link", { name })).toHaveAttribute("href", href);
+    }
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument();
   });

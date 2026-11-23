@@ -5,7 +5,7 @@ import { listArticles, listCourses, listProducts } from "@/lib/api/server";
 import type { ProductKind } from "@/lib/api/types";
 
 const SITE = "https://www.droneviet.vn";
-const STATIC = ["/", "/giao-duc", "/cua-hang", "/cua-hang/so-sanh", "/dao-tao", "/dao-tao/chung-chi", "/giao-duc/workshop", "/r-d", "/bay-mo-phong", "/ho-tro", "/bay-an-toan", "/bao-gia", "/en", "/en/education", "/chinh-sach-bao-mat", "/dieu-khoan-su-dung"];
+const STATIC = ["/", "/giao-duc", "/cua-hang", "/cua-hang/so-sanh", "/dao-tao", "/dao-tao/chung-chi", "/dao-tao/cap-phep", "/dao-tao/quy-dinh", "/dao-tao/ban-do", "/giao-duc/workshop", "/r-d", "/bay-mo-phong", "/ho-tro", "/bay-an-toan", "/bao-gia", "/en", "/en/education", "/chinh-sach-bao-mat", "/dieu-khoan-su-dung"];
 const KINDS: ProductKind[] = ["combo", "drone", "education_kit", "part", "accessory"];
 
 export const revalidate = 3600;

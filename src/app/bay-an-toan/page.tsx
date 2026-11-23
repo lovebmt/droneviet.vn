@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/page/page-header";
-import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
-import { LEGAL_TOPICS, SAFETY_RULES } from "@/content/safety";
+import { LEGAL_PAGES } from "@/content/legal";
+import { SAFETY_RULES } from "@/content/safety";
 
 export const metadata: Metadata = {
   title: "Bay an toàn & cấp phép",
@@ -17,7 +18,7 @@ export default function SafetyPage() {
     <>
       <PageHeader
         title="Bay an toàn & cấp phép"
-        lead="Những nguyên tắc cơ bản giúp học sinh và giáo viên bay drone an toàn. Quy định pháp lý chi tiết đang được cập nhật."
+        lead="Những nguyên tắc cơ bản giúp học sinh và giáo viên bay drone an toàn, cùng đường dẫn tới quy định và thủ tục cấp phép."
         crumbs={[{ label: "Trang chủ", href: "/" }, { label: "Hỗ trợ", href: "/ho-tro" }, { label: "Bay an toàn" }]}
       />
       <Section>
@@ -34,12 +35,17 @@ export default function SafetyPage() {
       </Section>
       <Section tone="sky">
         <h2 className="text-3xl font-light tracking-tight">Quy định và cấp phép</h2>
-        <p className="mt-2 max-w-2xl text-muted">Drone Việt đang xác minh thông tin với cơ quan có thẩm quyền trước khi đăng. Liên hệ để được hướng dẫn trường hợp cụ thể.</p>
+        <p className="mt-2 max-w-2xl text-muted">Giấy phép điều khiển, thủ tục xin phép bay, văn bản pháp luật và khu vực cấm bay, có dẫn nguồn từng điều khoản.</p>
         <ul className="mt-8 divide-y divide-line rounded-2xl bg-white">
-          {LEGAL_TOPICS.map((t) => (
-            <li key={t.title} className="flex flex-wrap items-center justify-between gap-3 p-5">
-              <span className="font-semibold">{t.title}</span>
-              <Badge>{t.text}</Badge>
+          {LEGAL_PAGES.map((p) => (
+            <li key={p.href}>
+              <Link href={p.href} className="flex flex-wrap items-center justify-between gap-3 p-5 hover:bg-sky-50">
+                <span>
+                  <span className="block font-semibold">{p.title}</span>
+                  <span className="block text-sm text-muted">{p.lead}</span>
+                </span>
+                <ChevronRight size={20} strokeWidth={1.75} className="text-sky-ink" aria-hidden="true" />
+              </Link>
             </li>
           ))}
         </ul>
