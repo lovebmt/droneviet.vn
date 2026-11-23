@@ -335,4 +335,46 @@ describe("OauthService", () => {
     expect(detail).not.toMatch(/[<>()]/);
     expect(detail.length).toBeLessThanOrEqual(80);
   });
+
+  it("retries the Zalo profile with fields=id when Zalo limits personal info for a non-Vietnam IP (-501)", async () => {
+    const logs = capturedLogs();
+    const { service, users } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    const fetchMock = stubFetch({
+      // Longest prefix first: the stub matches the first key the URL starts with.
+      "https://graph.zalo.me/v2.0/me?fields=id,name": {
+        error: -501,
+        message: "Personal information is limited due to IP address not inside Vietnam",
+      },
+      "https://graph.zalo.me/v2.0/me?fields=id": { id: "z-501" },
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access" },
+    });
+
+    await service.exchange(await service.finishZalo("auth-code", state));
+
+    const requested = fetchMock.mock.calls.map(([url]) => String(url));
+    expect(requested).toContain("https://graph.zalo.me/v2.0/me?fields=id,name");
+    expect(requested).toContain("https://graph.zalo.me/v2.0/me?fields=id");
+    expect([...users.rows.values()][0]).toMatchObject({
+      displayName: null,
+      email: "zalo_z-501@users.droneviet.vn",
+      zaloId: "z-501",
+    });
+    expect(logs.join("\n")).toContain("retrying with fields=id");
+  });
+
+  it("still reports a profile failure when even the id-only retry is refused", async () => {
+    const { service } = setup();
+    const state = new URL(await service.startZalo()).searchParams.get("state")!;
+    stubFetch({
+      "https://graph.zalo.me/v2.0/me?fields=id,name": { error: -501, message: "Personal information is limited" },
+      "https://graph.zalo.me/v2.0/me?fields=id": { error: -501, message: "Personal information is limited" },
+      "https://oauth.zaloapp.com/v4/access_token": { access_token: "z-access" },
+    });
+
+    const failure = await service.finishZalo("auth-code", state).catch((error: unknown) => error);
+
+    expect(failure).toMatchObject({ reason: "profile" });
+    expect((failure as { detail: string }).detail).toContain("-501");
+  });
 });

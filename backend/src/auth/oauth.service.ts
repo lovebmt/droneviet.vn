@@ -174,11 +174,23 @@ export class OauthService {
       throw new OauthFailure("token_exchange", "Zalo token exchange failed", summariseProviderBody(token));
     }
 
-    const profile = await this.getJson<{ id?: string | number; name?: string }>(
+    type ZaloProfile = { error?: number; id?: string | number; name?: string };
+    const zaloHeaders = { access_token: token.access_token };
+    let profile = await this.getJson<ZaloProfile>(
       "zalo profile",
       "https://graph.zalo.me/v2.0/me?fields=id,name",
-      { access_token: token.access_token },
+      zaloHeaders,
     );
+    if (!profile.id && profile.error === -501) {
+      // Zalo limits personal info when the caller's IP is outside Vietnam (e.g. Vercel in the US);
+      // the bare account id may still be available.
+      this.logger.warn("zalo profile limited for a non-Vietnam IP (-501): retrying with fields=id");
+      profile = await this.getJson<ZaloProfile>(
+        "zalo profile (id only)",
+        "https://graph.zalo.me/v2.0/me?fields=id",
+        zaloHeaders,
+      );
+    }
     if (!profile.id) {
       throw new OauthFailure("profile", "Zalo profile is missing an id", summariseProviderBody(profile));
     }
