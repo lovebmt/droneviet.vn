@@ -65,6 +65,23 @@ describe.skipIf(!integrationDatabaseUrl)("content publishing API", () => {
     expect((await fetch(`${ctx.baseUrl}/content/articles/${slug}`)).status).toBe(404);
   });
 
+  it("legal articles are listed only when asked for", async () => {
+    const legal = `phap-ly-${s}`;
+    const guide = `huong-dan-${s}`;
+    for (const [slug, kind] of [[legal, "phap-ly"], [guide, "guide"]] as const) {
+      expect((await call("PUT", `/admin/content/articles/${slug}`, { title: slug, bodyMarkdown: "Nội dung", kind })).status).toBe(200);
+      expect((await call("POST", `/admin/content/articles/${slug}/publish`)).status).toBe(201);
+    }
+    const slugs = async (query: string) => ((await (await fetch(`${ctx.baseUrl}/content/articles${query}`)).json()) as Array<{ slug: string }>).map((a) => a.slug);
+    const all = await slugs("");
+    expect(all).toContain(guide);
+    expect(all).not.toContain(legal);
+    const legalOnly = await slugs("?kind=phap-ly");
+    expect(legalOnly).toContain(legal);
+    expect(legalOnly).not.toContain(guide);
+    expect((await fetch(`${ctx.baseUrl}/content/articles/${legal}`)).status).toBe(200);
+  });
+
   it("wrong token gets 401", async () => {
     expect((await call("PUT", `/admin/content/articles/${slug}`, { title: "x", bodyMarkdown: "x" }, "wrong")).status).toBe(401);
   });

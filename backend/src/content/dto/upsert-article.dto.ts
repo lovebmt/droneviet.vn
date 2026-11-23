@@ -19,5 +19,5 @@ export class UpsertArticleDto {
   @IsOptional() @IsArray() @IsIn(["tieu-hoc", "thcs", "thpt", "dai-hoc", "quoc-te"], { each: true }) levels?: string[];
   @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => AttachmentDto) attachments?: AttachmentDto[];
   @IsOptional() @IsArray() @IsString({ each: true }) relatedProductSlugs?: string[];
-  @IsOptional() @IsIn(["guide", "research", "news"]) kind?: string;
+  @IsOptional() @IsIn(["guide", "research", "news", "phap-ly"]) kind?: string;
 }

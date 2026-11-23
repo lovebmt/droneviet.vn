@@ -34,6 +34,9 @@ function readingMinutes(markdown: string): number {
   return Math.max(1, Math.round(words / 200));
 }
 
+/** Legal guides live under /dao-tao, not in R&D lists, search or home news. */
+export const LEGAL_KIND = "phap-ly";
+
 @Injectable()
 export class ContentService {
   constructor(
@@ -94,12 +97,13 @@ export class ContentService {
     return this.dataSource.getRepository(Article).find({ order: { updatedAt: "DESC" } });
   }
 
-  async listPublicArticles(filter: { tag?: string; level?: string; limit?: number }): Promise<PublicArticleSummary[]> {
+  async listPublicArticles(filter: { tag?: string; level?: string; limit?: number; kind?: string }): Promise<PublicArticleSummary[]> {
     const articles = await this.dataSource.getRepository(Article).find({
       where: { status: ContentStatus.PUBLISHED },
       order: { publishedAt: "DESC" },
     });
     return articles
+      .filter((a) => (filter.kind ? a.kind === filter.kind : a.kind !== LEGAL_KIND))
       .filter((a) => !filter.tag || (a.tags ?? []).includes(filter.tag))
       .filter((a) => !filter.level || (a.levels ?? []).includes(filter.level))
       .slice(0, filter.limit && filter.limit > 0 ? filter.limit : undefined)

@@ -55,8 +55,10 @@ export function getProduct(slug: string): Promise<ProductDetail | null> {
   return apiGetOrNull<ProductDetail>(`/catalog/products/${encodeURIComponent(slug)}`, { tags: ["catalog", `product:${slug}`] });
 }
 
-export function listArticles(opts: { tag?: string; level?: string; limit?: number } = {}): Promise<ArticleSummary[]> {
+/** Legal guides (kind "phap-ly") are only returned when asked for by `kind`. */
+export function listArticles(opts: { tag?: string; level?: string; limit?: number; kind?: string } = {}): Promise<ArticleSummary[]> {
   const query = new URLSearchParams();
+  if (opts.kind) query.set("kind", opts.kind);
   if (opts.tag) query.set("tag", opts.tag);
   if (opts.level) query.set("level", opts.level);
   if (opts.limit) query.set("limit", String(opts.limit));

@@ -61,7 +61,7 @@ export class Article {
   @Column({ type: "json", default: () => "'[]'" })
   relatedProductSlugs!: string[];
 
-  /** guide | research | news (spec §9.4). */
+  /** guide | research | news (spec §9.4) | phap-ly (legal guides, kept out of public lists unless asked for). */
   @Column({ type: "varchar", default: "guide" })
   kind!: string;
 

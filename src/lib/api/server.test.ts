@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { apiGet, apiGetOrNull, listProducts } from "./server";
+import { apiGet, apiGetOrNull, listArticles, listProducts } from "./server";
 
 describe("server API client", () => {
   beforeEach(() => vi.stubEnv("NEXT_PUBLIC_COMMERCE_API_URL", "https://api.test/"));
@@ -28,6 +28,13 @@ describe("server API client", () => {
       "https://api.test/catalog/products?kind=drone",
       expect.objectContaining({ next: { tags: ["catalog"], revalidate: 300 } }),
     );
+  });
+
+  it("listArticles asks for legal guides by kind", async () => {
+    const fetchMock = vi.fn(async () => Response.json([]));
+    vi.stubGlobal("fetch", fetchMock);
+    await listArticles({ kind: "phap-ly" });
+    expect(fetchMock).toHaveBeenCalledWith("https://api.test/content/articles?kind=phap-ly", expect.anything());
   });
 
   it("apiGetOrNull returns null on 404", async () => {
