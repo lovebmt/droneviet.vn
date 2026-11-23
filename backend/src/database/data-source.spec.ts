@@ -52,7 +52,7 @@ describe("createDatabaseOptions", () => {
         PromoCode,
       ]),
     );
-    expect(options.migrations).toHaveLength(7);
+    expect(options.migrations).toHaveLength(8);
   });
 
   it("uses DATABASE_URL with TLS when sslmode=require", () => {
