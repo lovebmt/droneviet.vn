@@ -46,7 +46,8 @@ for (const dir of dirs) {
       console.log(JSON.stringify({ slug: result.slug, ...result.payload, bodyMarkdown: `${result.payload.bodyMarkdown.slice(0, 200)}…` }, null, 2));
     } else {
       console.log(`${flag("--publish") ? "Đã đăng" : "Đã lưu bản nháp"}: ${result.slug} (${result.uploaded.length} tệp đã tải lên) → ${api}`);
-      if (flag("--publish")) console.log(`Xem: https://www.droneviet.vn/r-d/${result.slug}`);
+      const site = /localhost|127\.0\.0\.1/.test(api) ? "http://localhost:3000" : "https://www.droneviet.vn";
+      if (flag("--publish")) console.log(`Xem: ${site}/r-d/${result.slug}`);
     }
   } catch (error) {
     failed = true;

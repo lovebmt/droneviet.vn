@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from "vitest";
-// @ts-expect-error -- plain ESM script without type declarations
 import { buildPayload, localAssets, parseArticle, publishArticle, rewriteBody } from "./lib.mjs";
 
 const SOURCE = `---
