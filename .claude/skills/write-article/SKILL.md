@@ -63,7 +63,7 @@ title: Lắp ráp drone F450 cho lớp 8  # ≤ 70 ký tự, nói rõ người �
 summary: Một câu 120–160 ký tự, dùng làm mô tả SEO nếu không có seoDescription.
 kind: guide                          # guide | research | news | phap-ly
 locale: vi
-tags: [lap-rap, thcs]                # chữ thường không dấu; dùng lại tag cũ khi có thể
+tags: [lap-rap, stem]                # chữ thường không dấu; chọn trong src/content/tags.ts
 levels: [thcs]                       # tieu-hoc | thcs | thpt | dai-hoc | quoc-te
 cover: ./bia.webp                    # ảnh bìa 16:9 hoặc 2:1 (R&D)
 related: [dv-code-fleet]             # slug sản phẩm, hiện thẻ "Sản phẩm trong bài"
@@ -75,6 +75,8 @@ seoTitle: ...                        # tuỳ chọn
 seoDescription: ...                  # tuỳ chọn
 ---
 ```
+
+Tag phải có nhãn tiếng Việt trong `src/content/tags.ts` (hiện ở bộ lọc trang R&D; test `src/content/tags.test.ts` kiểm tra). Ưu tiên tag có sẵn; tag mới thì thêm nhãn vào file đó, việc này là code nên cần deploy.
 
 Bài pháp lý dùng: `kind: phap-ly`, `tags: [phap-ly]`, `levels: []`, không `cover`, không `related`.
 

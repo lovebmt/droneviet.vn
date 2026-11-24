@@ -23,6 +23,8 @@ const nextConfig: NextConfig = {
   },
   images: {
     // Media uploaded through the API (R2), production and local development.
+    // Next 16 refuses to optimise images from private IPs; the local API is on localhost.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [
       { protocol: "https", hostname: "api.droneviet.vn", pathname: "/media/**" },
       { protocol: "http", hostname: "localhost", port: "4000", pathname: "/media/**" },

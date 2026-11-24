@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { tagLabel } from "@/content/tags";
 import Link from "next/link";
 import { ArticleCard } from "@/components/content/article-card";
 import { EmptyState } from "@/components/page/empty-state";
@@ -12,8 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/r-d" },
 };
 
-const TAG_LABEL: Record<string, string> = { "lap-rap": "Lắp ráp", "lap-trinh": "Lập trình", "cam-bien": "Cảm biến", "giao-duc": "Giáo dục", "an-toan": "An toàn" };
-const label = (tag: string) => TAG_LABEL[tag] ?? tag.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase());
+const label = tagLabel;
 
 export default async function RdPage({ searchParams }: { searchParams: Promise<{ tag?: string }> }) {
   const { tag } = await searchParams;

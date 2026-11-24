@@ -44,6 +44,10 @@ describe("apex droneviet.vn routing", () => {
     }
   });
 
+  it("local API images are optimised in development only", () => {
+    expect(nextConfig.images?.dangerouslyAllowLocalIP).toBe(process.env.NODE_ENV !== "production");
+  });
+
   it("marks the homepage canonical on www so the apex copy is not a duplicate", () => {
     expect(metadata?.alternates?.canonical).toBe("https://www.droneviet.vn/");
   });
