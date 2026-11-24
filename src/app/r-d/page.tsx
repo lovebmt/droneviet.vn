@@ -25,12 +25,13 @@ export default async function RdPage({ searchParams }: { searchParams: Promise<{
   return (
     <>
       <PageHeader
+        compact
         title="R&D"
         lead="Hướng dẫn lắp ráp, lập trình, nghiên cứu và kinh nghiệm đưa drone vào lớp học."
         crumbs={[{ label: "Trang chủ", href: "/" }, { label: "R&D" }]}
       >
         {tags.length ? (
-          <nav aria-label="Chủ đề" className="mt-6 flex flex-wrap gap-2">
+          <nav aria-label="Chủ đề" className="flex gap-2">
             <Link href="/r-d" className={chip(!tag)} aria-current={!tag ? "page" : undefined}>Tất cả</Link>
             {tags.map((t) => (
               <Link key={t} href={`/r-d?tag=${encodeURIComponent(t)}`} className={chip(t === tag)} aria-current={t === tag ? "page" : undefined}>{label(t)}</Link>
@@ -38,7 +39,7 @@ export default async function RdPage({ searchParams }: { searchParams: Promise<{
           </nav>
         ) : null}
       </PageHeader>
-      <Container className="py-12 sm:py-16">
+      <Container className="py-8 sm:py-10">
         {articles.length ? (
           <ul className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
             {articles.map((a) => <li key={a.slug}><ArticleCard article={a} /></li>)}

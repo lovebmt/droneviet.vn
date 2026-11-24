@@ -33,11 +33,12 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
   return (
     <>
       <PageHeader
+        compact
         title={selected?.title ?? "Cửa hàng"}
         lead={selected?.lead ?? "Combo trọn bộ cho lớp học được báo giá theo nhu cầu. Drone lẻ và linh kiện mua online, giao toàn quốc."}
         crumbs={[{ label: "Trang chủ", href: "/" }, ...(selected ? [{ label: "Cửa hàng", href: "/cua-hang" }, { label: selected.title }] : [{ label: "Cửa hàng" }])]}
       >
-        <nav aria-label="Loại sản phẩm" className="mt-6 flex flex-wrap gap-2">
+        <nav aria-label="Loại sản phẩm" className="flex gap-2">
           <FilterLink href="/cua-hang" active={!selected}>Tất cả</FilterLink>
           {GROUPS.map((g) => (
             <FilterLink key={g.loai} href={`/cua-hang?loai=${g.loai}`} active={selected?.loai === g.loai}>{g.title}</FilterLink>
@@ -46,7 +47,7 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
         </nav>
       </PageHeader>
 
-      <Container className="space-y-16 py-12 sm:py-16">
+      <Container className="space-y-14 py-8 sm:py-10">
         {loaded.map((group) => (
           <section key={group.loai} aria-labelledby={`nhom-${group.loai}`}>
             <div className="flex flex-wrap items-end justify-between gap-3">
