@@ -108,15 +108,74 @@ describe("SiteHeader", () => {
     await waitFor(() => expect(screen.getByRole("link", { name: "Giỏ hàng, 3 sản phẩm" })).toHaveAttribute("href", "/gio-hang"));
   });
 
-  it("account icon points to sign-in when signed out and to the account when signed in", async () => {
+  it("account icon points to sign-in when signed out", async () => {
     signedOut();
-    const first = render(<AppProviders><SiteHeader /></AppProviders>);
-    await waitFor(() => expect(screen.getByRole("link", { name: "Đăng nhập" })).toHaveAttribute("href", "/dang-nhap"));
-    first.unmount();
-
-    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ id: "u", email: "a@b.c", displayName: "An", roles: [] })));
     render(<AppProviders><SiteHeader /></AppProviders>);
-    await waitFor(() => expect(screen.getByRole("link", { name: "Tài khoản của tôi" })).toHaveAttribute("href", "/tai-khoan"));
+    await waitFor(() => expect(screen.getByRole("link", { name: "Đăng nhập" })).toHaveAttribute("href", "/dang-nhap"));
+    expect(screen.queryByRole("button", { name: "Tài khoản của tôi" })).not.toBeInTheDocument();
+  });
+
+  function signedIn(roles: string[] = ["customer"]) {
+    const calls: Array<{ path: string; method: string }> = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      const path = new URL(url).pathname;
+      calls.push({ path, method: init?.method ?? "GET" });
+      return path === "/auth/me" ? Response.json({ id: "u", email: "an@example.com", displayName: "Nguyễn An", roles }) : Response.json({ ok: true });
+    }));
+    return calls;
+  }
+
+  it("signed in, the account icon opens a menu with profile, orders, courses and sign-out", async () => {
+    signedIn();
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    const trigger = await screen.findByRole("button", { name: "Tài khoản của tôi" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("link", { name: "Hồ sơ" })).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(trigger.parentElement!);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    const panel = screen.getByRole("region", { name: "Tài khoản" });
+    expect(within(panel).getByText("Nguyễn An")).toBeInTheDocument();
+    expect(within(panel).getByText("an@example.com")).toBeInTheDocument();
+    for (const [name, href] of [["Hồ sơ", "/tai-khoan"], ["Đơn hàng của tôi", "/tai-khoan/don-hang"], ["Khóa học của tôi", "/tai-khoan/khoa-hoc"]]) {
+      expect(within(panel).getByRole("link", { name })).toHaveAttribute("href", href);
+    }
+    expect(within(panel).queryByRole("link", { name: "Quản trị" })).not.toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "Đăng xuất" })).toBeInTheDocument();
+
+    fireEvent.mouseLeave(trigger.parentElement!);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("the account menu opens on click or touch and closes on Escape or a click outside", async () => {
+    signedIn();
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    const trigger = await screen.findByRole("button", { name: "Tài khoản của tôi" });
+    fireEvent.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    fireEvent.keyDown(trigger, { key: "Escape" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(trigger);
+    fireEvent.pointerDown(document.body);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("staff see Quản trị in the account menu", async () => {
+    signedIn(["operations"]);
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    fireEvent.click(await screen.findByRole("button", { name: "Tài khoản của tôi" }));
+    expect(screen.getByRole("link", { name: "Quản trị" })).toHaveAttribute("href", "/admin");
+  });
+
+  it("Đăng xuất signs out from the account menu", async () => {
+    const calls = signedIn();
+    const assign = vi.fn();
+    vi.stubGlobal("location", { ...window.location, assign });
+    render(<AppProviders><SiteHeader /></AppProviders>);
+    fireEvent.click(await screen.findByRole("button", { name: "Tài khoản của tôi" }));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Đăng xuất" })));
+    expect(calls).toContainEqual({ path: "/auth/logout", method: "POST" });
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/"));
   });
 
   it("mobile menu opens, lists sections and closes on Escape", () => {

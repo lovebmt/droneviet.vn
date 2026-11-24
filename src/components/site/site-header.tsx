@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, Menu, Search, ShoppingBag, UserRound } from "lucide-react";
+import { ChevronDown, Menu, Search, ShoppingBag } from "lucide-react";
 import { type FocusEvent, useCallback, useState } from "react";
 import { useCart } from "@/components/providers/cart-provider";
-import { useSession } from "@/components/providers/session-provider";
 import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { AccountMenu } from "./account-menu";
 import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
 import { mainNav, type NavItem } from "./nav";
@@ -61,10 +61,8 @@ function NavMenu({ item }: { item: NavItem }) {
 
 export function SiteHeader() {
   const { count } = useCart();
-  const { status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
-  const signedIn = status === "signed-in";
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
@@ -93,13 +91,7 @@ export function SiteHeader() {
           <Link href="/tim-kiem" aria-label="Tìm kiếm" className={`rounded-full p-2 hover:bg-sky-50 max-[359px]:hidden sm:p-2.5 ${PRESS.item}`}>
             <Search {...ICON} />
           </Link>
-          <Link
-            href={signedIn ? "/tai-khoan" : "/dang-nhap"}
-            aria-label={signedIn ? "Tài khoản của tôi" : "Đăng nhập"}
-            className={`rounded-full p-2 hover:bg-sky-50 sm:p-2.5 ${PRESS.item}`}
-          >
-            <UserRound {...ICON} />
-          </Link>
+          <AccountMenu />
           <Link href="/gio-hang" aria-label={`Giỏ hàng, ${count} sản phẩm`} className={`relative rounded-full p-2 hover:bg-sky-50 sm:p-2.5 ${PRESS.item}`}>
             <ShoppingBag {...ICON} />
             {count > 0 ? (

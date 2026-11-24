@@ -3,11 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const ITEMS = [
-  { href: "/tai-khoan", label: "Tổng quan" },
-  { href: "/tai-khoan/don-hang", label: "Đơn hàng" },
-  { href: "/tai-khoan/khoa-hoc", label: "Khóa học" },
-];
+import { ACCOUNT_LINKS as ITEMS } from "./account-links";
 
 export function AccountNav() {
   const pathname = usePathname();
