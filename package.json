@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "rd:publish": "node scripts/rd/publish.mjs",
     "e2e": "playwright test",
-    "zones:build": "node scripts/flight-zones/build.mjs"
+    "zones:build": "node scripts/flight-zones/build.mjs",
+    "content:publish": "node scripts/rd/publish.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
