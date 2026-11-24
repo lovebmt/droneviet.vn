@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="420" fill="#F5F9FF"/>
+  <text x="400" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Một chiếc drone, bốn môn học</text>
+  <g transform="translate(400 225)">
+    <rect x="-70" y="-50" width="140" height="100" rx="20" fill="#0F2742"/><text y="-6" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Nhiệm vụ</text><text y="18" text-anchor="middle" font-size="14" fill="#fff">bay của nhóm</text>
+  </g>
+  <g font-size="14">
+    <rect x="40" y="70" width="230" height="110" rx="14" fill="#fff" stroke="#13B8A6" stroke-width="3"/><text x="58" y="100" font-size="22" font-weight="700" fill="#08857a">S Khoa học</text><text x="58" y="126" fill="#0F2742">Lực nâng, trọng lực,</text><text x="58" y="146" fill="#0F2742">năng lượng pin</text>
+    <rect x="530" y="70" width="230" height="110" rx="14" fill="#fff" stroke="#0B6FE0" stroke-width="3"/><text x="548" y="100" font-size="22" font-weight="700" fill="#0B6FE0">T Công nghệ</text><text x="548" y="126" fill="#0F2742">Lập trình, cảm biến,</text><text x="548" y="146" fill="#0F2742">dữ liệu bay</text>
+    <rect x="40" y="270" width="230" height="110" rx="14" fill="#fff" stroke="#B54708" stroke-width="3"/><text x="58" y="300" font-size="22" font-weight="700" fill="#B54708">E Kỹ thuật</text><text x="58" y="326" fill="#0F2742">Lắp ráp, thử, sửa,</text><text x="58" y="346" fill="#0F2742">cải tiến thiết kế</text>
+    <rect x="530" y="270" width="230" height="110" rx="14" fill="#fff" stroke="#4A6078" stroke-width="3"/><text x="548" y="300" font-size="22" font-weight="700" fill="#4A6078">M Toán</text><text x="548" y="326" fill="#0F2742">Tọa độ, góc, tốc độ,</text><text x="548" y="346" fill="#0F2742">thống kê kết quả</text>
+  </g>
+  <g stroke="#0F2742" stroke-width="2" stroke-dasharray="5 5"><path d="M270 150L330 185"/><path d="M530 150L470 185"/><path d="M270 300L330 265"/><path d="M530 300L470 265"/></g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="420" fill="#F5F9FF"/>
+  <text x="400" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Lộ trình drone qua các cấp học</text>
+  <g font-size="14">
+    <rect x="30" y="300" width="175" height="96" rx="12" fill="#13B8A6"/><text x="46" y="328" font-weight="700" fill="#fff" font-size="17">Tiểu học</text><text x="46" y="352" fill="#fff">Bay an toàn, quan sát</text><text x="46" y="372" fill="#fff">Khối lệnh đơn giản</text>
+    <rect x="215" y="225" width="175" height="96" rx="12" fill="#0B6FE0"/><text x="231" y="253" font-weight="700" fill="#fff" font-size="17">THCS</text><text x="231" y="277" fill="#fff">Lắp ráp, vòng lặp, biến</text><text x="231" y="297" fill="#fff">Tọa độ, cảm biến</text>
+    <rect x="400" y="150" width="175" height="96" rx="12" fill="#4A6078"/><text x="416" y="178" font-weight="700" fill="#fff" font-size="17">THPT</text><text x="416" y="202" fill="#fff">Python, dữ liệu bay</text><text x="416" y="222" fill="#fff">Dự án STEM nhóm</text>
+    <rect x="585" y="75" width="185" height="96" rx="12" fill="#0F2742"/><text x="601" y="103" font-weight="700" fill="#fff" font-size="17">Đại học</text><text x="601" y="127" fill="#fff">PID, thị giác máy tính</text><text x="601" y="147" fill="#fff">Nghiên cứu, tự động hóa</text>
+  </g>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><path d="M0 0L10 5L0 10z" fill="#E0A800"/></marker></defs><g fill="none" stroke="#FFC531" stroke-width="5" stroke-linecap="round" marker-end="url(#a)"><path d="M118 298 V273 H210"/><path d="M303 223 V198 H395"/><path d="M488 148 V123 H580"/></g>
+  <text x="30" y="70" font-size="14" fill="#4A6078">Mỗi bậc dùng lại</text><text x="30" y="90" font-size="14" fill="#4A6078">kỹ năng bậc trước</text>
+</svg>
