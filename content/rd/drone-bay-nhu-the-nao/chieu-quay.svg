@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -24 800 494" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect y="-24" width="800" height="494" fill="#F5F9FF"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0F2742"/></marker></defs>
+  <text x="400" y="2" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Nhìn từ trên xuống: hai cặp cánh quay ngược chiều</text>
+  <g transform="translate(400 240)" stroke="#4A6078" stroke-width="12" stroke-linecap="round"><line x1="-120" y1="-120" x2="120" y2="120"/><line x1="120" y1="-120" x2="-120" y2="120"/></g>
+  <rect x="370" y="210" width="60" height="60" rx="12" fill="#0F2742"/>
+  <path d="M400 222 l10 14 h-20z" fill="#FFC531"/>
+  <g font-size="15" text-anchor="middle">
+    <g transform="translate(280 120)"><text y="-76" fill="#0F2742" font-weight="700">Ngược chiều kim đồng hồ</text><circle r="62" fill="#0B6FE0" fill-opacity=".15" stroke="#0B6FE0" stroke-width="3"/><path d="M-40 -30 A50 50 0 1 1 -48 10" fill="none" stroke="#0F2742" stroke-width="3" marker-end="url(#a)"/></g>
+    <g transform="translate(520 120)"><text y="-76" fill="#0F2742" font-weight="700">Cùng chiều kim đồng hồ</text><circle r="62" fill="#13B8A6" fill-opacity=".15" stroke="#13B8A6" stroke-width="3"/><path d="M40 -30 A50 50 0 1 0 48 10" fill="none" stroke="#0F2742" stroke-width="3" marker-end="url(#a)"/></g>
+    <g transform="translate(280 360)"><text y="84" fill="#0F2742" font-weight="700">Cùng chiều kim đồng hồ</text><circle r="62" fill="#13B8A6" fill-opacity=".15" stroke="#13B8A6" stroke-width="3"/><path d="M40 -30 A50 50 0 1 0 48 10" fill="none" stroke="#0F2742" stroke-width="3" marker-end="url(#a)"/></g>
+    <g transform="translate(520 360)"><text y="84" fill="#0F2742" font-weight="700">Ngược chiều kim đồng hồ</text><circle r="62" fill="#0B6FE0" fill-opacity=".15" stroke="#0B6FE0" stroke-width="3"/><path d="M-40 -30 A50 50 0 1 1 -48 10" fill="none" stroke="#0F2742" stroke-width="3" marker-end="url(#a)"/></g>
+  </g>
+  <text x="640" y="225" font-size="15" fill="#4A6078">Mũi tên vàng:</text><text x="640" y="245" font-size="15" fill="#4A6078">hướng mũi drone</text>
+  <text x="40" y="225" font-size="15" fill="#4A6078">Mô-men xoắn</text><text x="40" y="245" font-size="15" fill="#4A6078">triệt tiêu nhau,</text><text x="40" y="265" font-size="15" fill="#4A6078">drone không tự xoay</text>
+</svg>

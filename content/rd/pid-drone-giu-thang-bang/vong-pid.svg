@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="400" fill="#F5F9FF"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0F2742"/></marker></defs>
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Vòng điều khiển PID giữ drone nằm ngang</text>
+  <g font-size="15" text-anchor="middle">
+    <rect x="30" y="150" width="130" height="64" rx="12" fill="#FFC531"/><text x="95" y="178" font-weight="700" fill="#0F2742">Góc mong muốn</text><text x="95" y="198" fill="#0F2742" font-size="13">ví dụ 0° (nằm ngang)</text>
+    <circle cx="230" cy="182" r="24" fill="#fff" stroke="#0F2742" stroke-width="2"/><text x="230" y="188" font-size="20" fill="#0F2742">−</text>
+    <rect x="300" y="110" width="170" height="144" rx="12" fill="#0F2742"/><text x="385" y="140" font-weight="700" fill="#fff">Bộ PID</text>
+    <text x="385" y="168" fill="#fff" font-size="13">P: sai lệch bây giờ</text><text x="385" y="192" fill="#fff" font-size="13">I: sai lệch dồn lại</text><text x="385" y="216" fill="#fff" font-size="13">D: sai lệch đang đổi</text><text x="385" y="240" fill="#FFC531" font-size="13">nhanh hay chậm</text>
+    <rect x="520" y="150" width="120" height="64" rx="12" fill="#13B8A6"/><text x="580" y="178" font-weight="700" fill="#fff">Động cơ</text><text x="580" y="198" fill="#fff" font-size="13">tăng/giảm tốc</text>
+    <rect x="670" y="150" width="110" height="64" rx="12" fill="#0B6FE0"/><text x="725" y="178" font-weight="700" fill="#fff">Drone</text><text x="725" y="198" fill="#fff" font-size="13">nghiêng ít đi</text>
+    <rect x="460" y="300" width="200" height="56" rx="12" fill="#4A6078"/><text x="560" y="325" font-weight="700" fill="#fff">Con quay (IMU)</text><text x="560" y="344" fill="#fff" font-size="13">đo góc thật mỗi vài ms</text>
+  </g>
+  <g stroke="#0F2742" stroke-width="2.5" fill="none" marker-end="url(#a)"><path d="M160 182H204"/><path d="M254 182H298"/><path d="M470 182H518"/><path d="M640 182H668"/><path d="M725 214V328H662"/><path d="M460 328H230V208"/></g>
+  <text x="276" y="210" text-anchor="middle" font-size="13" fill="#B42318">sai lệch</text>
+  <text x="240" y="300" font-size="13" fill="#4A6078">góc đo được</text>
+</svg>

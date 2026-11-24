@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="450" fill="#F5F9FF"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="26" markerHeight="26" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0F2742"/></marker></defs>
+  <g transform="translate(400 230)">
+    <rect x="-70" y="-14" width="140" height="28" rx="8" fill="#0F2742"/>
+    <rect x="-150" y="-6" width="80" height="12" rx="4" fill="#4A6078"/><rect x="70" y="-6" width="80" height="12" rx="4" fill="#4A6078"/>
+    <rect x="-180" y="-24" width="70" height="8" rx="4" fill="#0B6FE0"/><rect x="110" y="-24" width="70" height="8" rx="4" fill="#0B6FE0"/>
+    <line x1="0" y1="-40" x2="0" y2="-170" stroke="#13B8A6" stroke-width="8" marker-end="url(#a)"/>
+    <line x1="0" y1="40" x2="0" y2="160" stroke="#B42318" stroke-width="8" marker-end="url(#a)"/>
+    <line x1="190" y1="0" x2="320" y2="0" stroke="#0B6FE0" stroke-width="8" marker-end="url(#a)"/>
+    <line x1="-190" y1="0" x2="-320" y2="0" stroke="#B54708" stroke-width="8" marker-end="url(#a)"/>
+  </g>
+  <text x="425" y="88" font-size="22" font-weight="700" fill="#08857a">Lực nâng</text><text x="425" y="112" font-size="16" fill="#4A6078">cánh quạt đẩy không khí xuống</text>
+  <text x="425" y="365" font-size="22" font-weight="700" fill="#B42318">Trọng lực</text><text x="425" y="389" font-size="16" fill="#4A6078">khối lượng drone và pin</text>
+  <text x="620" y="190" font-size="22" font-weight="700" fill="#0B6FE0">Lực đẩy</text><text x="600" y="270" font-size="16" fill="#4A6078">nghiêng drone để có</text><text x="600" y="290" font-size="16" fill="#4A6078">thành phần nằm ngang</text>
+  <text x="80" y="190" font-size="22" font-weight="700" fill="#B54708">Lực cản</text><text x="40" y="270" font-size="16" fill="#4A6078">không khí cản lại</text><text x="40" y="290" font-size="16" fill="#4A6078">khi drone chuyển động</text>
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Bốn lực tác dụng lên drone</text>
+</svg>

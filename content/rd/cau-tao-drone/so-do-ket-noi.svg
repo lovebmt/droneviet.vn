@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="450" fill="#F5F9FF"/>
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Điện và tín hiệu đi qua drone như thế nào</text>
+  <g font-size="16" text-anchor="middle" fill="#fff" font-weight="700">
+    <rect x="40" y="190" width="140" height="70" rx="12" fill="#B54708"/><text x="110" y="222">Pin LiPo</text><text x="110" y="244" font-weight="400" font-size="13">nguồn điện</text>
+    <rect x="240" y="190" width="150" height="70" rx="12" fill="#4A6078"/><text x="315" y="222">Bảng phân điện</text><text x="315" y="244" font-weight="400" font-size="13">chia điện cho 4 ESC</text>
+    <rect x="300" y="70" width="200" height="70" rx="12" fill="#0F2742"/><text x="400" y="102">Mạch bay</text><text x="400" y="124" font-weight="400" font-size="13">cảm biến + bộ não</text>
+    <rect x="560" y="70" width="190" height="70" rx="12" fill="#0B6FE0"/><text x="655" y="102">Bộ thu sóng</text><text x="655" y="124" font-weight="400" font-size="13">nhận lệnh từ tay điều khiển</text>
+    <g font-size="14"><rect x="470" y="170" width="110" height="44" rx="10" fill="#13B8A6"/><text x="525" y="197">ESC 1</text><rect x="470" y="226" width="110" height="44" rx="10" fill="#13B8A6"/><text x="525" y="253">ESC 2</text><rect x="470" y="282" width="110" height="44" rx="10" fill="#13B8A6"/><text x="525" y="309">ESC 3</text><rect x="470" y="338" width="110" height="44" rx="10" fill="#13B8A6"/><text x="525" y="365">ESC 4</text></g>
+    <g font-size="14" fill="#0F2742"><circle cx="680" cy="192" r="22" fill="#FFC531"/><text x="680" y="197">M1</text><circle cx="680" cy="248" r="22" fill="#FFC531"/><text x="680" y="253">M2</text><circle cx="680" cy="304" r="22" fill="#FFC531"/><text x="680" y="309">M3</text><circle cx="680" cy="360" r="22" fill="#FFC531"/><text x="680" y="365">M4</text></g>
+  </g>
+  <g stroke="#B54708" stroke-width="5" fill="none"><path d="M180 225H240"/><path d="M390 225H430V192H470M430 225V248H470M430 248V304H470M430 304V360H470"/></g>
+  <g stroke="#0F2742" stroke-width="2.5" stroke-dasharray="6 5" fill="none"><path d="M500 105H560"/><path d="M400 140V160H450V192M450 160V360"/></g>
+  <g stroke="#13B8A6" stroke-width="4"><path d="M580 192H658M580 248H658M580 304H658M580 360H658"/></g>
+  <g font-size="14" fill="#4A6078"><line x1="60" y1="400" x2="100" y2="400" stroke="#B54708" stroke-width="5"/><text x="110" y="405">Dòng điện lớn</text><line x1="240" y1="400" x2="280" y2="400" stroke="#0F2742" stroke-width="2.5" stroke-dasharray="6 5"/><text x="290" y="405">Tín hiệu điều khiển</text><line x1="460" y1="400" x2="500" y2="400" stroke="#13B8A6" stroke-width="4"/><text x="510" y="405">3 dây pha tới động cơ</text></g>
+</svg>

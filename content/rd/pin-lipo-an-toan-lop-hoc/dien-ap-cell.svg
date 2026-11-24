@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="360" fill="#F5F9FF"/>
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Điện áp của một cell LiPo (mỗi "S")</text>
+  <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#B42318"/><stop offset=".25" stop-color="#FDB022"/><stop offset=".5" stop-color="#13B8A6"/><stop offset="1" stop-color="#0B6FE0"/></linearGradient></defs>
+  <rect x="80" y="150" width="640" height="40" rx="8" fill="url(#g)"/>
+  <g font-size="15" text-anchor="middle" fill="#0F2742">
+    <line x1="80" y1="130" x2="80" y2="210" stroke="#0F2742" stroke-width="2"/><text x="80" y="120" font-weight="700">3,0 V</text><text x="80" y="235">Cạn: dừng bay</text><text x="80" y="255">trước mức này</text>
+    <line x1="400" y1="130" x2="400" y2="210" stroke="#0F2742" stroke-width="2"/><text x="400" y="120" font-weight="700">3,7 V</text><text x="400" y="235">Điện áp danh định</text><text x="400" y="255">(số in trên pin)</text>
+    <line x1="480" y1="130" x2="480" y2="210" stroke="#0F2742" stroke-width="2"/><text x="505" y="120" font-weight="700">3,8 V</text><text x="530" y="300">Cất giữ dài ngày</text><text x="530" y="320">ở mức khoảng này</text><path d="M480 210L520 282" stroke="#0F2742" stroke-width="1.5"/>
+    <line x1="720" y1="130" x2="720" y2="210" stroke="#0F2742" stroke-width="2"/><text x="720" y="120" font-weight="700">4,2 V</text><text x="720" y="235">Đầy: không</text><text x="720" y="255">sạc quá mức này</text>
+  </g>
+  <text x="400" y="345" text-anchor="middle" font-size="14" fill="#4A6078">Pin 2S (7,4 V) có 2 cell nối tiếp: nhân các mốc trên với 2.</text>
+</svg>

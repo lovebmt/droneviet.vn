@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 470" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="470" fill="#F5F9FF"/>
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Chương trình mẫu: bay một hình vuông</text>
+  <g font-size="17" font-weight="700" fill="#fff">
+    <rect x="220" y="70" width="300" height="46" rx="10" fill="#FFC531"/><text x="240" y="100" fill="#0F2742">Khi bấm Bắt đầu</text>
+    <rect x="220" y="122" width="300" height="46" rx="10" fill="#0B6FE0"/><text x="240" y="152">Cất cánh</text>
+    <rect x="220" y="174" width="360" height="46" rx="10" fill="#0B6FE0"/><text x="240" y="204">Bay lên  50  cm</text>
+    <path d="M220 226h380v46h-340v112h340v22h-380z" fill="#B54708"/><text x="240" y="256">Lặp lại  4  lần</text>
+    <rect x="260" y="280" width="320" height="46" rx="10" fill="#13B8A6"/><text x="280" y="310">Bay tới  100  cm</text>
+    <rect x="260" y="332" width="320" height="46" rx="10" fill="#13B8A6"/><text x="280" y="362">Xoay phải  90  độ</text>
+    <rect x="220" y="414" width="300" height="44" rx="10" fill="#0B6FE0"/><text x="240" y="442">Hạ cánh</text>
+  </g>
+  <g fill="none" stroke="#0F2742" stroke-width="2"><rect x="640" y="150" width="120" height="120"/></g>
+  <g fill="#0F2742" font-size="13"><circle cx="640" cy="270" r="6"/><text x="610" y="295">xuất phát</text><text x="640" y="135">mỗi cạnh 1 m</text></g>
+</svg>

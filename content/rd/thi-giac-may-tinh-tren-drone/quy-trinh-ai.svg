@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" font-family="Be Vietnam Pro, Arial, sans-serif">
+  <rect width="800" height="300" fill="#F5F9FF"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0F2742"/></marker></defs>
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#0F2742">Từ khung hình đến quyết định bay</text>
+  <g font-size="15" text-anchor="middle">
+    <rect x="20" y="100" width="140" height="90" rx="12" fill="#0B6FE0"/><text x="90" y="138" fill="#fff" font-weight="700">Camera</text><text x="90" y="160" fill="#fff" font-size="13">25 đến 30 khung/giây</text>
+    <rect x="190" y="100" width="140" height="90" rx="12" fill="#4A6078"/><text x="260" y="138" fill="#fff" font-weight="700">Tiền xử lý</text><text x="260" y="160" fill="#fff" font-size="13">thu nhỏ, chuẩn hóa</text>
+    <rect x="360" y="100" width="140" height="90" rx="12" fill="#0F2742"/><text x="430" y="138" fill="#fff" font-weight="700">Mô hình AI</text><text x="430" y="160" fill="#fff" font-size="13">nhận diện vật thể</text>
+    <rect x="530" y="100" width="120" height="90" rx="12" fill="#fff" stroke="#13B8A6" stroke-width="3"/><rect x="555" y="118" width="46" height="34" fill="none" stroke="#B42318" stroke-width="3"/><text x="590" y="176" fill="#0F2742" font-size="13">khung + nhãn</text>
+    <rect x="680" y="100" width="110" height="90" rx="12" fill="#13B8A6"/><text x="735" y="138" fill="#fff" font-weight="700">Quyết định</text><text x="735" y="160" fill="#fff" font-size="13">bám theo, né</text>
+  </g>
+  <g stroke="#0F2742" stroke-width="2.5" marker-end="url(#a)"><path d="M160 145H188"/><path d="M330 145H358"/><path d="M500 145H528"/><path d="M650 145H678"/></g>
+  <text x="400" y="250" text-anchor="middle" font-size="14" fill="#4A6078">Cả vòng phải chạy xong trước khung hình kế tiếp thì drone mới phản ứng kịp.</text>
+</svg>
