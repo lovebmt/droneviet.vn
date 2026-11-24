@@ -12,6 +12,7 @@ const { default: AccountPage } = await import("./page");
 const { default: OrdersPage } = await import("./don-hang/page");
 const { default: MyCoursesPage } = await import("./khoa-hoc/page");
 const { default: LoginPage } = await import("../dang-nhap/page");
+const { default: RegisterPage } = await import("../dang-ky/page");
 
 const user = { id: "u1", email: "an@example.com", displayName: "Nguyễn An", roles: ["customer"] };
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
@@ -82,6 +83,14 @@ describe("staff shortcut", () => {
 });
 
 describe("sign-in return path", () => {
+  it("sign-in accepts passwords shorter than 12 characters; only sign-up requires 12", async () => {
+    const login = render(<AppProviders>{await LoginPage({})}</AppProviders>);
+    expect(login.container.querySelector("input[name=password]")).not.toHaveAttribute("minlength");
+    login.unmount();
+    render(<AppProviders>{await RegisterPage({})}</AppProviders>);
+    expect(document.querySelector("input[name=password]")).toHaveAttribute("minlength", "12");
+  });
+
   it("safeNextPath keeps same-site paths only", () => {
     expect(safeNextPath("/tai-khoan/don-hang")).toBe("/tai-khoan/don-hang");
     expect(safeNextPath("https://evil.example")).toBeNull();

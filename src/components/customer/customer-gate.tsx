@@ -109,7 +109,8 @@ export function CustomerGate({
             ) : null}
             <Field label="Email"><Input required name="email" type="email" autoComplete="email" /></Field>
             <Field label="Mật khẩu" hint={isRegister ? "Ít nhất 12 ký tự" : undefined}>
-              <Input required minLength={12} name="password" type="password" autoComplete={isRegister ? "new-password" : "current-password"} />
+              {/* 12 characters is the sign-up rule; existing accounts may have shorter passwords. */}
+              <Input required minLength={isRegister ? 12 : undefined} name="password" type="password" autoComplete={isRegister ? "new-password" : "current-password"} />
             </Field>
             <FormError message={message || null} />
             {oauthError && oauthReason ? <p className="text-xs text-muted">Mã lỗi: {oauthReason}</p> : null}
